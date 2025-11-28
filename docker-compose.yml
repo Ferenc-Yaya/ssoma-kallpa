@@ -1,0 +1,110 @@
+services:
+  postgres:
+    image: postgres:14-alpine
+    container_name: ssoma-postgres
+    environment:
+      POSTGRES_DB: ssoma_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - ssoma-network
+
+  identity-service:
+    build:
+      context: ./ssoma-identity-service
+    container_name: ssoma-identity-service
+    image: kallpa/ssoma-identity-service:1.0.0
+    ports:
+      - "8081:8081"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssoma_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_ENABLED: "true"
+    networks:
+      - ssoma-network
+    depends_on:
+      - postgres
+
+  assets-service:
+    build:
+      context: ./ssoma-assets-service
+    container_name: ssoma-assets-service
+    image: kallpa/ssoma-assets-service:1.0.0
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssoma_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_ENABLED: "false"
+    networks:
+      - ssoma-network
+    depends_on:
+      - postgres
+      - identity-service
+
+  compliance-service:
+    build:
+      context: ./ssoma-compliance-service
+    container_name: ssoma-compliance-service
+    image: kallpa/ssoma-compliance-service:1.0.0
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssoma_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_ENABLED: "false"
+    networks:
+      - ssoma-network
+    depends_on:
+      - postgres
+      - identity-service
+
+  hazmat-service:
+    build:
+      context: ./ssoma-hazmat-service
+    container_name: ssoma-hazmat-service
+    image: kallpa/ssoma-hazmat-service:1.0.0
+    ports:
+      - "8085:8085"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssoma_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_ENABLED: "false"
+    networks:
+      - ssoma-network
+    depends_on:
+      - postgres
+      - identity-service
+
+  documental-service:
+    build:
+      context: ./ssoma-documental-service
+    container_name: ssoma-documental-service
+    image: kallpa/ssoma-documental-service:1.0.0
+    ports:
+      - "8086:8086"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/ssoma_db
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_FLYWAY_ENABLED: "false"
+    networks:
+      - ssoma-network
+    depends_on:
+      - postgres
+      - identity-service
+
+volumes:
+  postgres_data:
+
+networks:
+  ssoma-network:
+    driver: bridge
