@@ -1,0 +1,81 @@
+<div class="main-layout">
+  <!-- Sidebar -->
+  <aside class="sidebar" [class.collapsed]="sidebarCollapsed">
+    <div class="sidebar-header">
+      <div class="logo" *ngIf="!sidebarCollapsed">
+        <h2>KALLPA</h2>
+        <p>SSOMA</p>
+      </div>
+      <button mat-icon-button (click)="toggleSidebar()" class="toggle-btn">
+        <mat-icon>{{ sidebarCollapsed ? 'menu' : 'menu_open' }}</mat-icon>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <a routerLink="/dashboard" 
+         routerLinkActive="active"
+         class="nav-item"
+         matTooltip="Dashboard"
+         [matTooltipDisabled]="!sidebarCollapsed"
+         matTooltipPosition="right">
+        <mat-icon>dashboard</mat-icon>
+        <span *ngIf="!sidebarCollapsed">Dashboard</span>
+      </a>
+
+      <a routerLink="/empresas" 
+         routerLinkActive="active"
+         class="nav-item"
+         matTooltip="Empresas"
+         [matTooltipDisabled]="!sidebarCollapsed"
+         matTooltipPosition="right">
+        <mat-icon>business</mat-icon>
+        <span *ngIf="!sidebarCollapsed">Empresas</span>
+      </a>
+
+      <a routerLink="/acreditacion" 
+         routerLinkActive="active"
+         class="nav-item"
+         matTooltip="Acreditación"
+         [matTooltipDisabled]="!sidebarCollapsed"
+         matTooltipPosition="right">
+        <mat-icon>assignment_turned_in</mat-icon>
+        <span *ngIf="!sidebarCollapsed">Acreditación</span>
+      </a>
+
+      <a routerLink="/pasaporte" 
+         routerLinkActive="active"
+         class="nav-item"
+         matTooltip="Pasaporte Digital"
+         [matTooltipDisabled]="!sidebarCollapsed"
+         matTooltipPosition="right">
+        <mat-icon>badge</mat-icon>
+        <span *ngIf="!sidebarCollapsed">Pasaporte</span>
+      </a>
+    </nav>
+  </aside>
+
+  <!-- Contenido principal -->
+  <div class="main-content">
+    <!-- Header -->
+    <header class="header">
+      <div class="header-left">
+        <h1>Plataforma SSOMA</h1>
+      </div>
+      <div class="header-right">
+        <span class="user-name">
+          <mat-icon>person</mat-icon>
+          Juan Pérez
+        </span>
+        <button mat-raised-button (click)="logout()" class="btn-logout">
+          <mat-icon>logout</mat-icon>
+          Salir
+        </button>
+      </div>
+    </header>
+
+    <!-- Área de contenido -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </div>
+</div>

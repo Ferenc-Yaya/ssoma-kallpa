@@ -1,0 +1,51 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+// Tema simple con colores corporativos
+$my-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+));
+
+// Aplicar tema
+html {
+  @include mat.all-component-themes($my-theme);
+}
+
+// Tailwind
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+// Estilos globales
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
+
+// Sobrescribir colores de Material con los corporativos usando CSS variables
+:root {
+  --mdc-theme-primary: #1F438C;
+  --mdc-theme-secondary: #241C40;
+  --mat-toolbar-container-background-color: linear-gradient(90deg, #241C40 0%, #1F438C 100%);
+}
+
+.snackbar-success {
+  background: #22c55e !important;
+  color: white !important;
+}
+
+.snackbar-error {
+  background: #ef4444 !important;
+  color: white !important;
+}

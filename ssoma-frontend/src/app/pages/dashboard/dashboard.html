@@ -1,0 +1,128 @@
+<div class="dashboard">
+  <h1>Dashboard de Control</h1>
+
+  <!-- Fila 1: Tarjetas KPI compactas -->
+  <div class="kpi-cards">
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container primary">
+            <mat-icon>business</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Total Empresas</p>
+            <h2 class="kpi-number">{{ stats.totalEmpresas }}</h2>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container accent">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Total Trabajadores</p>
+            <h2 class="kpi-number">{{ stats.totalTrabajadores }}</h2>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card alert">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container warn">
+            <mat-icon>warning</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <p class="kpi-label">Documentos Vencidos</p>
+            <h2 class="kpi-number danger">{{ stats.documentosVencidos }}</h2>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="dashboard-grid">
+    <!-- Semáforo Corporativo - más compacto -->
+    <mat-card class="semaforo-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>traffic</mat-icon>
+          Semáforo Corporativo
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="chart-wrapper">
+          <div class="chart-container">
+            <canvas id="semaforoChart"></canvas>
+          </div>
+          <div class="semaforo-stats">
+            <div class="stat-item">
+              <span class="stat-number green">{{ stats.semaforo.apto }}%</span>
+              <span class="stat-label">Apto</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number yellow">{{ stats.semaforo.pendiente }}%</span>
+              <span class="stat-label">Pendiente</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-number red">{{ stats.semaforo.bloqueado }}%</span>
+              <span class="stat-label">Bloqueado</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Top Offenders -->
+    <mat-card class="offenders-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>report_problem</mat-icon>
+          Top 5 Observaciones
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <table mat-table [dataSource]="stats.topOffenders" class="offenders-table">
+          
+          <ng-container matColumnDef="posicion">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let item; let i = index">
+              <span class="position-badge">{{ i + 1 }}</span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="empresa">
+            <th mat-header-cell *matHeaderCellDef>Empresa</th>
+            <td mat-cell *matCellDef="let item">{{ item.empresa }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="documentosRechazados">
+            <th mat-header-cell *matHeaderCellDef>Rechazados</th>
+            <td mat-cell *matCellDef="let item">
+              <strong>{{ item.documentosRechazados }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let item">
+              <mat-chip 
+                [class.chip-critical]="item.estado === 'CRITICO'"
+                [class.chip-warning]="item.estado === 'ADVERTENCIA'">
+                {{ item.estado }}
+              </mat-chip>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

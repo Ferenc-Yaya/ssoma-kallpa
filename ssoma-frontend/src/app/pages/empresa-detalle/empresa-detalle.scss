@@ -1,0 +1,148 @@
+.empresa-detalle {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.breadcrumb {
+  margin-bottom: 1.5rem;
+
+  a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: #1F438C;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover {
+      color: #241C40;
+    }
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.detalle-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+
+  .header-info {
+    h1 {
+      margin: 0 0 0.5rem 0;
+      color: #333;
+      font-size: 2rem;
+    }
+
+    .ruc {
+      margin: 0;
+      color: #666;
+      font-size: 1.1rem;
+    }
+  }
+
+  .header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+}
+
+.info-card, .personal-card {
+  margin-bottom: 1.5rem;
+
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+
+      mat-icon {
+        color: #1F438C;
+      }
+    }
+  }
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  padding: 1rem 0;
+
+  .info-item {
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: #666;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+    }
+
+    p {
+      margin: 0;
+      font-size: 1.1rem;
+      color: #333;
+      font-weight: 600;
+    }
+  }
+}
+
+.personal-card {
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .trabajadores-table {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .no-data {
+    text-align: center;
+    padding: 3rem;
+    color: #999;
+
+    mat-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      margin-bottom: 1rem;
+    }
+
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+    }
+  }
+}
+
+.chip-apto {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.chip-observado {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+.chip-pendiente {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+}

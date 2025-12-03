@@ -1,0 +1,19 @@
+.dialog-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+}
+
+mat-dialog-content {
+  p {
+    margin: 1rem 0;
+    font-size: 1rem;
+    color: #555;
+  }
+}

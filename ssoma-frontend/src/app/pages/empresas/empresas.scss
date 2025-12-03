@@ -1,0 +1,85 @@
+.empresas-page {
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    h1 {
+      margin: 0;
+      color: #333;
+    }
+  }
+
+  .search-container {
+    position: relative;
+    max-width: 500px;
+    margin-bottom: 1.5rem;
+
+    .search-icon {
+      position: absolute;
+      left: 0.875rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #666;
+      z-index: 1;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 0.875rem 0.875rem 0.875rem 3rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: all 0.2s;
+
+      &:focus {
+        outline: none;
+        border-color: #1F438C;
+        box-shadow: 0 0 0 3px rgba(31, 67, 140, 0.1);
+      }
+
+      &::placeholder {
+        color: #999;
+      }
+    }
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  .empresas-table {
+    width: 100%;
+  }
+
+  .chip-apto {
+    background: #d1fae5 !important;
+    color: #065f46 !important;
+  }
+
+  .chip-observado {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+  }
+
+  .chip-pendiente {
+    background: #fef3c7 !important;
+    color: #92400e !important;
+  }
+
+  .no-results {
+    padding: 3rem;
+    text-align: center;
+    color: #999;
+
+    mat-icon {
+      font-size: 4rem;
+      width: 4rem;
+      height: 4rem;
+      margin-bottom: 1rem;
+    }
+  }
+}

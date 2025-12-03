@@ -1,0 +1,38 @@
+.form-container {
+  min-width: 400px;
+  padding: 1rem 0;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+
+  label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #333;
+    font-weight: 500;
+    font-size: 0.95rem;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: all 0.2s;
+
+    &:focus {
+      outline: none;
+      border-color: #1F438C;
+      box-shadow: 0 0 0 3px rgba(31, 67, 140, 0.1);
+    }
+  }
+
+  .error-text {
+    display: block;
+    margin-top: 0.25rem;
+    color: #c33;
+    font-size: 0.85rem;
+  }
+}

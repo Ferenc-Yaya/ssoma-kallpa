@@ -1,0 +1,90 @@
+<div class="empresas-page">
+  <div class="page-header">
+    <h1>Gestión de Empresas</h1>
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      <mat-icon>add</mat-icon>
+      Nueva Empresa
+    </button>
+  </div>
+
+  <!-- Barra de búsqueda simple -->
+  <div class="search-container">
+    <mat-icon class="search-icon">search</mat-icon>
+    <input type="text"
+           [(ngModel)]="searchTerm"
+           (input)="filterEmpresas()"
+           placeholder="Razón social o RUC..."
+           class="search-input">
+  </div>
+
+  <!-- Tabla Material -->
+  <div class="mat-elevation-z2 table-container">
+    <table mat-table [dataSource]="empresasFiltradas" class="empresas-table">
+      
+      <ng-container matColumnDef="id">
+        <th mat-header-cell *matHeaderCellDef>ID</th>
+        <td mat-cell *matCellDef="let empresa">{{ empresa.id }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="razonSocial">
+        <th mat-header-cell *matHeaderCellDef>Razón Social</th>
+        <td mat-cell *matCellDef="let empresa">{{ empresa.razonSocial }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="ruc">
+        <th mat-header-cell *matHeaderCellDef>RUC</th>
+        <td mat-cell *matCellDef="let empresa">{{ empresa.ruc }}</td>
+      </ng-container>
+
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let empresa">
+          <mat-chip [highlighted]="empresa.tipo === 'PERMANENTE'">
+            {{ empresa.tipo }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef>Estado</th>
+        <td mat-cell *matCellDef="let empresa">
+          <mat-chip 
+            [class.chip-apto]="empresa.estadoHabilitacion === 'APTO'"
+            [class.chip-observado]="empresa.estadoHabilitacion === 'OBSERVADO'"
+            [class.chip-pendiente]="empresa.estadoHabilitacion === 'PENDIENTE'">
+            {{ empresa.estadoHabilitacion }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef>Acciones</th>
+        <td mat-cell *matCellDef="let empresa">
+          <button mat-icon-button color="primary" 
+                  matTooltip="Ver Detalle"
+                  (click)="verDetalle(empresa)">
+            <mat-icon>visibility</mat-icon>
+          </button>
+          <button mat-icon-button color="accent" 
+                  matTooltip="Editar"
+                  (click)="openEditDialog(empresa)">
+            <mat-icon>edit</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" 
+                  matTooltip="Eliminar"
+                  (click)="deleteEmpresa(empresa)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+
+    <div *ngIf="empresasFiltradas.length === 0" class="no-results">
+      <mat-icon>search_off</mat-icon>
+      <p>No se encontraron empresas</p>
+    </div>
+  </div>
+</div>

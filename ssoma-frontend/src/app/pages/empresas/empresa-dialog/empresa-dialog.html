@@ -1,0 +1,52 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Editar Empresa' : 'Nueva Empresa' }}</h2>
+
+<mat-dialog-content>
+  <div class="form-container">
+    <div class="form-group">
+      <label>Razón Social *</label>
+      <input type="text" 
+             [(ngModel)]="empresa.razonSocial" 
+             placeholder="Ej: Contratista KALLPA SAC"
+             class="form-input">
+    </div>
+
+    <div class="form-group">
+      <label>RUC *</label>
+      <input type="text" 
+             [(ngModel)]="empresa.ruc" 
+             placeholder="11 dígitos"
+             maxlength="11"
+             class="form-input">
+      <small *ngIf="empresa.ruc && empresa.ruc.length !== 11" class="error-text">
+        El RUC debe tener 11 dígitos
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label>Tipo *</label>
+      <select [(ngModel)]="empresa.tipo" class="form-input">
+        <option value="PERMANENTE">PERMANENTE</option>
+        <option value="EVENTUAL">EVENTUAL</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label>Estado de Habilitación *</label>
+      <select [(ngModel)]="empresa.estadoHabilitacion" class="form-input">
+        <option value="APTO">APTO</option>
+        <option value="OBSERVADO">OBSERVADO</option>
+        <option value="PENDIENTE">PENDIENTE</option>
+      </select>
+    </div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-raised-button 
+          color="primary" 
+          (click)="onSave()"
+          [disabled]="!isValid()">
+    {{ isEdit ? 'Guardar' : 'Crear' }}
+  </button>
+</mat-dialog-actions>
