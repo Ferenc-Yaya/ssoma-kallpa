@@ -1,0 +1,121 @@
+<div class="acreditacion-page">
+  <h1>Acreditación Digital</h1>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <label>Filtrar por estado:</label>
+    <select [(ngModel)]="filtroEstado" (change)="aplicarFiltro()" class="filtro-select">
+      <option value="TODOS">Todos</option>
+      <option value="PENDIENTE">Pendientes</option>
+      <option value="APROBADO">Aprobados</option>
+      <option value="OBSERVADO">Observados</option>
+      <option value="RECHAZADO">Rechazados</option>
+    </select>
+  </div>
+
+  <!-- Layout Split Screen -->
+  <div class="split-container">
+    
+    <!-- Panel izquierdo: Lista de documentos -->
+    <div class="lista-documentos">
+      <mat-card class="documento-item" 
+                *ngFor="let doc of documentosFiltrados"
+                [class.selected]="documentoSeleccionado?.id === doc.id"
+                (click)="seleccionarDocumento(doc)">
+        <mat-card-content>
+          <div class="doc-header">
+            <mat-icon>description</mat-icon>
+            <div class="doc-info">
+              <h3>{{ doc.tipoDocumento }}</h3>
+              <p class="trabajador">{{ doc.trabajadorNombre }}</p>
+              <p class="empresa">{{ doc.empresaNombre }}</p>
+              <small class="fecha">{{ doc.fechaCarga }}</small>
+            </div>
+          </div>
+          
+          <mat-chip 
+            [class.chip-pendiente]="doc.estado === 'PENDIENTE'"
+            [class.chip-aprobado]="doc.estado === 'APROBADO'"
+            [class.chip-observado]="doc.estado === 'OBSERVADO'"
+            [class.chip-rechazado]="doc.estado === 'RECHAZADO'">
+            {{ doc.estado }}
+          </mat-chip>
+
+          <div class="doc-observaciones" *ngIf="doc.observaciones">
+            <small><strong>Obs:</strong> {{ doc.observaciones }}</small>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="no-documentos" *ngIf="documentosFiltrados.length === 0">
+        <mat-icon>inbox</mat-icon>
+        <p>No hay documentos {{ filtroEstado === 'TODOS' ? '' : filtroEstado.toLowerCase() }}</p>
+      </div>
+    </div>
+
+    <!-- Panel derecho: Visor PDF y acciones -->
+    <div class="visor-pdf">
+      <mat-card *ngIf="documentoSeleccionado" class="visor-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>picture_as_pdf</mat-icon>
+            {{ documentoSeleccionado.nombreArchivo }}
+          </mat-card-title>
+        </mat-card-header>
+
+        <mat-card-content>
+          <!-- Visor PDF -->
+          <div class="pdf-container">
+          <ngx-extended-pdf-viewer
+            [src]="documentoSeleccionado.urlPdf"
+            [height]="'500px'">
+          </ngx-extended-pdf-viewer>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="observaciones-section" *ngIf="documentoSeleccionado.estado === 'PENDIENTE'">
+            <h3>Observaciones / Comentarios</h3>
+            <textarea 
+              [(ngModel)]="observaciones"
+              placeholder="Ingrese observaciones si el documento requiere correcciones..."
+              rows="3"
+              class="observaciones-textarea">
+            </textarea>
+          </div>
+
+          <!-- Observaciones existentes (solo lectura) -->
+          <div class="observaciones-readonly" *ngIf="documentoSeleccionado.observaciones && documentoSeleccionado.estado !== 'PENDIENTE'">
+            <h3>Observaciones registradas:</h3>
+            <p>{{ documentoSeleccionado.observaciones }}</p>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="acciones" *ngIf="documentoSeleccionado.estado === 'PENDIENTE'">
+            <button mat-raised-button color="primary" (click)="aprobarDocumento()">
+              <mat-icon>check_circle</mat-icon>
+              Aprobar
+            </button>
+            <button mat-raised-button color="accent" (click)="observarDocumento()">
+              <mat-icon>warning</mat-icon>
+              Observar
+            </button>
+            <button mat-raised-button color="warn" (click)="rechazarDocumento()">
+              <mat-icon>cancel</mat-icon>
+              Rechazar
+            </button>
+          </div>
+
+          <div class="estado-final" *ngIf="documentoSeleccionado.estado !== 'PENDIENTE'">
+            <p>Este documento ya fue procesado con estado: <strong>{{ documentoSeleccionado.estado }}</strong></p>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <div class="no-seleccion" *ngIf="!documentoSeleccionado">
+        <mat-icon>touch_app</mat-icon>
+        <p>Seleccione un documento de la lista para revisarlo</p>
+      </div>
+    </div>
+
+  </div>
+</div>

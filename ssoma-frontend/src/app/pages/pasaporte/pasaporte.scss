@@ -1,0 +1,361 @@
+.pasaporte-page {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  h1 {
+    margin-bottom: 1.5rem;
+    color: #333;
+  }
+}
+
+// Buscador
+.buscador {
+  mat-card {
+    margin-bottom: 2rem;
+
+    h2 {
+      margin: 0 0 1rem 0;
+      color: #333;
+      font-size: 1.25rem;
+    }
+
+    .buscar-form {
+      display: flex;
+      gap: 1rem;
+
+      .dni-input {
+        flex: 1;
+        padding: 0.875rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+
+        &:focus {
+          outline: none;
+          border-color: #1F438C;
+          box-shadow: 0 0 0 3px rgba(31, 67, 140, 0.1);
+        }
+      }
+    }
+  }
+}
+
+.trabajadores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1rem;
+
+  .trabajador-card {
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
+
+    .trabajador-preview {
+      display: flex;
+      gap: 1rem;
+
+      .foto-preview {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
+      .info-preview {
+        flex: 1;
+
+        h3 {
+          margin: 0 0 0.25rem 0;
+          font-size: 1rem;
+          color: #333;
+        }
+
+        p {
+          margin: 0.125rem 0;
+          font-size: 0.85rem;
+          color: #666;
+
+          &.dni {
+            font-weight: 600;
+            color: #1F438C;
+          }
+        }
+
+        mat-chip {
+          margin-top: 0.5rem;
+          font-size: 0.75rem;
+          height: 24px;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+// Pasaporte Digital
+.pasaporte-digital {
+  position: relative;
+
+  .btn-volver {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 10;
+  }
+
+  .btn-imprimir {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 10;
+  }
+}
+
+.pasaporte-card {
+  max-width: 800px;
+  margin: 3rem auto;
+  padding: 2rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+  border: 2px solid #1F438C;
+}
+
+.pasaporte-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid #1F438C;
+  margin-bottom: 2rem;
+
+  .logo-header {
+    h2 {
+      margin: 0;
+      font-size: 2rem;
+      color: #1F438C;
+      font-weight: 700;
+    }
+
+    p {
+      margin: 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+  }
+
+  .estado-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 50px;
+    color: white;
+    font-weight: 700;
+    font-size: 1rem;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.pasaporte-main {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  gap: 2rem;
+  margin-bottom: 2rem;
+
+  .foto-section {
+    .foto-trabajador {
+      width: 100%;
+      aspect-ratio: 3/4;
+      object-fit: cover;
+      border-radius: 12px;
+      border: 3px solid #1F438C;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  .datos-section {
+    .nombre-completo {
+      margin: 0 0 1.5rem 0;
+      font-size: 1.75rem;
+      color: #333;
+      font-weight: 700;
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+
+      .info-item {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+
+        mat-icon {
+          color: #1F438C;
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+
+        label {
+          display: block;
+          font-size: 0.8rem;
+          color: #666;
+          font-weight: 500;
+          margin-bottom: 0.25rem;
+        }
+
+        p {
+          margin: 0;
+          font-size: 1rem;
+          color: #333;
+          font-weight: 600;
+        }
+      }
+    }
+  }
+}
+
+.qr-section {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 0;
+  border-top: 1px solid #e5e5e5;
+  border-bottom: 1px solid #e5e5e5;
+  margin-bottom: 2rem;
+
+  .qr-container {
+    text-align: center;
+
+    .qr-image {
+      width: 200px;
+      height: 200px;
+      border: 2px solid #1F438C;
+      border-radius: 8px;
+      padding: 0.5rem;
+      background: white;
+    }
+
+    .qr-label {
+      margin: 0.75rem 0 0 0;
+      color: #666;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+  }
+}
+
+.documentos-section {
+  margin-bottom: 2rem;
+
+  h3 {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0 0 1rem 0;
+    color: #333;
+    font-size: 1.25rem;
+
+    mat-icon {
+      color: #22c55e;
+    }
+  }
+
+  .documentos-list {
+    display: grid;
+    gap: 0.75rem;
+
+    .documento-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: white;
+      border-radius: 8px;
+      border: 1px solid #e5e5e5;
+
+      .doc-icon {
+        color: #22c55e;
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+
+      .doc-info {
+        flex: 1;
+
+        .doc-tipo {
+          margin: 0 0 0.25rem 0;
+          font-weight: 600;
+          color: #333;
+          font-size: 1rem;
+        }
+
+        small {
+          display: block;
+          color: #666;
+          font-size: 0.8rem;
+          line-height: 1.4;
+        }
+      }
+    }
+  }
+}
+
+.pasaporte-footer {
+  text-align: center;
+  padding-top: 1.5rem;
+  border-top: 2px solid #1F438C;
+
+  p {
+    margin: 0 0 0.5rem 0;
+    color: #666;
+    font-size: 0.9rem;
+  }
+
+  small {
+    color: #999;
+    font-size: 0.8rem;
+  }
+}
+
+// Print styles
+@media print {
+  .btn-volver, .btn-imprimir {
+    display: none !important;
+  }
+
+  .pasaporte-card {
+    box-shadow: none;
+    border: 2px solid #000;
+  }
+}
+
+// Responsive
+@media (max-width: 768px) {
+  .pasaporte-main {
+    grid-template-columns: 1fr;
+
+    .foto-section {
+      .foto-trabajador {
+        max-width: 200px;
+        margin: 0 auto;
+      }
+    }
+
+    .datos-section {
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+}

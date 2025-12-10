@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core'; // ← AGREGAR ChangeDetectorRef
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -31,7 +31,7 @@ interface Trabajador {
     MatIconModule,
     MatChipsModule,
     MatTableModule,
-    MatTooltipModule  // ← ESTE ES IMPORTANTE
+    MatTooltipModule
   ],
   templateUrl: './empresa-detalle.html',
   styleUrl: './empresa-detalle.scss'
@@ -45,15 +45,16 @@ export class EmpresaDetalleComponent implements OnInit {
     private route: ActivatedRoute,
     private router: Router,
     private empresasService: EmpresasService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef  // ← AGREGAR ESTO
   ) {
-    console.log('Constructor ejecutado'); // ← AGREGAR ESTE LOG
+    console.log('Constructor ejecutado');
   }
 
   ngOnInit(): void {
-    console.log('ngOnInit ejecutado'); // ← AGREGAR ESTE LOG
+    console.log('ngOnInit ejecutado');
     const id = Number(this.route.snapshot.paramMap.get('id'));
-    console.log('ID capturado:', id); // ← AGREGAR ESTE LOG
+    console.log('ID capturado:', id);
     this.loadEmpresa(id);
     this.loadTrabajadores(id);
   }
@@ -65,6 +66,8 @@ export class EmpresaDetalleComponent implements OnInit {
         console.log('Empresa encontrada:', empresa);
         if (empresa) {
           this.empresa = empresa;
+          this.cdr.detectChanges();  // ← AGREGAR ESTO - FUERZA LA ACTUALIZACIÓN DE LA VISTA
+          console.log('Vista actualizada con empresa:', this.empresa);
         } else {
           console.log('Empresa no existe');
           alert('Empresa no encontrada');

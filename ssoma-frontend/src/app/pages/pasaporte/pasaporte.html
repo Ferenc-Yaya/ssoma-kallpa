@@ -1,0 +1,157 @@
+<div class="pasaporte-page">
+  <h1>Pasaporte Digital</h1>
+
+  <!-- Buscador -->
+  <div class="buscador" *ngIf="!trabajadorSeleccionado">
+    <mat-card>
+      <mat-card-content>
+        <h2>Buscar Trabajador</h2>
+        <div class="buscar-form">
+          <input 
+            type="text" 
+            [(ngModel)]="dniBusqueda"
+            placeholder="Ingrese DNI del trabajador"
+            (keyup.enter)="buscarPorDni()"
+            class="dni-input"
+            maxlength="8">
+          <button mat-raised-button color="primary" (click)="buscarPorDni()">
+            <mat-icon>search</mat-icon>
+            Buscar
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <!-- Lista de trabajadores -->
+    <div class="trabajadores-grid">
+      <mat-card class="trabajador-card" 
+                *ngFor="let trabajador of trabajadores"
+                (click)="seleccionarTrabajador(trabajador)">
+        <mat-card-content>
+          <div class="trabajador-preview">
+            <img [src]="trabajador.foto" [alt]="trabajador.nombre" class="foto-preview">
+            <div class="info-preview">
+              <h3>{{ trabajador.nombre }} {{ trabajador.apellidos }}</h3>
+              <p class="dni">DNI: {{ trabajador.dni }}</p>
+              <p class="cargo">{{ trabajador.cargo }}</p>
+              <mat-chip 
+                [style.background-color]="getEstadoColor(trabajador.estadoAcreditacion)"
+                style="color: white;">
+                {{ trabajador.estadoAcreditacion }}
+              </mat-chip>
+            </div>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Pasaporte Digital -->
+  <div class="pasaporte-digital" *ngIf="trabajadorSeleccionado">
+    <button mat-icon-button class="btn-volver" (click)="trabajadorSeleccionado = null">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <button mat-raised-button color="primary" class="btn-imprimir" (click)="imprimirPasaporte()">
+      <mat-icon>print</mat-icon>
+      Imprimir
+    </button>
+
+    <mat-card class="pasaporte-card">
+      <!-- Header con logo corporativo -->
+      <div class="pasaporte-header">
+        <div class="logo-header">
+          <h2>KALLPA</h2>
+          <p>Sistema SSOMA</p>
+        </div>
+        <div class="estado-badge" [style.background-color]="getEstadoColor(trabajadorSeleccionado.estadoAcreditacion)">
+          <mat-icon>{{ getEstadoIcon(trabajadorSeleccionado.estadoAcreditacion) }}</mat-icon>
+          {{ trabajadorSeleccionado.estadoAcreditacion }}
+        </div>
+      </div>
+
+      <!-- Foto y datos principales -->
+      <div class="pasaporte-main">
+        <div class="foto-section">
+          <img [src]="trabajadorSeleccionado.foto" [alt]="trabajadorSeleccionado.nombre" class="foto-trabajador">
+        </div>
+        
+        <div class="datos-section">
+          <h1 class="nombre-completo">{{ trabajadorSeleccionado.nombre }} {{ trabajadorSeleccionado.apellidos }}</h1>
+          
+          <div class="info-grid">
+            <div class="info-item">
+              <mat-icon>badge</mat-icon>
+              <div>
+                <label>DNI</label>
+                <p>{{ trabajadorSeleccionado.dni }}</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>business</mat-icon>
+              <div>
+                <label>Empresa</label>
+                <p>{{ trabajadorSeleccionado.empresaNombre }}</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>work</mat-icon>
+              <div>
+                <label>Cargo</label>
+                <p>{{ trabajadorSeleccionado.cargo }}</p>
+              </div>
+            </div>
+
+            <div class="info-item" *ngIf="trabajadorSeleccionado.fechaVencimiento">
+              <mat-icon>event</mat-icon>
+              <div>
+                <label>Vigencia</label>
+                <p>{{ trabajadorSeleccionado.fechaVencimiento }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <!-- Código QR -->
+    <div class="qr-section">
+    <div class="qr-container">
+        <qrcode 
+        [qrdata]="qrData" 
+        [width]="200" 
+        [errorCorrectionLevel]="'M'"
+        [colorDark]="'#1F438C'"
+        [colorLight]="'#FFFFFF'">
+        </qrcode>
+        <p class="qr-label">Escanea para verificar</p>
+    </div>
+    </div>
+
+      <!-- Documentos aprobados -->
+      <div class="documentos-section">
+        <h3>
+          <mat-icon>verified</mat-icon>
+          Documentos Validados
+        </h3>
+        <div class="documentos-list">
+          <div class="documento-item" *ngFor="let doc of trabajadorSeleccionado.documentosAprobados">
+            <mat-icon class="doc-icon">check_circle</mat-icon>
+            <div class="doc-info">
+              <p class="doc-tipo">{{ doc.tipo }}</p>
+              <small>Aprobado: {{ doc.fechaAprobacion }}</small>
+              <small>Vigencia: {{ doc.vigencia }}</small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div class="pasaporte-footer">
+        <p>Este pasaporte digital certifica que el trabajador cumple con los requisitos de seguridad y salud ocupacional.</p>
+        <small>Generado el {{ getCurrentDate() }}</small>
+      </div>
+    </mat-card>
+  </div>
+</div>
