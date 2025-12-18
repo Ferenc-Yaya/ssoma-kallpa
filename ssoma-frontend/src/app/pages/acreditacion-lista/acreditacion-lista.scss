@@ -1,0 +1,218 @@
+.acreditacion-lista-page {
+  padding: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+
+  .page-header {
+    margin-bottom: 2rem;
+
+    h1 {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 2rem;
+      font-weight: 600;
+      color: #1F438C;
+      margin: 0 0 0.5rem 0;
+
+      mat-icon {
+        font-size: 2rem;
+        width: 2rem;
+        height: 2rem;
+      }
+    }
+
+    p {
+      font-size: 1rem;
+      color: #666;
+      margin: 0;
+    }
+  }
+
+  .contratos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+    gap: 1.5rem;
+
+    .contrato-card {
+      cursor: pointer;
+      transition: all 0.3s;
+
+      &:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+      }
+
+      mat-card-header {
+        margin-bottom: 1rem;
+
+        mat-card-title {
+          font-size: 1.25rem;
+          font-weight: 700;
+          color: #1F438C;
+        }
+
+        mat-card-subtitle {
+          font-size: 1rem;
+          color: #666;
+          margin-top: 0.25rem;
+        }
+      }
+
+      mat-card-content {
+        .descripcion {
+          font-size: 0.9rem;
+          color: #666;
+          margin-bottom: 1rem;
+          line-height: 1.4;
+        }
+
+        .badges {
+          display: flex;
+          gap: 0.5rem;
+          margin-bottom: 1rem;
+
+          mat-chip {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: white !important;
+            padding: 0.25rem 0.75rem;
+            height: auto;
+            min-height: 28px;
+          }
+        }
+
+        .progreso-info {
+          margin-bottom: 1rem;
+
+          .progreso-numeros {
+            display: flex;
+            gap: 1.5rem; // Aumentar espacio entre elementos
+            margin-bottom: 0.75rem;
+            font-size: 0.9rem; // Aumentar tamaño de fuente
+            font-weight: 600;
+
+            span {
+              display: flex;
+              align-items: center;
+              gap: 0.35rem; // Espacio entre símbolo y número
+            }
+
+            .aprobados { 
+              color: #22c55e; 
+              font-size: 1rem; // Símbolos más grandes
+            }
+            .rechazados { 
+              color: #ef4444; 
+              font-size: 1rem;
+            }
+            .pendientes { 
+              color: #f59e0b; 
+              font-size: 1rem;
+            }
+          }
+
+          .progreso-barra {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+
+            .barra-completa {
+              flex: 1;
+              height: 8px;
+              background: #e5e5e5;
+              border-radius: 4px;
+              overflow: hidden;
+
+              .barra-progreso {
+                height: 100%;
+                background: linear-gradient(90deg, #1F438C 0%, #3b82f6 100%);
+                transition: width 0.3s;
+              }
+            }
+
+            .progreso-texto {
+              font-size: 0.85rem;
+              font-weight: 600;
+              color: #1F438C;
+              min-width: 45px;
+            }
+          }
+        }
+
+        .recursos-resumen {
+          display: flex;
+          gap: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid #e5e5e5;
+
+          .recurso-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+
+            mat-icon {
+              font-size: 1.25rem;
+              width: 1.25rem;
+              height: 1.25rem;
+              color: #1F438C;
+            }
+          }
+        }
+      }
+
+      mat-card-actions {
+        padding: 1rem;
+        border-top: 1px solid #e5e5e5;
+
+        button {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+
+  .no-contratos {
+    text-align: center;
+    padding: 4rem 2rem;
+    color: #999;
+
+    mat-icon {
+      font-size: 5rem;
+      width: 5rem;
+      height: 5rem;
+      color: #22c55e;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #666;
+      margin: 0 0 0.5rem 0;
+    }
+
+    p {
+      font-size: 1rem;
+      color: #999;
+      margin: 0;
+    }
+  }
+  .custom-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 6px 16px;
+    border-radius: 16px;
+    font-size: 0.813rem;
+    font-weight: 600;
+    color: #1F438C !important;
+    white-space: nowrap;
+    height: 32px;
+  }
+}

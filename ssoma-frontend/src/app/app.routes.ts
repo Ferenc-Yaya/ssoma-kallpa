@@ -4,8 +4,9 @@ import { MainLayoutComponent } from './pages/main-layout/main-layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { EmpresasComponent } from './pages/empresas/empresas';
 import { EmpresaDetalleComponent } from './pages/empresa-detalle/empresa-detalle';
-import { AcreditacionComponent } from './pages/acreditacion/acreditacion';
+import { EmpresaPersonalComponent } from './pages/empresa-personal/empresa-personal';
 import { PasaporteComponent } from './pages/pasaporte/pasaporte';
+import { EmpresaActivosComponent } from './pages/empresa-activos/empresa-activos';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -17,9 +18,20 @@ export const routes: Routes = [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'empresas', component: EmpresasComponent },
       { path: 'empresas/:id', component: EmpresaDetalleComponent },
-      { path: 'acreditacion', component: AcreditacionComponent },
+      { path: 'empresas/:id/personal', component: EmpresaPersonalComponent },
       { path: 'pasaporte', component: PasaporteComponent },
-      { path: 'pasaporte/:id', component: PasaporteComponent }
+      { path: 'pasaporte/:id', component: PasaporteComponent },
+      { path: 'empresas/:id/activos', component: EmpresaActivosComponent},
+      
+      // Rutas de acreditación
+      {
+        path: 'acreditacion',
+        loadComponent: () => import('./pages/acreditacion-lista/acreditacion-lista').then(m => m.AcreditacionListaComponent)
+      },
+      {
+        path: 'acreditacion/contrato/:id',
+        loadComponent: () => import('./pages/acreditacion/acreditacion').then(m => m.AcreditacionComponent)
+      }
     ]
   }
 ];

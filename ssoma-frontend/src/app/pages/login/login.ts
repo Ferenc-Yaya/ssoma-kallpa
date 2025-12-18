@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService } from '../../core/services/auth';
 import { TenantService } from '../../core/services/tenant';
 
@@ -14,7 +16,9 @@ import { TenantService } from '../../core/services/tenant';
     CommonModule, 
     FormsModule,
     MatCardModule,
-    MatButtonModule
+    MatButtonModule,
+    MatIconModule,
+    MatProgressSpinnerModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.scss'
@@ -28,24 +32,40 @@ export class LoginComponent {
   constructor(
     private authService: AuthService,
     private tenantService: TenantService,
-    private router: Router
+    private router: Router,
+    private cdr: ChangeDetectorRef  // <-- AGREGAR ESTO
   ) {}
 
   onLogin(): void {
+    // VALIDACIÓN: Verificar campos vacíos
+    if (!this.username || !this.password) {
+      this.errorMessage = 'Por favor ingrese usuario y contraseña';
+      this.cdr.detectChanges();  // <-- FORZAR DETECCIÓN
+      return;
+    }
+
     this.loading = true;
     this.errorMessage = '';
 
     this.authService.login({ username: this.username, password: this.password })
       .subscribe({
         next: (response) => {
-          this.authService.saveToken(response.token);
-          this.tenantService.setTenant(response.user.tenant);
+          this.tenantService.setTenant(response.tenantId);
+          console.log('Login exitoso:', response);
           this.router.navigate(['/dashboard']);
           this.loading = false;
         },
         error: (error) => {
-          this.errorMessage = 'Usuario o contraseña incorrectos';
+          console.error('Error de login:', error);
+          
+          if (error.error && error.error.message) {
+            this.errorMessage = error.error.message;
+          } else {
+            this.errorMessage = 'Error al conectar con el servidor';
+          }
+          
           this.loading = false;
+          this.cdr.detectChanges();  // <-- FORZAR DETECCIÓN
         }
       });
   }

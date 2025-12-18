@@ -152,6 +152,10 @@ export class EmpresasComponent implements OnInit {
     this.router.navigate(['/empresas', empresa.id]);
   }
 
+  verPersonal(empresa: Empresa): void {
+    this.router.navigate(['/empresas', empresa.id, 'personal']);
+  }
+
   private showMessage(message: string, type: 'success' | 'error' = 'success'): void {
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
@@ -159,5 +163,9 @@ export class EmpresasComponent implements OnInit {
       horizontalPosition: 'end',
       verticalPosition: 'bottom'
     });
+  }
+  
+  verActivos(empresa: Empresa): void {
+  this.router.navigate(['/empresas', empresa.id, 'activos']);
   }
 }

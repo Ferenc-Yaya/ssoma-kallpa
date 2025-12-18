@@ -1,0 +1,206 @@
+<div class="persona-dialog">
+  <h2 class="dialog-title">
+    <mat-icon class="title-icon">{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+    {{ dialogTitle }}
+  </h2>
+
+  <div class="dialog-content">
+    <form class="persona-form">
+      
+      <!-- SECCIÓN: FOTO -->
+      <div class="foto-section">
+        <div class="foto-container">
+          <div class="foto-preview" [class.has-foto]="fotoPreview">
+            <img *ngIf="fotoPreview" [src]="fotoPreview" alt="Foto trabajador">
+            <mat-icon *ngIf="!fotoPreview" class="no-foto-icon">person</mat-icon>
+          </div>
+          <div class="foto-actions">
+            <input
+              type="file"
+              id="fotoInput"
+              accept="image/*"
+              style="display: none"
+              (change)="onFileSelected($event)"
+            >
+            <button
+              mat-raised-button
+              color="primary"
+              type="button"
+              (click)="triggerFileInput()"
+              class="upload-btn"
+            >
+              <mat-icon>upload</mat-icon>
+              {{ fotoPreview ? 'Cambiar Foto' : 'Subir Foto' }}
+            </button>
+            <button
+              *ngIf="fotoPreview"
+              mat-icon-button
+              color="warn"
+              type="button"
+              (click)="removeFoto()"
+              matTooltip="Eliminar foto"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+          <p class="foto-hint">Formatos: JPG, PNG. Máx: 2MB</p>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: DATOS PERSONALES -->
+      <div class="form-section">
+        <h3 class="section-title">Datos Personales</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nombres *</label>
+            <input type="text" 
+                   [(ngModel)]="persona.nombres"
+                   name="nombres"
+                   placeholder="Ej: Juan Carlos"
+                   class="form-input"
+                   required>
+          </div>
+
+          <div class="form-group">
+            <label>Apellidos *</label>
+            <input type="text" 
+                   [(ngModel)]="persona.apellidos"
+                   name="apellidos"
+                   placeholder="Ej: Pérez García"
+                   class="form-input"
+                   required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Tipo de Documento *</label>
+            <select [(ngModel)]="persona.tipo_documento" 
+                    name="tipo_documento"
+                    class="form-input">
+              <option *ngFor="let tipo of tiposDocumento" [value]="tipo.value">
+                {{ tipo.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Número de Documento *</label>
+            <input type="text" 
+                   [(ngModel)]="persona.numero_documento"
+                   name="numero_documento"
+                   placeholder="Ej: 12345678"
+                   class="form-input"
+                   required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Fecha de Nacimiento *</label>
+            <input type="date" 
+                   [(ngModel)]="persona.fecha_nacimiento"
+                   name="fecha_nacimiento"
+                   class="form-input"
+                   required>
+          </div>
+
+          <div class="form-group">
+            <label>Cargo *</label>
+            <input type="text" 
+                   [(ngModel)]="persona.cargo"
+                   name="cargo"
+                   placeholder="Ej: Operario de Maquinaria"
+                   class="form-input"
+                   required>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: CONTACTO -->
+      <div class="form-section">
+        <h3 class="section-title">Información de Contacto</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="tel" 
+                   [(ngModel)]="persona.telefono"
+                   name="telefono"
+                   placeholder="Ej: 987654321"
+                   class="form-input">
+            <small class="form-hint">Opcional - Entre 9 y 15 dígitos</small>
+          </div>
+
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" 
+                   [(ngModel)]="persona.email"
+                   name="email"
+                   placeholder="Ej: jperez@email.com"
+                   class="form-input">
+            <small class="form-hint">Opcional</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECCIÓN: ESTADO Y ACREDITACIÓN -->
+      <div class="form-section">
+        <h3 class="section-title">Estado y Acreditación</h3>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Estado de Acreditación *</label>
+            <select [(ngModel)]="persona.estado_acreditacion" 
+                    name="estado_acreditacion"
+                    class="form-input">
+              <option *ngFor="let estado of estadosAcreditacion" [value]="estado.value">
+                {{ estado.label }}
+              </option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Estado del Trabajador</label>
+            <div class="toggle-container">
+              <label class="switch">
+                <input type="checkbox" 
+                       [(ngModel)]="persona.estado"
+                       name="estado">
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-label">
+                {{ persona.estado ? 'ACTIVO' : 'INACTIVO' }}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- INFO ADICIONAL -->
+      <div class="info-box" *ngIf="data.empresaNombre">
+        <mat-icon>info</mat-icon>
+        <p>Este trabajador será asignado a: <strong>{{ data.empresaNombre }}</strong></p>
+      </div>
+
+    </form>
+  </div>
+
+  <div class="dialog-actions">
+    <button mat-button (click)="onCancel()" type="button">
+      <mat-icon>close</mat-icon>
+      Cancelar
+    </button>
+    <button 
+      mat-raised-button 
+      color="primary" 
+      (click)="onSubmit()"
+      type="button"
+      [disabled]="!isFormValid()"
+    >
+      <mat-icon>{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+      {{ isEditMode ? 'Guardar Cambios' : 'Agregar Trabajador' }}
+    </button>
+  </div>
+</div>

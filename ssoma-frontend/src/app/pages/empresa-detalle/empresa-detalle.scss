@@ -27,34 +27,91 @@
   }
 }
 
+.loading {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+  font-size: 1.1rem;
+}
+
 .detalle-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 2rem;
 
-  .header-info {
-    h1 {
-      margin: 0 0 0.5rem 0;
-      color: #333;
-      font-size: 2rem;
-    }
+  h1 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.75rem;
+    color: #333;
+  }
 
-    .ruc {
-      margin: 0;
-      color: #666;
-      font-size: 1.1rem;
-    }
+  .ruc {
+    margin: 0 0 0.75rem 0;
+    color: #666;
+    font-size: 1rem;
   }
 
   .header-actions {
     display: flex;
-    align-items: center;
     gap: 1rem;
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
   }
 }
 
-.info-card, .personal-card {
+.badges {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+
+  mat-chip {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Chips de estado de empresa
+.chip-activo {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.chip-inactivo {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+// Chips de estado de habilitación
+.chip-apto {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.chip-observado {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+.chip-pendiente {
+  background: #fef3c7 !important;
+  color: #92400e !important;
+}
+
+// Tarjetas de información
+.info-card, 
+.personal-card {
   margin-bottom: 1.5rem;
 
   mat-card-header {
@@ -71,6 +128,7 @@
   }
 }
 
+// Grid de información general
 .info-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -95,16 +153,12 @@
   }
 }
 
+// Sección de personal
 .personal-card {
   mat-card-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-  }
-
-  .trabajadores-table {
-    width: 100%;
-    margin-top: 1rem;
   }
 
   .no-data {
@@ -120,29 +174,8 @@
     }
 
     p {
-      margin-bottom: 1.5rem;
+      margin: 0;
       font-size: 1.1rem;
     }
   }
-}
-
-.chip-apto {
-  background: #d1fae5 !important;
-  color: #065f46 !important;
-}
-
-.chip-observado {
-  background: #fee2e2 !important;
-  color: #991b1b !important;
-}
-
-.chip-pendiente {
-  background: #fef3c7 !important;
-  color: #92400e !important;
-}
-
-.loading {
-  text-align: center;
-  padding: 3rem;
-  color: #999;
 }

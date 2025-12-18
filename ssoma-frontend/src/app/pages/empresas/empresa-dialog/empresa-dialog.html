@@ -1,20 +1,23 @@
 <h2 mat-dialog-title>{{ isEdit ? 'Editar Empresa' : 'Nueva Empresa' }}</h2>
 
 <mat-dialog-content>
-  <div class="form-container">
+  <div class="dialog-content">
+    
+    <!-- Razón Social -->
     <div class="form-group">
       <label>Razón Social *</label>
       <input type="text" 
              [(ngModel)]="empresa.razonSocial" 
-             placeholder="Ej: Contratista KALLPA SAC"
+             placeholder="Ingrese razón social"
              class="form-input">
     </div>
 
+    <!-- RUC -->
     <div class="form-group">
       <label>RUC *</label>
       <input type="text" 
              [(ngModel)]="empresa.ruc" 
-             placeholder="11 dígitos"
+             placeholder="Ingrese RUC (11 dígitos)"
              maxlength="11"
              class="form-input">
       <small *ngIf="empresa.ruc && empresa.ruc.length !== 11" class="error-text">
@@ -22,31 +25,64 @@
       </small>
     </div>
 
+    <!-- Tipo de Contratista -->
     <div class="form-group">
-      <label>Tipo *</label>
+      <label>Tipo de Contratista *</label>
       <select [(ngModel)]="empresa.tipo" class="form-input">
-        <option value="PERMANENTE">PERMANENTE</option>
-        <option value="EVENTUAL">EVENTUAL</option>
+        <option value="">Seleccionar...</option>
+        <option value="PERMANENTE">Permanente</option>
+        <option value="EVENTUAL">Eventual</option>
+        <option value="VISITAS">Visitas</option>
       </select>
     </div>
 
+    <!-- Dirección -->
+    <div class="form-group">
+      <label>Dirección *</label>
+      <input type="text" 
+             [(ngModel)]="empresa.direccion" 
+             placeholder="Ingrese dirección completa"
+             class="form-input">
+    </div>
+
+    <!-- Teléfono -->
+    <div class="form-group">
+      <label>Teléfono *</label>
+      <input type="text" 
+             [(ngModel)]="empresa.telefono" 
+             placeholder="Ej: 01-4567890"
+             class="form-input">
+    </div>
+
+    <!-- Email -->
+    <div class="form-group">
+      <label>Email *</label>
+      <input type="email" 
+             [(ngModel)]="empresa.email" 
+             placeholder="correo@empresa.com"
+             class="form-input">
+    </div>
+
+    <!-- Estado de Habilitación -->
     <div class="form-group">
       <label>Estado de Habilitación *</label>
       <select [(ngModel)]="empresa.estadoHabilitacion" class="form-input">
-        <option value="APTO">APTO</option>
-        <option value="OBSERVADO">OBSERVADO</option>
-        <option value="PENDIENTE">PENDIENTE</option>
+        <option value="">Seleccionar...</option>
+        <option value="APTO">Apto</option>
+        <option value="OBSERVADO">Observado</option>
+        <option value="PENDIENTE">Pendiente</option>
       </select>
     </div>
+
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()">Cancelar</button>
+  <button mat-button mat-dialog-close>Cancelar</button>
   <button mat-raised-button 
           color="primary" 
-          (click)="onSave()"
-          [disabled]="!isValid()">
+          [disabled]="!isValid()"
+          (click)="onSave()">
     {{ isEdit ? 'Guardar' : 'Crear' }}
   </button>
 </mat-dialog-actions>

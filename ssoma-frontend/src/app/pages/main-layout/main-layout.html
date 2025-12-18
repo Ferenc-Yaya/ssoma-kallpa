@@ -11,47 +11,29 @@
       </button>
     </div>
 
+    <!-- Menú dinámico basado en roles -->
     <nav class="sidebar-nav">
-      <a routerLink="/dashboard" 
+      <a *ngFor="let item of menuItems"
+         [routerLink]="item.route" 
          routerLinkActive="active"
          class="nav-item"
-         matTooltip="Dashboard"
+         [matTooltip]="item.label"
          [matTooltipDisabled]="!sidebarCollapsed"
          matTooltipPosition="right">
-        <mat-icon>dashboard</mat-icon>
-        <span *ngIf="!sidebarCollapsed">Dashboard</span>
-      </a>
-
-      <a routerLink="/empresas" 
-         routerLinkActive="active"
-         class="nav-item"
-         matTooltip="Empresas"
-         [matTooltipDisabled]="!sidebarCollapsed"
-         matTooltipPosition="right">
-        <mat-icon>business</mat-icon>
-        <span *ngIf="!sidebarCollapsed">Empresas</span>
-      </a>
-
-      <a routerLink="/acreditacion" 
-         routerLinkActive="active"
-         class="nav-item"
-         matTooltip="Acreditación"
-         [matTooltipDisabled]="!sidebarCollapsed"
-         matTooltipPosition="right">
-        <mat-icon>assignment_turned_in</mat-icon>
-        <span *ngIf="!sidebarCollapsed">Acreditación</span>
-      </a>
-
-      <a routerLink="/pasaporte" 
-         routerLinkActive="active"
-         class="nav-item"
-         matTooltip="Pasaporte Digital"
-         [matTooltipDisabled]="!sidebarCollapsed"
-         matTooltipPosition="right">
-        <mat-icon>badge</mat-icon>
-        <span *ngIf="!sidebarCollapsed">Pasaporte</span>
+        <mat-icon>{{ item.icon }}</mat-icon>
+        <span *ngIf="!sidebarCollapsed">{{ item.label }}</span>
       </a>
     </nav>
+
+    <!-- Footer del sidebar con rol -->
+    <div class="sidebar-footer" *ngIf="!sidebarCollapsed">
+      <div class="user-rol-badge">
+        <mat-icon>{{ userRole === 'SUPER_ADMIN' ? 'admin_panel_settings' : 
+                     userRole === 'ADMIN_EMPRESA_PRINCIPAL' ? 'business_center' : 
+                     'work' }}</mat-icon>
+        <span>{{ getRolLabel() }}</span>
+      </div>
+    </div>
   </aside>
 
   <!-- Contenido principal -->
@@ -59,13 +41,23 @@
     <!-- Header -->
     <header class="header">
       <div class="header-left">
-        <h1>Plataforma SSOMA</h1>
+        <app-breadcrumbs></app-breadcrumbs>
       </div>
       <div class="header-right">
-        <span class="user-name">
-          <mat-icon>person</mat-icon>
-          Juan Pérez
-        </span>
+        <!-- Campana de notificaciones -->
+        <app-notificaciones></app-notificaciones>
+        
+        <div class="user-info">
+          <div class="user-details">
+            <span class="user-name">
+              <mat-icon>person</mat-icon>
+              {{ username || 'Usuario' }}
+            </span>
+            <span class="user-rol" *ngIf="getRolLabel()">
+              {{ getRolLabel() }}
+            </span>
+          </div>
+        </div>
         <button mat-raised-button (click)="logout()" class="btn-logout">
           <mat-icon>logout</mat-icon>
           Salir

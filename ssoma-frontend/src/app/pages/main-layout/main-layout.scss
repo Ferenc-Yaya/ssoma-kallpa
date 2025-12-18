@@ -116,19 +116,41 @@
   .header-right {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 1.5rem;
 
-    .user-name {
+    .user-info {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      color: #666;
-      font-weight: 500;
+      padding: 0.5rem 1rem;
+      background: #f8f9fa;
+      border-radius: 8px;
 
-      mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
+      .user-details {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+
+        .user-name {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          color: #333;
+          font-weight: 600;
+          font-size: 0.95rem;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+            color: #1F438C;
+          }
+        }
+
+        .user-rol {
+          font-size: 0.75rem;
+          color: #666;
+          padding-left: 1.75rem;
+        }
       }
     }
 
@@ -167,4 +189,30 @@
   .main-content {
     margin-left: 0;
   }
+  .sidebar-footer {
+  margin-top: auto;
+  padding: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+
+  .user-rol-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: white;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    span {
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+  }
+}
 }

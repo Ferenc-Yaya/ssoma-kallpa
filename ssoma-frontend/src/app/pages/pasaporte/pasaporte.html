@@ -1,20 +1,19 @@
 <div class="pasaporte-page">
-  <h1>Pasaporte Digital</h1>
+  <h1>Pasaporte Digital por Contrato</h1>
 
   <!-- Buscador -->
-  <div class="buscador" *ngIf="!trabajadorSeleccionado">
+  <div class="buscador" *ngIf="!contratoSeleccionado">
     <mat-card>
       <mat-card-content>
-        <h2>Buscar Trabajador</h2>
+        <h2>Buscar Contrato</h2>
         <div class="buscar-form">
           <input 
             type="text" 
-            [(ngModel)]="dniBusqueda"
-            placeholder="Ingrese DNI del trabajador"
-            (keyup.enter)="buscarPorDni()"
-            class="dni-input"
-            maxlength="8">
-          <button mat-raised-button color="primary" (click)="buscarPorDni()">
+            [(ngModel)]="numeroBusqueda"
+            placeholder="Ingrese número de contrato (Ej: CONT-2024-001)"
+            (keyup.enter)="buscarPorNumero()"
+            class="numero-input">
+          <button mat-raised-button color="primary" (click)="buscarPorNumero()">
             <mat-icon>search</mat-icon>
             Buscar
           </button>
@@ -22,23 +21,33 @@
       </mat-card-content>
     </mat-card>
 
-    <!-- Lista de trabajadores -->
-    <div class="trabajadores-grid">
-      <mat-card class="trabajador-card" 
-                *ngFor="let trabajador of trabajadores"
-                (click)="seleccionarTrabajador(trabajador)">
+    <!-- Lista de contratos -->
+    <div class="contratos-grid">
+      <mat-card class="contrato-card" 
+                *ngFor="let contrato of contratos"
+                (click)="seleccionarContrato(contrato)">
         <mat-card-content>
-          <div class="trabajador-preview">
-            <img [src]="trabajador.foto" [alt]="trabajador.nombre" class="foto-preview">
+          <div class="contrato-preview">
             <div class="info-preview">
-              <h3>{{ trabajador.nombre }} {{ trabajador.apellidos }}</h3>
-              <p class="dni">DNI: {{ trabajador.dni }}</p>
-              <p class="cargo">{{ trabajador.cargo }}</p>
-              <mat-chip 
-                [style.background-color]="getEstadoColor(trabajador.estadoAcreditacion)"
-                style="color: white;">
-                {{ trabajador.estadoAcreditacion }}
-              </mat-chip>
+              <h3>{{ contrato.numero_contrato }}</h3>
+              <p class="empresa">{{ contrato.empresa_nombre }}</p>
+              <p class="descripcion">{{ contrato.descripcion }}</p>
+              <div class="badges">
+                <mat-chip 
+                  [style.background-color]="getEstadoColor(contrato.estado_acreditacion)"
+                  style="color: white;">
+                  {{ contrato.estado_acreditacion }}
+                </mat-chip>
+                <mat-chip 
+                  [style.background-color]="getNivelRiesgoColor(contrato.nivel_riesgo)"
+                  style="color: white;">
+                  Riesgo: {{ contrato.nivel_riesgo }}
+                </mat-chip>
+              </div>
+              <p class="vigencia">
+                <mat-icon>event</mat-icon>
+                Vigencia: {{ contrato.fecha_inicio | date:'dd/MM/yyyy' }} - {{ contrato.fecha_fin | date:'dd/MM/yyyy' }}
+              </p>
             </div>
           </div>
         </mat-card-content>
@@ -46,97 +55,143 @@
     </div>
   </div>
 
-  <!-- Pasaporte Digital -->
-  <div class="pasaporte-digital" *ngIf="trabajadorSeleccionado">
-    <button mat-icon-button class="btn-volver" (click)="trabajadorSeleccionado = null">
+  <!-- Pasaporte Digital del Contrato -->
+  <div class="pasaporte-digital" *ngIf="contratoSeleccionado">
+    <button mat-icon-button class="btn-volver" (click)="volverALista()">
       <mat-icon>arrow_back</mat-icon>
     </button>
 
     <button mat-raised-button color="primary" class="btn-imprimir" (click)="imprimirPasaporte()">
       <mat-icon>print</mat-icon>
-      Imprimir
+      Imprimir Pasaporte
     </button>
 
     <mat-card class="pasaporte-card">
       <!-- Header con logo corporativo -->
       <div class="pasaporte-header">
         <div class="logo-header">
-          <h2>KALLPA</h2>
-          <p>Sistema SSOMA</p>
+          <h2>KALLPA SAC</h2>
+          <p>Pasaporte Digital de Contrato</p>
         </div>
-        <div class="estado-badge" [style.background-color]="getEstadoColor(trabajadorSeleccionado.estadoAcreditacion)">
-          <mat-icon>{{ getEstadoIcon(trabajadorSeleccionado.estadoAcreditacion) }}</mat-icon>
-          {{ trabajadorSeleccionado.estadoAcreditacion }}
+        <div class="estado-badge" [style.background-color]="getEstadoColor(contratoSeleccionado.estado_acreditacion)">
+          <mat-icon>{{ getEstadoIcon(contratoSeleccionado.estado_acreditacion) }}</mat-icon>
+          {{ contratoSeleccionado.estado_acreditacion }}
         </div>
       </div>
 
-      <!-- Foto y datos principales -->
+      <!-- Información del Contrato -->
       <div class="pasaporte-main">
-        <div class="foto-section">
-          <img [src]="trabajadorSeleccionado.foto" [alt]="trabajadorSeleccionado.nombre" class="foto-trabajador">
-        </div>
-        
-        <div class="datos-section">
-          <h1 class="nombre-completo">{{ trabajadorSeleccionado.nombre }} {{ trabajadorSeleccionado.apellidos }}</h1>
+        <div class="contrato-info-section">
+          <h2 class="numero-contrato">{{ contratoSeleccionado.numero_contrato }}</h2>
+          <p class="empresa-nombre">{{ contratoSeleccionado.empresa_nombre }}</p>
           
           <div class="info-grid">
             <div class="info-item">
-              <mat-icon>badge</mat-icon>
+              <mat-icon>description</mat-icon>
               <div>
-                <label>DNI</label>
-                <p>{{ trabajadorSeleccionado.dni }}</p>
+                <label>Descripción</label>
+                <p>{{ contratoSeleccionado.descripcion }}</p>
               </div>
             </div>
 
             <div class="info-item">
-              <mat-icon>business</mat-icon>
+              <mat-icon>receipt</mat-icon>
               <div>
-                <label>Empresa</label>
-                <p>{{ trabajadorSeleccionado.empresaNombre }}</p>
+                <label>Orden de Compra</label>
+                <p>{{ contratoSeleccionado.numero_oc }}</p>
               </div>
             </div>
 
             <div class="info-item">
-              <mat-icon>work</mat-icon>
+              <mat-icon>warning</mat-icon>
               <div>
-                <label>Cargo</label>
-                <p>{{ trabajadorSeleccionado.cargo }}</p>
+                <label>Nivel de Riesgo</label>
+                <p>
+                  <span class="badge-riesgo" [style.background-color]="getNivelRiesgoColor(contratoSeleccionado.nivel_riesgo)">
+                    {{ contratoSeleccionado.nivel_riesgo }}
+                  </span>
+                </p>
               </div>
             </div>
 
-            <div class="info-item" *ngIf="trabajadorSeleccionado.fechaVencimiento">
+            <div class="info-item">
+              <mat-icon>person</mat-icon>
+              <div>
+                <label>Administrador Kallpa</label>
+                <p>{{ contratoSeleccionado.admin_contrato_kallpa }}</p>
+              </div>
+            </div>
+
+            <div class="info-item">
               <mat-icon>event</mat-icon>
               <div>
-                <label>Vigencia</label>
-                <p>{{ trabajadorSeleccionado.fechaVencimiento }}</p>
+                <label>Fecha Inicio</label>
+                <p>{{ contratoSeleccionado.fecha_inicio | date:'dd/MM/yyyy' }}</p>
               </div>
+            </div>
+
+            <div class="info-item">
+              <mat-icon>event_available</mat-icon>
+              <div>
+                <label>Fecha Fin</label>
+                <p>{{ contratoSeleccionado.fecha_fin | date:'dd/MM/yyyy' }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="vigencia-alert" *ngIf="getDiasVigencia() <= 30 && getDiasVigencia() > 0">
+            <mat-icon>warning</mat-icon>
+            <p>Este contrato vence en {{ getDiasVigencia() }} días</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Código QR -->
+      <div class="qr-section">
+        <div class="qr-container">
+          <qrcode 
+            [qrdata]="qrData" 
+            [width]="200" 
+            [errorCorrectionLevel]="'M'"
+            [colorDark]="'#1F438C'"
+            [colorLight]="'#FFFFFF'">
+          </qrcode>
+          <p class="qr-label">{{ contratoSeleccionado.qr_code }}</p>
+          <small>Escanea para verificar el contrato</small>
+        </div>
+      </div>
+
+      <!-- Personal Autorizado -->
+      <div class="personal-section">
+        <h3>
+          <mat-icon>groups</mat-icon>
+          Personal Autorizado ({{ trabajadoresContrato.length }})
+        </h3>
+        <div class="personal-grid">
+          <div class="personal-item" *ngFor="let trabajador of trabajadoresContrato">
+            <img [src]="trabajador.foto" [alt]="trabajador.nombres" class="foto-mini">
+            <div class="personal-info">
+              <p class="nombre">{{ trabajador.nombres }} {{ trabajador.apellidos }}</p>
+              <small>{{ trabajador.numero_documento }} - {{ trabajador.cargo }}</small>
+              <mat-chip 
+                [class.chip-apto]="trabajador.estado_acreditacion === 'APTO'"
+                [class.chip-observado]="trabajador.estado_acreditacion === 'OBSERVADO'"
+                [class.chip-pendiente]="trabajador.estado_acreditacion === 'PENDIENTE'">
+                {{ trabajador.estado_acreditacion }}
+              </mat-chip>
             </div>
           </div>
         </div>
       </div>
 
-    <!-- Código QR -->
-    <div class="qr-section">
-    <div class="qr-container">
-        <qrcode 
-        [qrdata]="qrData" 
-        [width]="200" 
-        [errorCorrectionLevel]="'M'"
-        [colorDark]="'#1F438C'"
-        [colorLight]="'#FFFFFF'">
-        </qrcode>
-        <p class="qr-label">Escanea para verificar</p>
-    </div>
-    </div>
-
       <!-- Documentos aprobados -->
       <div class="documentos-section">
         <h3>
           <mat-icon>verified</mat-icon>
-          Documentos Validados
+          Documentos Validados del Contrato
         </h3>
         <div class="documentos-list">
-          <div class="documento-item" *ngFor="let doc of trabajadorSeleccionado.documentosAprobados">
+          <div class="documento-item" *ngFor="let doc of contratoSeleccionado.documentos_aprobados">
             <mat-icon class="doc-icon">check_circle</mat-icon>
             <div class="doc-info">
               <p class="doc-tipo">{{ doc.tipo }}</p>
@@ -149,7 +204,7 @@
 
       <!-- Footer -->
       <div class="pasaporte-footer">
-        <p>Este pasaporte digital certifica que el trabajador cumple con los requisitos de seguridad y salud ocupacional.</p>
+        <p>Este pasaporte digital certifica que el contrato y su personal cumplen con los requisitos de seguridad y salud ocupacional.</p>
         <small>Generado el {{ getCurrentDate() }}</small>
       </div>
     </mat-card>

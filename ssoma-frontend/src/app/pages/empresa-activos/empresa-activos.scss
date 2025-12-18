@@ -1,0 +1,218 @@
+.empresa-activos-page {
+  min-height: 100vh;
+  background: #f5f7fa;
+
+  // HEADER
+  .page-header {
+    background: white;
+    padding: 2rem;
+    border-bottom: 2px solid #e5e5e5;
+    position: relative;
+
+    .btn-volver {
+      position: absolute;
+      top: 1.5rem;
+      left: 1.5rem;
+    }
+
+    .header-content {
+      padding-left: 3.5rem;
+
+      .header-info {
+        margin-bottom: 1.5rem;
+
+        h1 {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          font-size: 1.75rem;
+          font-weight: 700;
+          color: #1F438C;
+          margin: 0 0 0.5rem 0;
+
+          mat-icon {
+            font-size: 2rem;
+            width: 2rem;
+            height: 2rem;
+          }
+        }
+
+        p {
+          font-size: 1rem;
+          color: #666;
+          margin: 0;
+        }
+      }
+
+      .header-stats {
+        display: flex;
+        gap: 1.5rem;
+
+        .stat-card {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+          padding: 1rem 1.5rem;
+          background: #f8f9fa;
+          border-radius: 8px;
+          border-left: 4px solid #1F438C;
+
+          mat-icon {
+            font-size: 2.5rem;
+            width: 2.5rem;
+            height: 2.5rem;
+            color: #1F438C;
+          }
+
+          .stat-info {
+            display: flex;
+            flex-direction: column;
+
+            .stat-value {
+              font-size: 1.75rem;
+              font-weight: 700;
+              color: #1F438C;
+            }
+
+            .stat-label {
+              font-size: 0.85rem;
+              color: #666;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  // TABS
+  .activos-tabs {
+    background: white;
+
+    .tab-content {
+      padding: 2rem;
+
+      .tab-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+
+        h2 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #333;
+          margin: 0;
+        }
+
+        button {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+
+      // TABLA
+      .table-container {
+        overflow-x: auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        .activos-table {
+          width: 100%;
+
+          th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #333;
+            padding: 1rem;
+            border-bottom: 2px solid #e5e5e5;
+          }
+
+          td {
+            padding: 1rem;
+            border-bottom: 1px solid #f0f0f0;
+          }
+
+          tr:hover {
+            background: #f8f9fa;
+          }
+
+          strong {
+            color: #1F438C;
+            font-weight: 600;
+          }
+
+          .docs-status {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+
+            .doc-vigente {
+              color: #22c55e;
+            }
+
+            .doc-vencido {
+              color: #ef4444;
+            }
+          }
+
+          .actions {
+            display: flex;
+            gap: 0.5rem;
+          }
+        }
+      }
+
+      // EMPTY STATE
+      .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 8px;
+        border: 2px dashed #e5e5e5;
+
+        mat-icon {
+          font-size: 5rem;
+          width: 5rem;
+          height: 5rem;
+          color: #ccc;
+          margin-bottom: 1rem;
+        }
+
+        h3 {
+          font-size: 1.5rem;
+          font-weight: 600;
+          color: #666;
+          margin: 0 0 0.5rem 0;
+        }
+
+        p {
+          font-size: 1rem;
+          color: #999;
+          margin: 0 0 2rem 0;
+        }
+
+        button {
+          display: inline-flex;
+          align-items: center;
+          gap: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+// CHIP PERSONALIZADO
+.custom-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 16px;
+  border-radius: 16px;
+  font-size: 0.813rem;
+  font-weight: 600;
+  color: white;
+  white-space: nowrap;
+  height: 32px;
+}

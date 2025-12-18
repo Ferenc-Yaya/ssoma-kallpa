@@ -1,11 +1,11 @@
 import { Component, Inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
 import { Empresa } from '../../../mocks/empresas.mock';
 
 @Component({
@@ -15,10 +15,10 @@ import { Empresa } from '../../../mocks/empresas.mock';
     CommonModule,
     FormsModule,
     MatDialogModule,
+    MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
-    MatSelectModule,
-    MatButtonModule
+    MatSelectModule
   ],
   templateUrl: './empresa-dialog.html',
   styleUrl: './empresa-dialog.scss'
@@ -35,28 +35,34 @@ export class EmpresaDialogComponent {
     this.empresa = data.empresa ? { ...data.empresa } : {
       razonSocial: '',
       ruc: '',
-      tipo: 'PERMANENTE',
-      estadoHabilitacion: 'PENDIENTE'
+      tipo: undefined as any, // ← Cambiado de '' a undefined
+      direccion: '',
+      telefono: '',
+      email: '',
+      estado: 'ACTIVO',
+      estadoHabilitacion: undefined as any, // ← Cambiado de '' a undefined
+      tenant_id: 'KALLPA',
+      created_at: new Date().toISOString()
     };
   }
 
-  onCancel(): void {
-    this.dialogRef.close();
+  isValid(): boolean {
+    return !!(
+      this.empresa.razonSocial?.trim() &&
+      this.empresa.ruc?.trim() &&
+      this.empresa.ruc.length === 11 &&
+      this.empresa.tipo &&
+      this.empresa.direccion?.trim() &&
+      this.empresa.telefono?.trim() &&
+      this.empresa.email?.trim() &&
+      this.empresa.email.includes('@') &&
+      this.empresa.estadoHabilitacion
+    );
   }
 
   onSave(): void {
     if (this.isValid()) {
       this.dialogRef.close(this.empresa);
     }
-  }
-
-  isValid(): boolean {
-    return !!(
-      this.empresa.razonSocial &&
-      this.empresa.ruc &&
-      this.empresa.tipo &&
-      this.empresa.estadoHabilitacion &&
-      this.empresa.ruc.length === 11
-    );
   }
 }

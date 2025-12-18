@@ -9,8 +9,10 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { QRCodeComponent } from 'angularx-qrcode';
-import { TrabajadoresService } from '../../core/services/trabajadores';
-import { Trabajador } from '../../mocks/trabajadores.mock';
+import { ContratosService } from '../../core/services/contratos.service';
+import { PersonasService } from '../../core/services/personas.service';
+import { Contrato } from '../../mocks/contratos.mock';
+import { Persona } from '../../mocks/personas.mock';
 
 @Component({
   selector: 'app-pasaporte',
@@ -30,29 +32,75 @@ import { Trabajador } from '../../mocks/trabajadores.mock';
   styleUrl: './pasaporte.scss'
 })
 export class PasaporteComponent implements OnInit {
-  trabajadores: Trabajador[] = [];
-  trabajadorSeleccionado: Trabajador | null = null;
-  dniBusqueda: string = '';
+  contratos: Contrato[] = [];
+  contratoSeleccionado: Contrato | null = null;
+  trabajadoresContrato: Persona[] = [];
+  numeroBusqueda: string = '';
   qrData: string = '';
 
   constructor(
-    private trabajadoresService: TrabajadoresService,
+    private contratosService: ContratosService,
+    private personasService: PersonasService,
     private route: ActivatedRoute
   ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadTrabajadorById(Number(id));
+      this.loadContratoById(Number(id));
     } else {
-      this.loadTrabajadores();
+      this.loadContratos();
     }
   }
 
-  loadTrabajadores(): void {
-    this.trabajadoresService.getTrabajadores().subscribe({
+  loadContratos(): void {
+    this.contratosService.getContratos().subscribe({
       next: (data) => {
-        this.trabajadores = data;
+        this.contratos = data;
+      },
+      error: (error) => {
+        console.error('Error al cargar contratos:', error);
+      }
+    });
+  }
+
+  loadContratoById(id: number): void {
+    this.contratosService.getContratoById(id).subscribe({
+      next: (contrato) => {
+        if (contrato) {
+          this.seleccionarContrato(contrato);
+        }
+      }
+    });
+  }
+
+  buscarPorNumero(): void {
+    if (!this.numeroBusqueda.trim()) return;
+
+    this.contratosService.getContratoByNumero(this.numeroBusqueda).subscribe({
+      next: (contrato) => {
+        if (contrato) {
+          this.seleccionarContrato(contrato);
+        } else {
+          alert('No se encontró contrato con ese número');
+        }
+      }
+    });
+  }
+
+  seleccionarContrato(contrato: Contrato): void {
+    this.contratoSeleccionado = contrato;
+    this.loadTrabajadores(contrato);
+    this.generarQRData(contrato);
+  }
+
+  loadTrabajadores(contrato: Contrato): void {
+    this.personasService.getPersonasByEmpresa(contrato.empresa_id).subscribe({
+      next: (personas) => {
+        // Filtrar solo los trabajadores de este contrato
+        this.trabajadoresContrato = personas.filter(p => 
+          contrato.trabajadores_ids.includes(p.persona_id)
+        );
       },
       error: (error) => {
         console.error('Error al cargar trabajadores:', error);
@@ -60,43 +108,10 @@ export class PasaporteComponent implements OnInit {
     });
   }
 
-  loadTrabajadorById(id: number): void {
-    this.trabajadoresService.getTrabajadorById(id).subscribe({
-      next: (trabajador) => {
-        if (trabajador) {
-          this.seleccionarTrabajador(trabajador);
-        }
-      }
-    });
-  }
-
-  buscarPorDni(): void {
-    if (!this.dniBusqueda.trim()) return;
-
-    this.trabajadoresService.getTrabajadorByDni(this.dniBusqueda).subscribe({
-      next: (trabajador) => {
-        if (trabajador) {
-          this.seleccionarTrabajador(trabajador);
-        } else {
-          alert('No se encontró trabajador con ese DNI');
-        }
-      }
-    });
-  }
-
-  seleccionarTrabajador(trabajador: Trabajador): void {
-    this.trabajadorSeleccionado = trabajador;
-    this.generarQRData(trabajador);
-  }
-
-  generarQRData(trabajador: Trabajador): void {
-    this.qrData = JSON.stringify({
-      dni: trabajador.dni,
-      nombre: `${trabajador.nombre} ${trabajador.apellidos}`,
-      empresa: trabajador.empresaNombre,
-      estado: trabajador.estadoAcreditacion,
-      vigencia: trabajador.fechaVencimiento
-    });
+  generarQRData(contrato: Contrato): void {
+    // El QR contiene la URL para verificar el contrato
+    const baseUrl = window.location.origin;
+    this.qrData = `${baseUrl}/public/pasaporte/${contrato.qr_code}`;
   }
 
   getEstadoColor(estado: string): string {
@@ -119,6 +134,15 @@ export class PasaporteComponent implements OnInit {
     }
   }
 
+  getNivelRiesgoColor(nivel: string): string {
+    switch (nivel) {
+      case 'BAJO': return '#22c55e';
+      case 'MEDIO': return '#eab308';
+      case 'ALTO': return '#ef4444';
+      default: return '#6b7280';
+    }
+  }
+
   imprimirPasaporte(): void {
     window.print();
   }
@@ -129,5 +153,18 @@ export class PasaporteComponent implements OnInit {
       month: 'long', 
       day: 'numeric' 
     });
+  }
+
+  getDiasVigencia(): number {
+    if (!this.contratoSeleccionado) return 0;
+    const hoy = new Date();
+    const fin = new Date(this.contratoSeleccionado.fecha_fin);
+    const diff = fin.getTime() - hoy.getTime();
+    return Math.ceil(diff / (1000 * 60 * 60 * 24));
+  }
+
+  volverALista(): void {
+    this.contratoSeleccionado = null;
+    this.trabajadoresContrato = [];
   }
 }

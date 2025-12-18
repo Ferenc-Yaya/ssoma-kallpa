@@ -39,7 +39,7 @@
               class="btn-login"
               [disabled]="loading">
         <span *ngIf="!loading">Ingresar a Plataforma</span>
-        <span *ngIf="loading">Ingresando...</span>
+        <mat-spinner *ngIf="loading" diameter="20"></mat-spinner>
       </button>
     </form>
 
