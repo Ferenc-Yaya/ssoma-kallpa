@@ -48,11 +48,10 @@
       <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let empresa">
-          <mat-chip 
-            [class.chip-apto]="empresa.estadoHabilitacion === 'APTO'"
-            [class.chip-observado]="empresa.estadoHabilitacion === 'OBSERVADO'"
-            [class.chip-pendiente]="empresa.estadoHabilitacion === 'PENDIENTE'">
-            {{ empresa.estadoHabilitacion }}
+          <mat-chip
+            [class.chip-activo]="empresa.estado === 'ACTIVO'"
+            [class.chip-inactivo]="empresa.estado === 'INACTIVO'">
+            {{ empresa.estado }}
           </mat-chip>
         </td>
       </ng-container>

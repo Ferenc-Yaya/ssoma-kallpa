@@ -1,0 +1,99 @@
+import { Component, Inject, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatSelectModule } from '@angular/material/select';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { Contrato } from '../../../mocks/contratos.mock';
+import { EMPRESAS_MOCK } from '../../../mocks/empresas.mock';
+
+@Component({
+  selector: 'app-contrato-dialog',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    FormsModule
+  ],
+  templateUrl: './contrato-dialog.html',
+  styleUrl: './contrato-dialog.scss'
+})
+export class ContratoDialogComponent implements OnInit {
+  contrato: Contrato;
+  mode: 'crear' | 'editar';
+  empresas = EMPRESAS_MOCK.filter(e => e.estado === 'ACTIVO');
+
+  constructor(
+    public dialogRef: MatDialogRef<ContratoDialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {
+    this.mode = data.mode;
+    this.contrato = data.contrato || this.getNewContrato();
+  }
+
+  ngOnInit(): void {}
+
+  getNewContrato(): Contrato {
+    return {
+      contrato_id: Date.now(),
+      tenant_id: 'KALLPA',
+      empresa_id: 0,
+      empresa_nombre: '',
+      numero_contrato: '',
+      numero_oc: '',
+      descripcion: '',
+      fecha_inicio: '',
+      fecha_fin: '',
+      nivel_riesgo: 'MEDIO',
+      admin_contrato_kallpa: '',
+      monto_total: 0,
+      estado: 'VIGENTE',
+      estado_acreditacion: 'PENDIENTE',
+      qr_code: '',
+      trabajadores_ids: [],
+      documentos_aprobados: [],
+      created_at: new Date().toISOString()
+    };
+  }
+
+  onEmpresaChange(): void {
+    const empresa = this.empresas.find(e => e.id === this.contrato.empresa_id);
+    if (empresa) {
+      this.contrato.empresa_nombre = empresa.razonSocial;
+    }
+  }
+
+  guardar(): void {
+    // Validaciones básicas
+    if (!this.contrato.numero_contrato || !this.contrato.descripcion) {
+      alert('Por favor complete todos los campos obligatorios');
+      return;
+    }
+
+    if (!this.contrato.empresa_id) {
+      alert('Por favor seleccione una empresa');
+      return;
+    }
+
+    // Generar QR code
+    if (!this.contrato.qr_code) {
+      this.contrato.qr_code = `QR-${this.contrato.numero_contrato}`;
+    }
+
+    this.dialogRef.close(this.contrato);
+  }
+
+  cancelar(): void {
+    this.dialogRef.close();
+  }
+}

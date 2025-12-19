@@ -1,0 +1,8 @@
+        <div class="badges">
+          <mat-chip
+            [class.chip-activo]="empresa.estado === 'ACTIVO'"
+            [class.chip-inactivo]="empresa.estado === 'INACTIVO'">
+            <mat-icon>{{ empresa.estado === 'ACTIVO' ? 'check_circle' : 'cancel' }}</mat-icon>
+            {{ empresa.estado }}
+          </mat-chip>
+        </div>

@@ -1,0 +1,105 @@
+<div class="contratos-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>description</mat-icon>
+        Gestión de Contratos
+      </mat-card-title>
+      <button mat-raised-button color="primary" (click)="crearContrato()" class="btn-crear">
+        <mat-icon>add</mat-icon>
+        Nuevo Contrato
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Filtros -->
+      <div class="filtros-container">
+        <mat-form-field class="filtro-search">
+          <mat-icon matPrefix>search</mat-icon>
+          <input matInput placeholder="Buscar por número o descripción..." [(ngModel)]="searchText" (ngModelChange)="aplicarFiltros()">
+        </mat-form-field>
+
+        <mat-form-field class="filtro-select">
+          <mat-label>Estado</mat-label>
+          <mat-select [(ngModel)]="filterEstado" (ngModelChange)="aplicarFiltros()">
+            <mat-option value="todos">Todos los estados</mat-option>
+            <mat-option value="VIGENTE">VIGENTE</mat-option>
+            <mat-option value="VENCIDO">VENCIDO</mat-option>
+            <mat-option value="SUSPENDIDO">SUSPENDIDO</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <button mat-button (click)="limpiarFiltros()" class="btn-limpiar">
+          <mat-icon>clear</mat-icon>
+          Limpiar
+        </button>
+      </div>
+
+      <!-- Tabla de contratos -->
+      <div class="tabla-wrapper">
+        <table mat-table [dataSource]="contratosFiltrados" class="contratos-table">
+
+          <ng-container matColumnDef="numeroContrato">
+            <th mat-header-cell *matHeaderCellDef>N° Contrato</th>
+            <td mat-cell *matCellDef="let contrato">
+              <strong>{{ contrato.numero_contrato }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef>Descripción</th>
+            <td mat-cell *matCellDef="let contrato">{{ contrato.descripcion }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="empresa">
+            <th mat-header-cell *matHeaderCellDef>Empresa Asignada</th>
+            <td mat-cell *matCellDef="let contrato">
+              <div class="empresa-info">
+                <mat-icon class="empresa-icon">business</mat-icon>
+                <span>{{ contrato.empresa_nombre || 'Sin asignar' }}</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaInicio">
+            <th mat-header-cell *matHeaderCellDef>Fecha Inicio</th>
+            <td mat-cell *matCellDef="let contrato">{{ contrato.fecha_inicio }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechaFin">
+            <th mat-header-cell *matHeaderCellDef>Fecha Fin</th>
+            <td mat-cell *matCellDef="let contrato">{{ contrato.fecha_fin }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let contrato">
+              <span class="estado-badge" [ngClass]="getEstadoClass(contrato.estado)">
+                {{ contrato.estado }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="acciones">
+            <th mat-header-cell *matHeaderCellDef>Acciones</th>
+            <td mat-cell *matCellDef="let contrato">
+              <button mat-icon-button (click)="editarContrato(contrato)" matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="eliminarContrato(contrato)" matTooltip="Eliminar" color="warn">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+
+      <div class="tabla-footer">
+        <span>Mostrando {{ contratosFiltrados.length }} de {{ contratos.length }} contratos</span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

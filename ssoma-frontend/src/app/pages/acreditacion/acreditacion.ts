@@ -48,7 +48,7 @@ export class AcreditacionComponent implements OnInit {
 
   // Para saber de qué entidad es el documento seleccionado
   entidadSeleccionada: {
-    tipo: 'PERSONA' | 'ACTIVO' | 'MATERIAL';
+    tipo: 'PERSONA' | 'ACTIVO' | 'MATERIAL' | 'CONTRATO';
     nombre: string;
     foto?: string;
   } | null = null;
@@ -97,7 +97,7 @@ export class AcreditacionComponent implements OnInit {
 
   seleccionarDocumento(
     documento: DocumentoAcreditacion,
-    entidadTipo: 'PERSONA' | 'ACTIVO' | 'MATERIAL',
+    entidadTipo: 'PERSONA' | 'ACTIVO' | 'MATERIAL' | 'CONTRATO',
     entidadNombre: string,
     foto?: string
   ): void {

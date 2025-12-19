@@ -1,15 +1,11 @@
 .dashboard {
-  h1 {
-    margin-bottom: 1.5rem;
-    color: #333;
-    font-size: 1.75rem;
-  }
+  padding: 1rem;
 }
 
-// Tarjetas KPI - más compactas
+// Tarjetas KPI - 6 cards en grid
 .kpi-cards {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
@@ -20,7 +16,7 @@
   }
 
   mat-card-content {
-    padding: 1rem;
+    padding: 1.25rem;
   }
 
   .kpi-layout {
@@ -30,17 +26,18 @@
   }
 
   .kpi-icon-container {
-    width: 48px;
-    height: 48px;
-    border-radius: 12px;
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 
     mat-icon {
-      font-size: 24px;
-      width: 24px;
-      height: 24px;
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
       color: white;
     }
 
@@ -52,49 +49,65 @@
       background: linear-gradient(135deg, #241C40 0%, #6366f1 100%);
     }
 
+    &.tools {
+      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+    }
+
     &.warn {
-      background: linear-gradient(135deg, #ef4444 0%, #f59e0b 100%);
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    }
+
+    &.success {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    }
+
+    &.danger {
+      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
     }
   }
 
   .kpi-content {
     flex: 1;
 
-    .kpi-label {
-      margin: 0;
-      font-size: 0.85rem;
-      color: #666;
-      font-weight: 500;
-    }
-
     .kpi-number {
-      margin: 0.25rem 0 0 0;
-      font-size: 1.75rem;
+      margin: 0;
+      font-size: 2rem;
       font-weight: 700;
-      color: #333;
+      color: #1e293b;
+      line-height: 1;
 
       &.danger {
         color: #ef4444;
       }
     }
+
+    .kpi-label {
+      margin: 0.5rem 0 0 0;
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.2;
+    }
   }
 }
 
-// Grid de semáforo y top offenders
+// Grid de semáforo y top observaciones
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
-// Semáforo - más compacto
+// Semáforo Corporativo
 .semaforo-card {
   mat-card-header {
     mat-card-title {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
 
       mat-icon {
         font-size: 20px;
@@ -113,8 +126,8 @@
 }
 
 .chart-container {
-  width: 180px;
-  height: 180px;
+  width: 160px;
+  height: 160px;
   flex-shrink: 0;
 }
 
@@ -122,39 +135,50 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
 
   .stat-item {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
+
+    .stat-indicator {
+      width: 14px;
+      height: 14px;
+      border-radius: 2px;
+      flex-shrink: 0;
+
+      &.green { background: #22c55e; }
+      &.yellow { background: #eab308; }
+      &.red { background: #ef4444; }
+    }
+
+    .stat-label {
+      font-size: 0.875rem;
+      color: #64748b;
+      flex: 1;
+    }
 
     .stat-number {
-      font-size: 1.75rem;
+      font-size: 1.25rem;
       font-weight: 700;
-      min-width: 60px;
 
       &.green { color: #22c55e; }
       &.yellow { color: #eab308; }
       &.red { color: #ef4444; }
     }
-
-    .stat-label {
-      font-size: 0.95rem;
-      color: #666;
-      font-weight: 500;
-    }
   }
 }
 
-// Top Offenders
-.offenders-card {
+// Top 5 Observaciones
+.observaciones-card {
   mat-card-header {
     mat-card-title {
       display: flex;
       align-items: center;
       gap: 0.5rem;
-      font-size: 1.1rem;
+      font-size: 1rem;
+      font-weight: 600;
 
       mat-icon {
         font-size: 20px;
@@ -165,42 +189,338 @@
     }
   }
 
-  .offenders-table {
+  .observaciones-table {
     width: 100%;
 
-    .position-badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 28px;
-      height: 28px;
-      background: #1F438C;
-      color: white;
-      border-radius: 50%;
+    th {
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
     }
 
-    mat-chip {
+    td {
+      font-size: 0.875rem;
+    }
+
+    .estado-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
       font-size: 0.75rem;
       font-weight: 600;
-      height: 24px;
+      text-transform: uppercase;
 
-      &.chip-critical {
-        background: #fee !important;
-        color: #c33 !important;
+      &.estado-critico {
+        background: #fee2e2;
+        color: #dc2626;
       }
 
-      &.chip-warning {
-        background: #ffeaa7 !important;
-        color: #d63031 !important;
+      &.estado-advertencia {
+        background: #fef3c7;
+        color: #d97706;
+      }
+    }
+
+    .semaforo-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+
+      &.semaforo-rojo {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      &.semaforo-amarillo {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      &.semaforo-verde {
+        background: #dcfce7;
+        color: #16a34a;
       }
     }
   }
 }
 
+// Proveedores y Contratos
+.proveedores-card {
+  margin-top: 1.5rem;
+
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+    }
+  }
+}
+
+.filtros-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  .filtro-search {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .filtro-select {
+    min-width: 180px;
+  }
+
+  .btn-limpiar {
+    align-self: center;
+    color: #64748b;
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+}
+
+.tabla-proveedores-wrapper {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.proveedores-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f8fafc;
+  }
+
+  td {
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+
+  .header-button {
+    text-transform: none;
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #64748b;
+    padding: 0;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+
+  .proveedor-expandable {
+    text-transform: none;
+    font-size: 0.875rem;
+    color: #1e293b;
+    padding: 0;
+    justify-content: flex-start;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      margin-right: 0.25rem;
+    }
+  }
+
+  .contratos-badge {
+    background: #e0f2fe;
+    color: #0369a1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+  }
+
+  .estado-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    .estado-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+    }
+
+    &.estado-bloqueado {
+      background: #fee2e2;
+      color: #dc2626;
+
+      .estado-icon {
+        color: #dc2626;
+      }
+    }
+
+    &.estado-apto {
+      background: #dcfce7;
+      color: #16a34a;
+
+      .estado-icon {
+        color: #16a34a;
+      }
+    }
+
+    &.estado-pendiente {
+      background: #fef3c7;
+      color: #d97706;
+
+      .estado-icon {
+        color: #d97706;
+      }
+    }
+  }
+
+  .acreditacion-text {
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .proveedor-row {
+    cursor: pointer;
+  }
+
+  .detalle-row {
+    height: 0;
+  }
+}
+
+.detalle-contratos {
+  padding: 1rem 2rem;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.tabla-contratos {
+  width: 100%;
+  border-collapse: collapse;
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+
+  thead {
+    background: #e2e8f0;
+
+    th {
+      padding: 0.625rem 1rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 0.75rem;
+      color: #64748b;
+      text-transform: uppercase;
+      border-bottom: 1px solid #cbd5e1;
+
+      &:first-child {
+        text-align: left;
+      }
+
+      &:nth-child(2) {
+        text-align: left;
+      }
+    }
+  }
+
+  tbody {
+    td {
+      padding: 0.625rem 1rem;
+      font-size: 0.8125rem;
+      color: #1e293b;
+      border-bottom: 1px solid #e2e8f0;
+      text-align: center;
+
+      &:first-child {
+        text-align: left;
+        font-weight: 500;
+      }
+
+      &:nth-child(2) {
+        text-align: left;
+      }
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+  }
+}
+
+.contrato-estado-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+
+  &.contrato-activa {
+    background: #dcfce7;
+    color: #16a34a;
+  }
+
+  &.contrato-pendiente {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.contrato-porvencer {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+}
+
+.tabla-footer {
+  padding: 1rem;
+  text-align: right;
+  font-size: 0.875rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
 // Responsivo
+@media (max-width: 1024px) {
+  .kpi-cards {
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
+  .dashboard {
+    padding: 0.5rem;
+  }
+
+  .kpi-cards {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+
   .dashboard-grid {
     grid-template-columns: 1fr;
   }
@@ -212,5 +532,14 @@
   .chart-container {
     width: 200px;
     height: 200px;
+  }
+
+  .filtros-container {
+    flex-direction: column;
+
+    .filtro-search,
+    .filtro-select {
+      width: 100%;
+    }
   }
 }

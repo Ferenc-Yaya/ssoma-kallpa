@@ -1,0 +1,45 @@
+<h2 mat-dialog-title>{{ mode === 'crear' ? 'Nuevo Grupo' : 'Editar Grupo' }}</h2>
+
+<mat-dialog-content>
+  <div class="dialog-content">
+
+    <!-- Nombre -->
+    <div class="form-group">
+      <label>Nombre del Grupo *</label>
+      <input type="text"
+             [(ngModel)]="grupo.nombre"
+             placeholder="Ej. Supervisores SSOMA"
+             class="form-input">
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-group">
+      <label>Descripción *</label>
+      <textarea
+             [(ngModel)]="grupo.descripcion"
+             placeholder="Descripción del grupo y sus responsabilidades"
+             rows="3"
+             class="form-input"></textarea>
+    </div>
+
+    <!-- Permisos -->
+    <div class="form-group">
+      <label>Permisos *</label>
+      <div class="permisos-container">
+        <div *ngFor="let permiso of permisosDisponibles" class="permiso-item">
+          <mat-checkbox [(ngModel)]="permisosSeleccionados[permiso.id]">
+            {{ permiso.nombre }}
+          </mat-checkbox>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="cancelar()">Cancelar</button>
+  <button mat-raised-button color="primary" (click)="guardar()">
+    {{ mode === 'crear' ? 'Crear' : 'Guardar' }}
+  </button>
+</mat-dialog-actions>

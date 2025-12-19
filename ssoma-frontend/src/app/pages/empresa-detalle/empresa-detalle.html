@@ -24,12 +24,6 @@
             <mat-icon>{{ empresa.estado === 'ACTIVO' ? 'check_circle' : 'cancel' }}</mat-icon>
             {{ empresa.estado }}
           </mat-chip>
-          <mat-chip 
-            [class.chip-apto]="empresa.estadoHabilitacion === 'APTO'"
-            [class.chip-observado]="empresa.estadoHabilitacion === 'OBSERVADO'"
-            [class.chip-pendiente]="empresa.estadoHabilitacion === 'PENDIENTE'">
-            {{ empresa.estadoHabilitacion }}
-          </mat-chip>
         </div>
       </div>
       <div class="header-actions">

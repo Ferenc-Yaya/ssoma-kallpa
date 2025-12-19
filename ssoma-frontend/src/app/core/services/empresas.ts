@@ -12,6 +12,36 @@ export class EmpresasService {
     // Inicializar LocalStorage si está vacío
     if (!localStorage.getItem(this.STORAGE_KEY)) {
       this.saveToStorage(EMPRESAS_MOCK);
+    } else {
+      // Migrar datos antiguos: agregar campo 'estado' si no existe
+      this.migrateOldData();
+    }
+  }
+
+  private migrateOldData(): void {
+    const empresas = this.getFromStorage();
+    let needsUpdate = false;
+
+    const updatedEmpresas = empresas.map((empresa: any) => {
+      const updated = { ...empresa };
+
+      // Agregar campo 'estado' si no existe
+      if (!updated.estado) {
+        updated.estado = 'ACTIVO' as 'ACTIVO' | 'INACTIVO';
+        needsUpdate = true;
+      }
+
+      // Eliminar campo 'estadoHabilitacion' si existe (campo obsoleto)
+      if (updated.estadoHabilitacion) {
+        delete updated.estadoHabilitacion;
+        needsUpdate = true;
+      }
+
+      return updated;
+    });
+
+    if (needsUpdate) {
+      this.saveToStorage(updatedEmpresas);
     }
   }
 

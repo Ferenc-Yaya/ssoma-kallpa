@@ -48,6 +48,18 @@ export const MENU_ITEMS: MenuItem[] = [
     roles: ['ADMIN_EMPRESA_PRINCIPAL']
   },
   {
+    label: 'Contratos',
+    icon: 'description',
+    route: '/contratos',
+    roles: ['ADMIN_EMPRESA_PRINCIPAL']
+  },
+  {
+    label: 'Personal',
+    icon: 'people',
+    route: '/personal-kallpa',
+    roles: ['ADMIN_EMPRESA_PRINCIPAL']
+  },
+  {
     label: 'Acreditación',
     icon: 'assignment_turned_in',
     route: '/acreditacion',

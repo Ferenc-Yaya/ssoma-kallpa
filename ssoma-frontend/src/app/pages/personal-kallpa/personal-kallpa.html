@@ -1,0 +1,204 @@
+<div class="personal-kallpa-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>people</mat-icon>
+        Personal KALLPA
+      </mat-card-title>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group>
+        <!-- TAB: USUARIOS -->
+        <mat-tab label="Usuarios">
+          <div class="tab-content">
+            <div class="tab-header">
+              <button mat-raised-button color="primary" (click)="crearUsuario()" class="btn-crear">
+                <mat-icon>add</mat-icon>
+                Nuevo Usuario
+              </button>
+            </div>
+
+            <!-- Filtros Usuarios -->
+            <div class="filtros-container">
+              <mat-form-field class="filtro-search">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Buscar por nombre, DNI o email..." [(ngModel)]="searchTextUsuarios" (ngModelChange)="aplicarFiltrosUsuarios()">
+              </mat-form-field>
+
+              <mat-form-field class="filtro-select">
+                <mat-label>Grupo</mat-label>
+                <mat-select [(ngModel)]="filterGrupoUsuarios" (ngModelChange)="aplicarFiltrosUsuarios()">
+                  <mat-option [value]="0">Todos los grupos</mat-option>
+                  <mat-option *ngFor="let grupo of grupos" [value]="grupo.grupo_id">
+                    {{ grupo.nombre }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field class="filtro-select">
+                <mat-label>Estado</mat-label>
+                <mat-select [(ngModel)]="filterEstadoUsuarios" (ngModelChange)="aplicarFiltrosUsuarios()">
+                  <mat-option value="todos">Todos los estados</mat-option>
+                  <mat-option value="ACTIVO">ACTIVO</mat-option>
+                  <mat-option value="INACTIVO">INACTIVO</mat-option>
+                </mat-select>
+              </mat-form-field>
+
+              <button mat-button (click)="limpiarFiltrosUsuarios()" class="btn-limpiar">
+                <mat-icon>clear</mat-icon>
+                Limpiar
+              </button>
+            </div>
+
+            <!-- Tabla Usuarios -->
+            <div class="tabla-wrapper">
+              <table mat-table [dataSource]="usuariosFiltrados" class="usuarios-table">
+
+                <ng-container matColumnDef="foto">
+                  <th mat-header-cell *matHeaderCellDef>Foto</th>
+                  <td mat-cell *matCellDef="let usuario">
+                    <div class="usuario-avatar">
+                      <mat-icon>account_circle</mat-icon>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="nombres">
+                  <th mat-header-cell *matHeaderCellDef>Nombres y Apellidos</th>
+                  <td mat-cell *matCellDef="let usuario">
+                    <div class="usuario-info">
+                      <strong>{{ usuario.nombres }} {{ usuario.apellidos }}</strong>
+                      <span class="email">{{ usuario.email }}</span>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="dni">
+                  <th mat-header-cell *matHeaderCellDef>DNI</th>
+                  <td mat-cell *matCellDef="let usuario">{{ usuario.dni }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="cargo">
+                  <th mat-header-cell *matHeaderCellDef>Cargo</th>
+                  <td mat-cell *matCellDef="let usuario">{{ usuario.cargo }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="area">
+                  <th mat-header-cell *matHeaderCellDef>Área</th>
+                  <td mat-cell *matCellDef="let usuario">{{ usuario.area }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="grupo">
+                  <th mat-header-cell *matHeaderCellDef>Grupo</th>
+                  <td mat-cell *matCellDef="let usuario">
+                    <span class="grupo-badge">{{ usuario.grupo_nombre }}</span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="estado">
+                  <th mat-header-cell *matHeaderCellDef>Estado</th>
+                  <td mat-cell *matCellDef="let usuario">
+                    <span class="estado-badge" [ngClass]="getEstadoClass(usuario.estado)">
+                      {{ usuario.estado }}
+                    </span>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                  <td mat-cell *matCellDef="let usuario">
+                    <button mat-icon-button (click)="editarUsuario(usuario)" matTooltip="Editar">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="eliminarUsuario(usuario)" matTooltip="Eliminar" color="warn">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsUsuarios"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsUsuarios;"></tr>
+              </table>
+            </div>
+
+            <div class="tabla-footer">
+              <span>Mostrando {{ usuariosFiltrados.length }} de {{ usuarios.length }} usuarios</span>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- TAB: GRUPOS -->
+        <mat-tab label="Grupos">
+          <div class="tab-content">
+            <div class="tab-header">
+              <button mat-raised-button color="primary" (click)="crearGrupo()" class="btn-crear">
+                <mat-icon>add</mat-icon>
+                Nuevo Grupo
+              </button>
+            </div>
+
+            <!-- Filtros Grupos -->
+            <div class="filtros-container">
+              <mat-form-field class="filtro-search">
+                <mat-icon matPrefix>search</mat-icon>
+                <input matInput placeholder="Buscar por nombre..." [(ngModel)]="searchTextGrupos" (ngModelChange)="aplicarFiltrosGrupos()">
+              </mat-form-field>
+
+              <button mat-button (click)="limpiarFiltrosGrupos()" class="btn-limpiar">
+                <mat-icon>clear</mat-icon>
+                Limpiar
+              </button>
+            </div>
+
+            <!-- Tabla Grupos -->
+            <div class="tabla-wrapper">
+              <table mat-table [dataSource]="gruposFiltrados" class="grupos-table">
+
+                <ng-container matColumnDef="nombre">
+                  <th mat-header-cell *matHeaderCellDef>Nombre</th>
+                  <td mat-cell *matCellDef="let grupo">
+                    <strong>{{ grupo.nombre }}</strong>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="descripcion">
+                  <th mat-header-cell *matHeaderCellDef>Descripción</th>
+                  <td mat-cell *matCellDef="let grupo">{{ grupo.descripcion }}</td>
+                </ng-container>
+
+                <ng-container matColumnDef="permisos">
+                  <th mat-header-cell *matHeaderCellDef>Permisos</th>
+                  <td mat-cell *matCellDef="let grupo">
+                    <div class="permisos-chips">
+                      <mat-chip *ngFor="let permiso of grupo.permisos">{{ permiso }}</mat-chip>
+                    </div>
+                  </td>
+                </ng-container>
+
+                <ng-container matColumnDef="acciones">
+                  <th mat-header-cell *matHeaderCellDef>Acciones</th>
+                  <td mat-cell *matCellDef="let grupo">
+                    <button mat-icon-button (click)="editarGrupo(grupo)" matTooltip="Editar">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="eliminarGrupo(grupo)" matTooltip="Eliminar" color="warn">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumnsGrupos"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumnsGrupos;"></tr>
+              </table>
+            </div>
+
+            <div class="tabla-footer">
+              <span>Mostrando {{ gruposFiltrados.length }} de {{ grupos.length }} grupos</span>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

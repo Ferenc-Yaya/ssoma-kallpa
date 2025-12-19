@@ -8,7 +8,6 @@ export interface Empresa {
   telefono: string;
   email: string;
   estado: 'ACTIVO' | 'INACTIVO';
-  estadoHabilitacion: 'APTO' | 'OBSERVADO' | 'PENDIENTE';
   created_at: string;
 }
 
@@ -23,7 +22,6 @@ export const EMPRESAS_MOCK: Empresa[] = [
     telefono: '01-4567890',
     email: 'contacto@contratistakallpa.com',
     estado: 'ACTIVO',
-    estadoHabilitacion: 'APTO',
     created_at: '2024-01-15T10:30:00'
   },
   {
@@ -36,7 +34,6 @@ export const EMPRESAS_MOCK: Empresa[] = [
     telefono: '01-2345678',
     email: 'info@minerossur.com',
     estado: 'ACTIVO',
-    estadoHabilitacion: 'OBSERVADO',
     created_at: '2024-03-20T14:15:00'
   },
   {
@@ -49,7 +46,6 @@ export const EMPRESAS_MOCK: Empresa[] = [
     telefono: '01-9876543',
     email: 'contacto@construindustrial.com',
     estado: 'ACTIVO',
-    estadoHabilitacion: 'PENDIENTE',
     created_at: '2024-02-10T09:00:00'
   },
   {
@@ -61,8 +57,7 @@ export const EMPRESAS_MOCK: Empresa[] = [
     direccion: 'Calle Las Begonias 475, San Isidro, Lima',
     telefono: '01-5554321',
     email: 'admin@consultoresext.com',
-    estado: 'ACTIVO',
-    estadoHabilitacion: 'APTO',
+    estado: 'INACTIVO',
     created_at: '2024-05-05T11:20:00'
   }
 ];

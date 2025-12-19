@@ -52,6 +52,9 @@ export interface ContratoAcreditacion {
   admin_contrato: string;
   estado_acreditacion: 'APTO' | 'OBSERVADO' | 'PENDIENTE';
   
+  // Documentos propios del contrato (DSH, EHS, ADM CONTRATO)
+  documentos_contrato: DocumentoAcreditacion[];
+
   personas: PersonaAcreditacion[];
   activos: ActivoAcreditacion[];
   materiales: MaterialAcreditacion[];
@@ -77,6 +80,49 @@ export const CONTRATOS_ACREDITACION_MOCK: ContratoAcreditacion[] = [
     nivel_riesgo: 'MEDIO',
     admin_contrato: 'Ing. Carlos Mendoza',
     estado_acreditacion: 'PENDIENTE',
+
+    // Documentos propios del contrato
+    documentos_contrato: [
+      {
+        documento_id: 100,
+        documento_requerible_id: 100,
+        nombre: 'Anexo 4 - DI Cumplimiento de requerimientos EHS',
+        estado_revision: 'APROBADO',
+        fecha_revision: '2024-01-18',
+        revisor_nombre: 'Admin SSOMA',
+        obligatorio: true
+      },
+      {
+        documento_id: 101,
+        documento_requerible_id: 101,
+        nombre: 'F1 - F.ADM.EHS.001 - Términos de referencia EHS del Servicio',
+        estado_revision: 'PENDIENTE',
+        obligatorio: true
+      },
+      {
+        documento_id: 102,
+        documento_requerible_id: 102,
+        nombre: 'F2 - F.ADM.EHS.002 - Control de Personal Contratista y Subcontratista',
+        estado_revision: 'PENDIENTE',
+        obligatorio: true
+      },
+      {
+        documento_id: 103,
+        documento_requerible_id: 103,
+        nombre: 'F3 - F.ADM.EHS.003 - Control de Vehículos equipos y Herramientas',
+        estado_revision: 'APROBADO',
+        fecha_revision: '2024-01-19',
+        revisor_nombre: 'Admin SSOMA',
+        obligatorio: true
+      },
+      {
+        documento_id: 104,
+        documento_requerible_id: 104,
+        nombre: 'F4 - F.ADM.EHS.004 - Control de ingreso Sustancias Peligrosas',
+        estado_revision: 'PENDIENTE',
+        obligatorio: true
+      }
+    ],
     
     personas: [
       {

@@ -63,34 +63,6 @@
       </div>
 
       <div class="recursos-tree">
-        <!-- Documentos del Contrato (DSH, EHS, ADM CONTRATO) -->
-        <mat-expansion-panel class="recurso-panel" [expanded]="true">
-          <mat-expansion-panel-header>
-            <mat-panel-title>
-              <mat-icon class="recurso-icon">description</mat-icon>
-              <span class="recurso-title">Documentos del Contrato ({{ contrato.documentos_contrato.length }})</span>
-            </mat-panel-title>
-          </mat-expansion-panel-header>
-
-          <div class="documentos-list">
-            <div class="documento-item"
-                 *ngFor="let doc of contrato.documentos_contrato"
-                 [class.selected]="documentoSeleccionado?.documento_id === doc.documento_id"
-                 (click)="seleccionarDocumento(doc, 'CONTRATO', contrato.numero_contrato)">
-              <mat-icon
-                class="doc-status-icon"
-                [style.color]="getEstadoColor(doc.estado_revision)">
-                {{ getEstadoIcon(doc.estado_revision) }}
-              </mat-icon>
-              <div class="doc-info">
-                <span class="doc-nombre">{{ doc.nombre }}</span>
-                <small class="doc-obligatorio" *ngIf="doc.obligatorio">*Obligatorio</small>
-              </div>
-              <mat-icon class="doc-arrow" *ngIf="doc.archivo_url">chevron_right</mat-icon>
-            </div>
-          </div>
-        </mat-expansion-panel>
-
         <mat-expansion-panel class="recurso-panel" [expanded]="true">
           <mat-expansion-panel-header>
             <mat-panel-title>

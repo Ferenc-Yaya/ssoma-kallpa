@@ -35,12 +35,11 @@ export class EmpresaDialogComponent {
     this.empresa = data.empresa ? { ...data.empresa } : {
       razonSocial: '',
       ruc: '',
-      tipo: undefined as any, // ← Cambiado de '' a undefined
+      tipo: undefined as any,
       direccion: '',
       telefono: '',
       email: '',
       estado: 'ACTIVO',
-      estadoHabilitacion: undefined as any, // ← Cambiado de '' a undefined
       tenant_id: 'KALLPA',
       created_at: new Date().toISOString()
     };
@@ -55,8 +54,7 @@ export class EmpresaDialogComponent {
       this.empresa.direccion?.trim() &&
       this.empresa.telefono?.trim() &&
       this.empresa.email?.trim() &&
-      this.empresa.email.includes('@') &&
-      this.empresa.estadoHabilitacion
+      this.empresa.email.includes('@')
     );
   }
 

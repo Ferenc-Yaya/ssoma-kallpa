@@ -4,6 +4,12 @@ import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { FormsModule } from '@angular/forms';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 import { Chart, registerables } from 'chart.js';
 import { DASHBOARD_MOCK, DashboardStats } from '../../mocks/dashboard.mock';
 
@@ -17,18 +23,49 @@ Chart.register(...registerables);
     MatCardModule,
     MatTableModule,
     MatChipsModule,
-    MatIconModule
+    MatIconModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    FormsModule
   ],
   templateUrl: './dashboard.html',
-  styleUrl: './dashboard.scss'
+  styleUrl: './dashboard.scss',
+  animations: [
+    trigger('detailExpand', [
+      state('collapsed', style({ height: '0px', minHeight: '0', display: 'none' })),
+      state('expanded', style({ height: '*' })),
+      transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
+    ]),
+  ]
 })
 export class DashboardComponent implements OnInit, AfterViewInit {
   stats: DashboardStats = DASHBOARD_MOCK;
   chart: any;
-  displayedColumns: string[] = ['posicion', 'empresa', 'documentosRechazados', 'estado'];
+
+  // Columnas para tabla de observaciones
+  displayedColumnsObservaciones: string[] = ['posicion', 'empresa', 'documentosVencidos', 'documentosFaltantes', 'semaforo'];
+
+  // Columnas para tabla de proveedores
+  displayedColumnsProveedores: string[] = ['proveedor', 'empleados', 'activos', 'materialesPeligrosos', 'contratos', 'acreditacion'];
+
+  // Filtros
+  searchText: string = '';
+  filterEstado: string = 'todos';
+
+  // Datos filtrados
+  proveedoresFiltrados = [...this.stats.proveedores];
+
+  // Control de filas expandidas
+  expandedElement: any | null = null;
 
   ngOnInit(): void {
-    // Los datos ya están cargados desde el mock
+    this.aplicarFiltros();
+  }
+
+  toggleRow(element: any): void {
+    this.expandedElement = this.expandedElement === element ? null : element;
   }
 
   ngAfterViewInit(): void {
@@ -37,7 +74,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   createSemaforoChart(): void {
     const ctx = document.getElementById('semaforoChart') as HTMLCanvasElement;
-    
+
     this.chart = new Chart(ctx, {
       type: 'doughnut',
       data: {
@@ -66,5 +103,23 @@ export class DashboardComponent implements OnInit, AfterViewInit {
         }
       }
     });
+  }
+
+  aplicarFiltros(): void {
+    this.proveedoresFiltrados = this.stats.proveedores.filter(p => {
+      const matchSearch = !this.searchText ||
+        p.proveedor.toLowerCase().includes(this.searchText.toLowerCase());
+
+      const matchEstado = this.filterEstado === 'todos' ||
+        p.estado === this.filterEstado;
+
+      return matchSearch && matchEstado;
+    });
+  }
+
+  limpiarFiltros(): void {
+    this.searchText = '';
+    this.filterEstado = 'todos';
+    this.aplicarFiltros();
   }
 }

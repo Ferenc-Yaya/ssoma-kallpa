@@ -1,0 +1,140 @@
+.contratos-container {
+  padding: 1rem;
+}
+
+mat-card {
+  mat-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+
+      mat-icon {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+      }
+    }
+
+    .btn-crear {
+      mat-icon {
+        margin-right: 0.5rem;
+      }
+    }
+  }
+}
+
+.filtros-container {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+
+  .filtro-search {
+    flex: 1;
+    min-width: 250px;
+  }
+
+  .filtro-select {
+    min-width: 180px;
+  }
+
+  .btn-limpiar {
+    align-self: center;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+.tabla-wrapper {
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.contratos-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #64748b;
+    text-transform: uppercase;
+    background: #f8fafc;
+  }
+
+  td {
+    font-size: 0.875rem;
+    color: #1e293b;
+    padding: 1rem 0.75rem;
+  }
+
+  .empresa-info {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    .empresa-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #1F438C;
+    }
+  }
+
+  .estado-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.estado-activa {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    &.estado-pendiente {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    &.estado-porvencer {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    &.estado-finalizada {
+      background: #e2e8f0;
+      color: #64748b;
+    }
+  }
+}
+
+.tabla-footer {
+  padding: 1rem;
+  text-align: right;
+  font-size: 0.875rem;
+  color: #64748b;
+  background: #f8fafc;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  .filtros-container {
+    flex-direction: column;
+
+    .filtro-search,
+    .filtro-select {
+      width: 100%;
+    }
+  }
+}

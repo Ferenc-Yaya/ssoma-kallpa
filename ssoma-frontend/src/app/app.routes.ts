@@ -7,6 +7,8 @@ import { EmpresaDetalleComponent } from './pages/empresa-detalle/empresa-detalle
 import { EmpresaPersonalComponent } from './pages/empresa-personal/empresa-personal';
 import { PasaporteComponent } from './pages/pasaporte/pasaporte';
 import { EmpresaActivosComponent } from './pages/empresa-activos/empresa-activos';
+import { ContratosComponent } from './pages/contratos/contratos';
+import { PersonalKallpaComponent } from './pages/personal-kallpa/personal-kallpa';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -22,7 +24,9 @@ export const routes: Routes = [
       { path: 'pasaporte', component: PasaporteComponent },
       { path: 'pasaporte/:id', component: PasaporteComponent },
       { path: 'empresas/:id/activos', component: EmpresaActivosComponent},
-      
+      { path: 'contratos', component: ContratosComponent },
+      { path: 'personal-kallpa', component: PersonalKallpaComponent },
+
       // Rutas de acreditación
       {
         path: 'acreditacion',
