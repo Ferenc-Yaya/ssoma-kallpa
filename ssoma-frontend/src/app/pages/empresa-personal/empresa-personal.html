@@ -87,17 +87,15 @@
         </td>
       </ng-container>
 
-      <!-- Columna Estado Acreditación -->
-      <ng-container matColumnDef="estado_acreditacion">
+      <!-- Columna Estado Laboral -->
+      <ng-container matColumnDef="estado">
         <th mat-header-cell *matHeaderCellDef>Estado</th>
         <td mat-cell *matCellDef="let persona">
-        <div class="status-chip" [ngClass]="'chip-' + persona.estado_acreditacion.toLowerCase()">
+        <div class="status-chip" [ngClass]="'chip-' + persona.estado.toLowerCase()">
             <mat-icon class="chip-icon">
-            {{ persona.estado_acreditacion === 'APTO' ? 'check_circle' : 
-                persona.estado_acreditacion === 'OBSERVADO' ? 'cancel' : 
-                'schedule' }}
+            {{ persona.estado === 'ACTIVO' ? 'check_circle' : 'cancel' }}
             </mat-icon>
-            <span>{{ persona.estado_acreditacion }}</span>
+            <span>{{ persona.estado }}</span>
         </div>
         </td>
       </ng-container>

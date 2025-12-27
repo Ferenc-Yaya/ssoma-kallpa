@@ -9,7 +9,9 @@ export interface Contrato {
   fecha_inicio: string;
   fecha_fin: string;
   nivel_riesgo: 'BAJO' | 'MEDIO' | 'ALTO';
-  admin_contrato_kallpa: string;
+  admin_contrato_kallpa: string; // Legacy - mantener para compatibilidad
+  administradores_contrato?: number[]; // IDs de usuarios Kallpa
+  supervisores_ehs?: number[]; // IDs de usuarios Kallpa
   monto_total: number;
   estado: 'VIGENTE' | 'VENCIDO' | 'SUSPENDIDO';
   estado_acreditacion: 'APTO' | 'OBSERVADO' | 'PENDIENTE';

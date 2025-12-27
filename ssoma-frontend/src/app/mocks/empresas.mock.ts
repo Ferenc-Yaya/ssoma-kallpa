@@ -1,13 +1,24 @@
+export interface EmpresaContacto {
+  id?: number;
+  nombre_completo: string;
+  cargo: string;
+  telefono: string;
+  email: string;
+  es_principal: boolean;
+}
+
 export interface Empresa {
   id: number;
   tenant_id: string;
   ruc: string;
   razonSocial: string;
-  tipo: 'PERMANENTE' | 'EVENTUAL' | 'VISITAS';
+  tipo_contratista_id?: number;
+  tipo?: 'PERMANENTE' | 'EVENTUAL' | 'VISITAS'; // Legacy - mantener para compatibilidad
   direccion: string;
   telefono: string;
   email: string;
   estado: 'ACTIVO' | 'INACTIVO';
+  contactos?: EmpresaContacto[];
   created_at: string;
 }
 

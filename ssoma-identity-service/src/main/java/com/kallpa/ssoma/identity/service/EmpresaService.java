@@ -1,0 +1,196 @@
+package com.kallpa.ssoma.identity.service;
+
+import com.kallpa.ssoma.identity.domain.Empresa;
+import com.kallpa.ssoma.identity.domain.EmpresaContacto;
+import com.kallpa.ssoma.identity.dto.CreateEmpresaRequest;
+import com.kallpa.ssoma.identity.dto.EmpresaContactoDTO;
+import com.kallpa.ssoma.identity.dto.EmpresaDTO;
+import com.kallpa.ssoma.identity.dto.UpdateEmpresaRequest;
+import com.kallpa.ssoma.identity.repository.EmpresaRepository;
+import com.kallpa.ssoma.shared.context.TenantContext;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+@Slf4j
+@Service
+@RequiredArgsConstructor
+public class EmpresaService {
+
+    private final EmpresaRepository empresaRepository;
+
+    @Transactional(readOnly = true)
+    public List<EmpresaDTO> findAll() {
+        String tenantId = TenantContext.getTenantId();
+        log.debug("Buscando todas las empresas para tenant: {}", tenantId);
+        return empresaRepository.findByTenantIdWithTipo(tenantId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public EmpresaDTO findById(Long id) {
+        String tenantId = TenantContext.getTenantId();
+        log.debug("Buscando empresa {} para tenant: {}", id, tenantId);
+        Empresa empresa = empresaRepository.findByTenantIdAndEmpresaIdWithTipo(tenantId, id)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con ID: " + id));
+        return toDTO(empresa);
+    }
+
+    @Transactional
+    public EmpresaDTO create(CreateEmpresaRequest request) {
+        String tenantId = TenantContext.getTenantId();
+        log.info("Creando nueva empresa con RUC: {} para tenant: {}", request.getRuc(), tenantId);
+
+        // Validar RUC único
+        if (empresaRepository.existsByRuc(request.getRuc())) {
+            throw new RuntimeException("Ya existe una empresa con el RUC: " + request.getRuc());
+        }
+
+        Empresa empresa = new Empresa();
+        empresa.setTenantId(tenantId);
+        empresa.setRuc(request.getRuc());
+        empresa.setRazonSocial(request.getRazonSocial());
+        empresa.setTipoContratistaId(request.getTipoContratistaId());
+        empresa.setDireccion(request.getDireccion());
+        empresa.setTelefono(request.getTelefono());
+        empresa.setEmail(request.getEmail());
+        empresa.setEstado(request.getEstado() != null ? request.getEstado() : "ACTIVO");
+
+        // Agregar contactos si existen
+        if (request.getContactos() != null) {
+            request.getContactos().forEach(contactoDTO -> {
+                EmpresaContacto contacto = new EmpresaContacto();
+                contacto.setTenantId(tenantId);
+                contacto.setNombreCompleto(contactoDTO.getNombreCompleto());
+                contacto.setCargo(contactoDTO.getCargo());
+                contacto.setTelefono(contactoDTO.getTelefono());
+                contacto.setEmail(contactoDTO.getEmail());
+                contacto.setEsPrincipal(contactoDTO.getEsPrincipal());
+                empresa.addContacto(contacto);
+            });
+        }
+
+        Empresa savedEmpresa = empresaRepository.save(empresa);
+        log.info("Empresa creada exitosamente con ID: {}", savedEmpresa.getEmpresaId());
+        return toDTO(savedEmpresa);
+    }
+
+    @Transactional
+    public EmpresaDTO update(Long id, UpdateEmpresaRequest request) {
+        String tenantId = TenantContext.getTenantId();
+        log.info("Actualizando empresa {} para tenant: {}", id, tenantId);
+
+        Empresa empresa = empresaRepository.findByTenantIdAndEmpresaId(tenantId, id)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con ID: " + id));
+
+        if (request.getRazonSocial() != null) {
+            empresa.setRazonSocial(request.getRazonSocial());
+        }
+        if (request.getTipoContratistaId() != null) {
+            empresa.setTipoContratistaId(request.getTipoContratistaId());
+        }
+        if (request.getDireccion() != null) {
+            empresa.setDireccion(request.getDireccion());
+        }
+        if (request.getTelefono() != null) {
+            empresa.setTelefono(request.getTelefono());
+        }
+        if (request.getEmail() != null) {
+            empresa.setEmail(request.getEmail());
+        }
+        if (request.getEstado() != null) {
+            empresa.setEstado(request.getEstado());
+        }
+
+        // Actualizar contactos si se proporcionan
+        if (request.getContactos() != null) {
+            empresa.getContactos().clear();
+            request.getContactos().forEach(contactoDTO -> {
+                EmpresaContacto contacto = new EmpresaContacto();
+                contacto.setTenantId(tenantId);
+                contacto.setNombreCompleto(contactoDTO.getNombreCompleto());
+                contacto.setCargo(contactoDTO.getCargo());
+                contacto.setTelefono(contactoDTO.getTelefono());
+                contacto.setEmail(contactoDTO.getEmail());
+                contacto.setEsPrincipal(contactoDTO.getEsPrincipal());
+                empresa.addContacto(contacto);
+            });
+        }
+
+        Empresa updatedEmpresa = empresaRepository.save(empresa);
+        log.info("Empresa actualizada exitosamente: {}", id);
+        return toDTO(updatedEmpresa);
+    }
+
+    @Transactional
+    public void delete(Long id) {
+        String tenantId = TenantContext.getTenantId();
+        log.info("Eliminando empresa {} para tenant: {}", id, tenantId);
+
+        Empresa empresa = empresaRepository.findByTenantIdAndEmpresaId(tenantId, id)
+                .orElseThrow(() -> new RuntimeException("Empresa no encontrada con ID: " + id));
+
+        empresaRepository.delete(empresa);
+        log.info("Empresa eliminada exitosamente: {}", id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<EmpresaDTO> search(String searchTerm) {
+        String tenantId = TenantContext.getTenantId();
+        log.debug("Buscando empresas con término: {} para tenant: {}", searchTerm, tenantId);
+        return empresaRepository.searchEmpresas(tenantId, searchTerm).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    private EmpresaDTO toDTO(Empresa empresa) {
+        EmpresaDTO dto = new EmpresaDTO();
+        dto.setId(empresa.getEmpresaId());
+        dto.setTenantId(empresa.getTenantId());
+        dto.setRuc(empresa.getRuc());
+        dto.setRazonSocial(empresa.getRazonSocial());
+        dto.setTipoContratistaId(empresa.getTipoContratistaId());
+
+        log.debug("Empresa {} - tipoContratistaId: {}, tipoContratista: {}",
+            empresa.getEmpresaId(),
+            empresa.getTipoContratistaId(),
+            empresa.getTipoContratista());
+
+        if (empresa.getTipoContratista() != null) {
+            dto.setTipo(empresa.getTipoContratista().getNombre());
+            log.debug("Tipo asignado: {}", empresa.getTipoContratista().getNombre());
+        } else {
+            log.warn("TipoContratista es null para empresa {}", empresa.getEmpresaId());
+        }
+        dto.setDireccion(empresa.getDireccion());
+        dto.setTelefono(empresa.getTelefono());
+        dto.setEmail(empresa.getEmail());
+        dto.setEstado(empresa.getEstado());
+        dto.setCreatedAt(empresa.getCreatedAt());
+
+        if (empresa.getContactos() != null && !empresa.getContactos().isEmpty()) {
+            List<EmpresaContactoDTO> contactosDTO = empresa.getContactos().stream()
+                    .map(this::toContactoDTO)
+                    .collect(Collectors.toList());
+            dto.setContactos(contactosDTO);
+        }
+
+        return dto;
+    }
+
+    private EmpresaContactoDTO toContactoDTO(EmpresaContacto contacto) {
+        EmpresaContactoDTO dto = new EmpresaContactoDTO();
+        dto.setId(contacto.getContactoId());
+        dto.setNombreCompleto(contacto.getNombreCompleto());
+        dto.setCargo(contacto.getCargo());
+        dto.setTelefono(contacto.getTelefono());
+        dto.setEmail(contacto.getEmail());
+        dto.setEsPrincipal(contacto.getEsPrincipal());
+        return dto;
+    }
+}

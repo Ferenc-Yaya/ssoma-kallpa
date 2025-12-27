@@ -38,7 +38,6 @@ export class PersonaDialogComponent implements OnInit {
     telefono: '',
     email: '',
     cargo: '',
-    estado_acreditacion: 'PENDIENTE',
     estado: true
   };
 
@@ -51,11 +50,6 @@ export class PersonaDialogComponent implements OnInit {
     { value: 'PASAPORTE', label: 'Pasaporte' }
   ];
 
-  estadosAcreditacion = [
-    { value: 'APTO', label: 'APTO' },
-    { value: 'OBSERVADO', label: 'OBSERVADO' },
-    { value: 'PENDIENTE', label: 'PENDIENTE' }
-  ];
 
   constructor(
     public dialogRef: MatDialogRef<PersonaDialogComponent>,
@@ -78,11 +72,10 @@ export class PersonaDialogComponent implements OnInit {
         telefono: persona.telefono || '',
         email: persona.email || '',
         cargo: persona.cargo || '',
-        estado_acreditacion: persona.estado_acreditacion || 'PENDIENTE',
         estado: persona.estado === 'ACTIVO'
     };
 
-    if (persona.foto) {  // <-- Cambiado de foto_url a foto
+    if (persona.foto) {
         this.fotoPreview = persona.foto;
     }
   }
@@ -151,7 +144,6 @@ export class PersonaDialogComponent implements OnInit {
         telefono: this.persona.telefono,
         email: this.persona.email,
         cargo: this.persona.cargo,
-        estado_acreditacion: this.persona.estado_acreditacion,
         empresa_id: this.data.empresaId,
         tenant_id: 'KALLPA',
         estado: this.persona.estado ? 'ACTIVO' : 'INACTIVO',

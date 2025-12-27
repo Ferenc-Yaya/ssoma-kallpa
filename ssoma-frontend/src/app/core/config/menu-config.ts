@@ -33,6 +33,12 @@ export const MENU_ITEMS: MenuItem[] = [
     route: '/pasaporte',
     roles: ['SUPER_ADMIN']
   },
+  {
+    label: 'Reglas de Negocio',
+    icon: 'rule',
+    route: '/reglas-negocio',
+    roles: ['SUPER_ADMIN']
+  },
   
   // ===== EMPRESA PRINCIPAL =====
   {
@@ -69,6 +75,12 @@ export const MENU_ITEMS: MenuItem[] = [
     label: 'Pasaportes',
     icon: 'badge',
     route: '/pasaporte',
+    roles: ['ADMIN_EMPRESA_PRINCIPAL']
+  },
+  {
+    label: 'Reglas de Negocio',
+    icon: 'rule',
+    route: '/reglas-negocio',
     roles: ['ADMIN_EMPRESA_PRINCIPAL']
   },
   

@@ -1,0 +1,109 @@
+<div class="material-documentos-container">
+  <!-- Breadcrumb -->
+  <div class="breadcrumb">
+    <a [routerLink]="['/empresas']">
+      <mat-icon>business</mat-icon>
+      Empresas
+    </a>
+    <mat-icon class="separator">chevron_right</mat-icon>
+    <a [routerLink]="['/empresas', empresaId]">
+      Empresa
+    </a>
+    <mat-icon class="separator">chevron_right</mat-icon>
+    <a [routerLink]="['/empresas', empresaId, 'materiales-peligrosos']">
+      Materiales Peligrosos
+    </a>
+    <mat-icon class="separator">chevron_right</mat-icon>
+    <span class="current">Documentos</span>
+  </div>
+
+  <!-- Header con información del material peligroso -->
+  <mat-card class="material-card" *ngIf="material">
+    <div class="material-header">
+      <mat-icon class="material-icon">warning</mat-icon>
+      <div class="material-info">
+        <h2>{{ material.nombre }}</h2>
+        <p class="material-datos">
+          <mat-icon>category</mat-icon>
+          Tipo: {{ material.tipo }} - {{ material.clasificacion }}
+        </p>
+        <p class="material-datos">
+          <mat-icon>inventory</mat-icon>
+          Cantidad: {{ material.cantidad }} {{ material.unidad }}
+        </p>
+        <p class="material-datos">
+          <mat-icon>location_on</mat-icon>
+          Ubicación: {{ material.ubicacion }}
+        </p>
+      </div>
+      <div class="material-estado">
+        <div class="status-chip" [ngClass]="'chip-' + material.estado.toLowerCase()">
+          <mat-icon class="chip-icon">
+            {{ material.estado === 'VIGENTE' ? 'check_circle' :
+               material.estado === 'POR_VENCER' ? 'schedule' :
+               'error' }}
+          </mat-icon>
+          <span>{{ material.estado === 'POR_VENCER' ? 'POR VENCER' : material.estado }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Documentos por categoría -->
+  <div class="categorias-container" *ngIf="documentosCargados">
+    <mat-card class="categoria-card" *ngFor="let categoria of categorias">
+      <mat-card-header [style.background-color]="getCategoriaColor(categoria)">
+        <mat-card-title>
+          <mat-icon>{{ getCategoriaIcon(categoria) }}</mat-icon>
+          {{ categoria }}
+        </mat-card-title>
+      </mat-card-header>
+
+      <mat-card-content>
+        <div class="documentos-list">
+          <ng-container *ngIf="getDocumentosPorCategoria(categoria) as docsCategoria">
+            <div class="documento-item" *ngFor="let doc of docsCategoria">
+              <div class="documento-info">
+                <mat-icon class="doc-icon">description</mat-icon>
+                <div class="doc-details">
+                  <div class="doc-nombre-row">
+                    <span class="doc-nombre">{{ doc.nombre }}</span>
+                    <mat-icon class="obligatorio-icon" *ngIf="doc.obligatorio" matTooltip="Documento obligatorio" color="warn">
+                      priority_high
+                    </mat-icon>
+                  </div>
+                  <span class="doc-estado" *ngIf="doc.archivo">
+                    <mat-icon class="status-icon">check_circle</mat-icon>
+                    Subido
+                  </span>
+                  <span class="doc-estado sin-archivo" *ngIf="!doc.archivo">
+                    <mat-icon class="status-icon">cloud_upload</mat-icon>
+                    Pendiente {{ doc.obligatorio ? '(Obligatorio)' : '' }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="documento-acciones">
+                <button mat-raised-button color="primary" (click)="subirDocumento(doc)">
+                  <mat-icon>upload</mat-icon>
+                  {{ doc.archivo ? 'Reemplazar' : 'Subir' }}
+                </button>
+                <button mat-icon-button *ngIf="doc.archivo" (click)="verDocumento(doc)" matTooltip="Ver documento">
+                  <mat-icon>visibility</mat-icon>
+                </button>
+                <button mat-icon-button *ngIf="doc.archivo" (click)="eliminarDocumento(doc)" color="warn" matTooltip="Eliminar">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+
+            <div class="sin-documentos" *ngIf="docsCategoria.length === 0">
+              <mat-icon>info</mat-icon>
+              <p>No hay documentos requeridos en esta categoría</p>
+            </div>
+          </ng-container>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

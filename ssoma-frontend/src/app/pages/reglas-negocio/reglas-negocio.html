@@ -1,0 +1,139 @@
+<div class="reglas-negocio-container">
+  <mat-card class="header-card">
+    <mat-card-header>
+      <mat-card-title>
+        <div class="title-container">
+          <mat-icon class="title-icon">rule</mat-icon>
+          <span>Reglas de Negocio - Configuración de Requisitos por Tipo de Contratista</span>
+        </div>
+      </mat-card-title>
+      <mat-card-subtitle>
+        Configure qué documentos requiere cada tipo de contratista según las necesidades de su contrato
+      </mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-actions class="header-actions">
+      <div class="actions-left">
+        <button mat-raised-button color="accent" (click)="agregarNuevoTipo()">
+          <mat-icon>add_circle</mat-icon>
+          Nuevo Tipo
+        </button>
+        <button mat-raised-button color="warn" (click)="eliminarTipoActual()" [disabled]="tiposContratistas.length <= 1">
+          <mat-icon>delete</mat-icon>
+          Eliminar Tipo
+        </button>
+      </div>
+      <div class="actions-right">
+        <button mat-raised-button color="primary" (click)="guardarCambios()" [disabled]="cambiosGuardados">
+          <mat-icon>save</mat-icon>
+          Guardar Cambios
+        </button>
+        <button mat-raised-button (click)="resetearCambios()" [disabled]="cambiosGuardados">
+          <mat-icon>restore</mat-icon>
+          Resetear
+        </button>
+        <button mat-raised-button (click)="exportarConfiguracion()">
+          <mat-icon>download</mat-icon>
+          Exportar
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-card>
+
+  <mat-card class="content-card">
+    <!-- Selector de tipo de contratista -->
+    <div class="tipo-selector">
+      <label class="selector-label">Tipo de Contratista:</label>
+      <div class="tipos-chips">
+        <button
+          *ngFor="let tipo of tiposContratistas"
+          class="tipo-chip"
+          [class.tipo-chip-active]="selectedTipoId === tipo.id"
+          (click)="seleccionarTipo(tipo.id)"
+          [title]="tipo.descripcion || tipo.nombre">
+          {{ tipo.nombre }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Información del tipo seleccionado -->
+    <div class="tipo-info" *ngIf="tipoContratistaActual">
+      <h2>{{ tipoContratistaActual.nombre }}</h2>
+      <p class="tipo-descripcion" *ngIf="tipoContratistaActual.descripcion">{{ tipoContratistaActual.descripcion }}</p>
+      <p class="tipo-codigo">Código: <strong>{{ tipoContratistaActual.codigo }}</strong></p>
+    </div>
+
+    <!-- Grid de categorías -->
+    <div class="categorias-grid" *ngIf="tipoContratistaActual">
+      <div *ngFor="let categoria of categorias" class="categoria-card">
+        <div class="categoria-header" [style.background-color]="getCategoriaColor(categoria)">
+          <h3>{{ categoria }}</h3>
+          <div class="categoria-stats">
+            <mat-chip class="stat-chip">
+              <mat-icon>check_circle</mat-icon>
+              {{ contarRequisitosAplican(categoria) }} Aplican
+            </mat-chip>
+            <mat-chip class="stat-chip obligatorio-chip">
+              <mat-icon>priority_high</mat-icon>
+              {{ contarRequisitosObligatorios(categoria) }} Obligatorios
+            </mat-chip>
+          </div>
+        </div>
+
+        <div class="categoria-body">
+          <table class="requisitos-table">
+            <thead>
+              <tr>
+                <th class="col-documento">Documento</th>
+                <th class="col-checkbox">Aplica</th>
+                <th class="col-checkbox">Obligatorio</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let requisito of getRequisitosPorCategoria(categoria)"
+                  [class.row-no-aplica]="!requisito.aplica">
+                <td class="documento-nombre">
+                  <mat-icon class="doc-icon">description</mat-icon>
+                  {{ requisito.documentoNombre }}
+                </td>
+                <td class="checkbox-cell">
+                  <mat-checkbox
+                    [(ngModel)]="requisito.aplica"
+                    (change)="toggleAplica(requisito)"
+                    color="primary">
+                  </mat-checkbox>
+                </td>
+                <td class="checkbox-cell">
+                  <mat-checkbox
+                    [(ngModel)]="requisito.obligatorio"
+                    (change)="toggleObligatorio(requisito)"
+                    [disabled]="!requisito.aplica"
+                    color="warn">
+                  </mat-checkbox>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Leyenda -->
+  <mat-card class="legend-card">
+    <h3>Leyenda:</h3>
+    <div class="legend-items">
+      <div class="legend-item">
+        <mat-icon class="legend-icon" color="primary">check_box</mat-icon>
+        <span><strong>Aplica:</strong> Este documento es requerido para este tipo de contratista</span>
+      </div>
+      <div class="legend-item">
+        <mat-icon class="legend-icon" color="warn">check_box</mat-icon>
+        <span><strong>Obligatorio:</strong> Este documento es obligatorio (bloquea si no se presenta)</span>
+      </div>
+      <div class="legend-item">
+        <mat-icon class="legend-icon">info</mat-icon>
+        <span>Si un documento <strong>no aplica</strong>, no será solicitado a ese tipo de contratista</span>
+      </div>
+    </div>
+  </mat-card>
+</div>

@@ -1,0 +1,46 @@
+<h2 mat-dialog-title>
+  <mat-icon>add_business</mat-icon>
+  Crear Nuevo Tipo de Contratista
+</h2>
+
+<mat-dialog-content>
+  <p class="dialog-description">
+    Ingrese los datos del nuevo tipo de contratista. Los requisitos se configurarán en el siguiente paso.
+  </p>
+
+  <form>
+    <div class="form-group">
+      <label>Nombre del Tipo *</label>
+      <input
+        type="text"
+        class="form-input"
+        [(ngModel)]="nombre"
+        name="nombre"
+        placeholder="Ej: Contratistas Permanentes"
+        required>
+      <small class="form-hint">Nombre del tipo de contratista</small>
+    </div>
+
+    <div class="form-group">
+      <label>Descripción</label>
+      <textarea
+        class="form-input"
+        [(ngModel)]="descripcion"
+        name="descripcion"
+        placeholder="Ej: Contratistas con contrato indefinido o mayor a 6 meses"
+        rows="3"></textarea>
+      <small class="form-hint">Descripción opcional del tipo de contratista</small>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!isValid()">
+    <mat-icon>add</mat-icon>
+    Crear Tipo
+  </button>
+</mat-dialog-actions>

@@ -1,0 +1,494 @@
+.dashboard-contratista {
+  padding: 1rem;
+}
+
+// Tarjetas KPI - 4 cards en grid
+.kpi-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi-card {
+  mat-card-content {
+    padding: 1.25rem;
+  }
+
+  .kpi-layout {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .kpi-icon-container {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+
+    mat-icon {
+      font-size: 28px;
+      width: 28px;
+      height: 28px;
+      color: white;
+    }
+
+    &.accent {
+      background: linear-gradient(135deg, #241C40 0%, #6366f1 100%);
+    }
+
+    &.tools {
+      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
+    }
+
+    &.warn {
+      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+    }
+
+    &.success {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    }
+  }
+
+  .kpi-content {
+    flex: 1;
+
+    .kpi-number {
+      margin: 0;
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1;
+    }
+
+    .kpi-label {
+      margin: 0.5rem 0 0 0;
+      font-size: 0.75rem;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+  }
+}
+
+// Contratos Nuevos
+.contratos-nuevos-card {
+  margin-bottom: 1.5rem;
+  border: 2px solid #f59e0b;
+  box-shadow: 0 4px 6px rgba(245, 158, 11, 0.1);
+
+  mat-card-header {
+    background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+    padding: 1rem 1.5rem;
+
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: #92400e;
+
+      .icon-alert {
+        font-size: 24px;
+        width: 24px;
+        height: 24px;
+        color: #f59e0b;
+        animation: pulse 2s infinite;
+      }
+
+      .badge-count {
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.625rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        margin-left: auto;
+      }
+    }
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.contratos-nuevos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.contrato-nuevo-item {
+  background: white;
+  border: 2px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+
+  &:hover {
+    border-color: #1F438C;
+    box-shadow: 0 4px 12px rgba(31, 67, 140, 0.1);
+  }
+}
+
+.contrato-nuevo-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.contrato-nuevo-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.875rem;
+  border-radius: 20px;
+  font-size: 0.8125rem;
+  font-weight: 700;
+
+  mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+
+  &.riesgo-alto {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  &.riesgo-medio {
+    background: #fef3c7;
+    color: #d97706;
+  }
+
+  &.riesgo-bajo {
+    background: #dbeafe;
+    color: #1d4ed8;
+  }
+}
+
+.fecha-creacion {
+  font-size: 0.8125rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.contrato-nuevo-info {
+  margin-bottom: 1.5rem;
+
+  .contrato-numero {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1F438C;
+  }
+
+  .contrato-descripcion {
+    margin: 0 0 1rem 0;
+    font-size: 0.9375rem;
+    color: #475569;
+    line-height: 1.5;
+  }
+}
+
+.contrato-detalles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin-top: 1rem;
+
+  .detalle-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: #475569;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+      color: #64748b;
+
+      &.riesgo-icon-alto {
+        color: #dc2626;
+      }
+
+      &.riesgo-icon-medio {
+        color: #f59e0b;
+      }
+
+      &.riesgo-icon-bajo {
+        color: #22c55e;
+      }
+    }
+
+    strong {
+      color: #1e293b;
+    }
+  }
+}
+
+.contrato-requisitos {
+  background: #f8fafc;
+  padding: 1.25rem;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+
+  .requisitos-title {
+    margin: 0 0 1rem 0;
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: #1e293b;
+  }
+}
+
+.requisitos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+
+  .requisito-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #94a3b8;
+
+    mat-icon {
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+      color: #cbd5e1;
+    }
+
+    &.requerido {
+      border-color: #1F438C;
+      color: #1F438C;
+
+      .icon-required {
+        color: #1F438C;
+      }
+
+      .check-icon {
+        color: #22c55e;
+      }
+    }
+  }
+}
+
+.documentos-requeridos {
+  .docs-title {
+    margin: 0 0 0.75rem 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .docs-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 0.5rem;
+
+    li {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.8125rem;
+      color: #64748b;
+
+      mat-icon {
+        font-size: 16px;
+        width: 16px;
+        height: 16px;
+        color: #94a3b8;
+      }
+    }
+  }
+}
+
+.contrato-acciones {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid #e2e8f0;
+
+  .btn-iniciar {
+    flex: 1;
+    font-weight: 600;
+
+    mat-icon {
+      margin-right: 0.375rem;
+    }
+  }
+
+  .btn-detalles {
+    color: #64748b;
+    font-weight: 600;
+  }
+}
+
+// Detalle de Contratos
+.contratos-card {
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        color: #1F438C;
+      }
+    }
+  }
+}
+
+.tabla-contratos-wrapper {
+  overflow-x: auto;
+}
+
+.contratos-table {
+  width: 100%;
+
+  th {
+    font-weight: 600;
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f8fafc;
+    text-transform: uppercase;
+  }
+
+  td {
+    font-size: 0.875rem;
+    color: #1e293b;
+  }
+
+  .fechas-container {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+
+    .fecha-item {
+      display: flex;
+      align-items: center;
+      gap: 0.25rem;
+
+      .fecha-icon {
+        font-size: 14px;
+        width: 14px;
+        height: 14px;
+        color: #64748b;
+      }
+    }
+
+    .fecha-separator {
+      color: #cbd5e1;
+      font-weight: 600;
+    }
+  }
+
+  .estado-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+
+    &.estado-apto {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+
+    &.estado-observado {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    &.estado-pendiente {
+      background: #fef3c7;
+      color: #d97706;
+    }
+  }
+
+  .progreso-container {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 180px;
+
+    mat-progress-bar {
+      flex: 1;
+      height: 8px;
+      border-radius: 4px;
+
+      ::ng-deep .mdc-linear-progress__bar-inner {
+        border-radius: 4px;
+      }
+    }
+
+    .progreso-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e293b;
+      min-width: 40px;
+      text-align: right;
+    }
+  }
+}
+
+// Responsivo
+@media (max-width: 1024px) {
+  .kpi-cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .dashboard-contratista {
+    padding: 0.5rem;
+  }
+
+  .kpi-cards {
+    gap: 0.75rem;
+  }
+
+  .progress-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+  }
+
+  .tabla-contratos-wrapper {
+    overflow-x: scroll;
+  }
+
+  .contratos-table {
+    min-width: 900px;
+  }
+}

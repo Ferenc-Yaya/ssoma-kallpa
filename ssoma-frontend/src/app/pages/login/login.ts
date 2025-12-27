@@ -52,7 +52,14 @@ export class LoginComponent {
         next: (response) => {
           this.tenantService.setTenant(response.tenantId);
           console.log('Login exitoso:', response);
-          this.router.navigate(['/dashboard']);
+
+          // Redirigir según el rol del usuario
+          if (response.rol === 'ADMIN_CONTRATISTA') {
+            this.router.navigate(['/dashboard-contratista']);
+          } else {
+            this.router.navigate(['/dashboard']);
+          }
+
           this.loading = false;
         },
         error: (error) => {

@@ -94,6 +94,16 @@ export class EmpresaActivosComponent implements OnInit {
     this.showMessage('Funcionalidad de editar próximamente', 'success');
   }
 
+  verDocumentos(activo: Activo): void {
+    if (!this.empresa) {
+      this.showMessage('Error: No se pudo cargar la información de la empresa', 'error');
+      return;
+    }
+
+    const ruta = ['/empresas', this.empresa.id, 'activos', activo.activo_id, 'documentos'];
+    this.router.navigate(ruta);
+  }
+
   eliminarActivo(activo: Activo): void {
     if (confirm(`¿Está seguro de eliminar ${activo.descripcion}?`)) {
       this.activosService.deleteActivo(activo.activo_id).subscribe({

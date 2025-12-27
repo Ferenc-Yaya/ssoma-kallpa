@@ -145,27 +145,16 @@
         </div>
       </div>
 
-      <!-- SECCIÓN: ESTADO Y ACREDITACIÓN -->
+      <!-- SECCIÓN: ESTADO -->
       <div class="form-section">
-        <h3 class="section-title">Estado y Acreditación</h3>
-        
-        <div class="form-row">
-          <div class="form-group">
-            <label>Estado de Acreditación *</label>
-            <select [(ngModel)]="persona.estado_acreditacion" 
-                    name="estado_acreditacion"
-                    class="form-input">
-              <option *ngFor="let estado of estadosAcreditacion" [value]="estado.value">
-                {{ estado.label }}
-              </option>
-            </select>
-          </div>
+        <h3 class="section-title">Estado</h3>
 
+        <div class="form-row">
           <div class="form-group">
             <label>Estado del Trabajador</label>
             <div class="toggle-container">
               <label class="switch">
-                <input type="checkbox" 
+                <input type="checkbox"
                        [(ngModel)]="persona.estado"
                        name="estado">
                 <span class="slider"></span>

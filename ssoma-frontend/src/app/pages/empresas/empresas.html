@@ -70,13 +70,19 @@
                   color="primary">
             <mat-icon>people</mat-icon>
           </button>
-          <button mat-icon-button 
+          <button mat-icon-button
                   (click)="verActivos(empresa)"
                   matTooltip="Ver Activos"
                   color="accent">
             <mat-icon>inventory_2</mat-icon>
           </button>
-          <button mat-icon-button 
+          <button mat-icon-button
+                  (click)="verMaterialesPeligrosos(empresa)"
+                  matTooltip="Materiales Peligrosos"
+                  style="color: #f57c00;">
+            <mat-icon>warning</mat-icon>
+          </button>
+          <button mat-icon-button
                   (click)="openEditDialog(empresa)"
                   matTooltip="Editar">
             <mat-icon>edit</mat-icon>

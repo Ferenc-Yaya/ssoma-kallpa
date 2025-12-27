@@ -131,14 +131,10 @@ export class EmpresasComponent implements OnInit {
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
         this.empresasService.deleteEmpresa(empresa.id).subscribe({
-          next: (success: boolean) => {
-            if (success) {
-              this.showMessage('Empresa eliminada exitosamente');
-              this.searchTerm = '';
-              this.loadEmpresas();
-            } else {
-              this.showMessage('No se pudo eliminar la empresa', 'error');
-            }
+          next: () => {
+            this.showMessage('Empresa eliminada exitosamente');
+            this.searchTerm = '';
+            this.loadEmpresas();
           },
           error: () => {
             this.showMessage('Error al eliminar empresa', 'error');
@@ -166,6 +162,10 @@ export class EmpresasComponent implements OnInit {
   }
   
   verActivos(empresa: Empresa): void {
-  this.router.navigate(['/empresas', empresa.id, 'activos']);
+    this.router.navigate(['/empresas', empresa.id, 'activos']);
+  }
+
+  verMaterialesPeligrosos(empresa: Empresa): void {
+    this.router.navigate(['/empresas', empresa.id, 'materiales-peligrosos']);
   }
 }

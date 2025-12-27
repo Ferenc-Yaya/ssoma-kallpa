@@ -1,0 +1,130 @@
+<div class="empresa-materiales-page">
+  <!-- Header -->
+  <div class="page-header">
+    <button mat-icon-button class="btn-volver" (click)="volver()">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+
+    <div class="header-content" *ngIf="empresa">
+      <div class="header-info">
+        <h1>
+          <mat-icon>warning</mat-icon>
+          Materiales Peligrosos - {{ empresa.razonSocial }}
+        </h1>
+        <p>Gestión de materiales peligrosos y sustancias controladas</p>
+      </div>
+
+      <div class="header-stats">
+        <div class="stat-card vigente">
+          <mat-icon>check_circle</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ getMaterialesVigentes() }}</span>
+            <span class="stat-label">Vigentes</span>
+          </div>
+        </div>
+        <div class="stat-card por-vencer">
+          <mat-icon>schedule</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ getMaterialesPorVencer() }}</span>
+            <span class="stat-label">Por Vencer</span>
+          </div>
+        </div>
+        <div class="stat-card vencido">
+          <mat-icon>error</mat-icon>
+          <div class="stat-info">
+            <span class="stat-value">{{ getMaterialesVencidos() }}</span>
+            <span class="stat-label">Vencidos</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenido -->
+  <div class="content">
+    <div class="content-header">
+      <h2>Materiales Registrados</h2>
+      <button mat-raised-button color="primary" (click)="agregarMaterial()">
+        <mat-icon>add</mat-icon>
+        Agregar Material
+      </button>
+    </div>
+
+    <div class="table-container" *ngIf="materiales.length > 0">
+      <table mat-table [dataSource]="materiales" class="materiales-table">
+        <!-- Nombre -->
+        <ng-container matColumnDef="nombre">
+          <th mat-header-cell *matHeaderCellDef>Sustancia</th>
+          <td mat-cell *matCellDef="let material">
+            <strong>{{ material.sustanciaNombre }}</strong>
+          </td>
+        </ng-container>
+
+        <!-- Código UN -->
+        <ng-container matColumnDef="codigo">
+          <th mat-header-cell *matHeaderCellDef>Código UN</th>
+          <td mat-cell *matCellDef="let material">{{ material.codigoUn || 'N/A' }}</td>
+        </ng-container>
+
+        <!-- Clasificación -->
+        <ng-container matColumnDef="clasificacion">
+          <th mat-header-cell *matHeaderCellDef>Clase de Peligro</th>
+          <td mat-cell *matCellDef="let material">{{ material.clasePeligro || 'N/A' }}</td>
+        </ng-container>
+
+        <!-- Cantidad -->
+        <ng-container matColumnDef="cantidad">
+          <th mat-header-cell *matHeaderCellDef>Cantidad</th>
+          <td mat-cell *matCellDef="let material">{{ material.cantidad }} {{ material.unidadMedida }}</td>
+        </ng-container>
+
+        <!-- Ubicación -->
+        <ng-container matColumnDef="ubicacion">
+          <th mat-header-cell *matHeaderCellDef>Ubicación</th>
+          <td mat-cell *matCellDef="let material">{{ material.ubicacion }}</td>
+        </ng-container>
+
+        <!-- Estado -->
+        <ng-container matColumnDef="estado">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let material">
+            <div class="custom-chip" [style.background-color]="getEstadoColor(material.estado || '')">
+              {{ material.estado }}
+            </div>
+          </td>
+        </ng-container>
+
+        <!-- Acciones -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let material">
+            <div class="actions">
+              <button mat-icon-button color="accent" (click)="verDocumentos(material)" matTooltip="Gestionar Documentos">
+                <mat-icon>description</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" (click)="editarMaterial(material)" matTooltip="Editar">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="eliminarMaterial(material)" matTooltip="Eliminar">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </div>
+
+    <div class="empty-state" *ngIf="materiales.length === 0">
+      <mat-icon>warning</mat-icon>
+      <h3>No hay materiales peligrosos registrados</h3>
+      <p>Agrega el primer material peligroso de esta empresa</p>
+      <button mat-raised-button color="primary" (click)="agregarMaterial()">
+        <mat-icon>add</mat-icon>
+        Agregar Material
+      </button>
+    </div>
+  </div>
+</div>

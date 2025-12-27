@@ -207,7 +207,18 @@
   }
 }
 
-// Chips de estado
+// Chips de estado laboral
+.chip-activo {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.chip-inactivo {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+// Chips de estado de acreditación (para otros usos)
 .chip-apto {
   background: #d1fae5 !important;
   color: #065f46 !important;
@@ -236,6 +247,24 @@
     font-size: 16px;
     width: 16px;
     height: 16px;
+  }
+
+  &.chip-activo {
+    background: #d1fae5;
+    color: #065f46;
+
+    .chip-icon {
+      color: #065f46;
+    }
+  }
+
+  &.chip-inactivo {
+    background: #fee2e2;
+    color: #991b1b;
+
+    .chip-icon {
+      color: #991b1b;
+    }
   }
 
   &.chip-apto {

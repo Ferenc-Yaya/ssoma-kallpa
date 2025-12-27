@@ -1,0 +1,110 @@
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: #1976d2;
+  margin: 0;
+
+  mat-icon {
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
+  }
+}
+
+mat-dialog-content {
+  min-width: 400px;
+  padding: 20px 24px;
+
+  .dialog-description {
+    color: #666;
+    margin-bottom: 20px;
+    font-size: 14px;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+
+    .form-group {
+      margin-bottom: 1.5rem;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+        color: #333;
+        font-weight: 500;
+        font-size: 0.95rem;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        font-size: 1rem;
+        transition: all 0.2s;
+        font-family: inherit;
+
+        &:focus {
+          outline: none;
+          border-color: #1F438C;
+          box-shadow: 0 0 0 3px rgba(31, 67, 140, 0.1);
+        }
+      }
+
+      textarea.form-input {
+        resize: vertical;
+        min-height: 80px;
+      }
+
+      .form-hint {
+        display: block;
+        margin-top: 0.25rem;
+        color: #666;
+        font-size: 0.85rem;
+      }
+    }
+  }
+
+  .preview-info {
+    display: flex;
+    gap: 12px;
+    padding: 12px;
+    background-color: #e3f2fd;
+    border-left: 4px solid #2196f3;
+    border-radius: 4px;
+    margin-top: 16px;
+
+    mat-icon {
+      color: #2196f3;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+
+    div {
+      font-size: 13px;
+      color: #1565c0;
+      line-height: 1.6;
+    }
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  gap: 12px;
+
+  button {
+    mat-icon {
+      margin-right: 8px;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  mat-dialog-content {
+    min-width: 280px;
+  }
+}

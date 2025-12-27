@@ -1,0 +1,20 @@
+{
+  "/api/sustancias-peligrosas": {
+    "target": "http://localhost:8085",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api/inventario-matpel": {
+    "target": "http://localhost:8085",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  },
+  "/api": {
+    "target": "http://localhost:8081",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "debug"
+  }
+}

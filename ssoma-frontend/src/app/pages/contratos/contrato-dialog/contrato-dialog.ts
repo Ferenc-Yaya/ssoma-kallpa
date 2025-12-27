@@ -7,9 +7,12 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { MatIconModule } from '@angular/material/icon';
+import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
 import { Contrato } from '../../../mocks/contratos.mock';
 import { EMPRESAS_MOCK } from '../../../mocks/empresas.mock';
+import { USUARIOS_KALLPA_MOCK, UsuarioKallpa } from '../../../mocks/personal-kallpa.mock';
 
 @Component({
   selector: 'app-contrato-dialog',
@@ -23,6 +26,8 @@ import { EMPRESAS_MOCK } from '../../../mocks/empresas.mock';
     MatSelectModule,
     MatDatepickerModule,
     MatNativeDateModule,
+    MatIconModule,
+    MatChipsModule,
     FormsModule
   ],
   templateUrl: './contrato-dialog.html',
@@ -33,15 +38,31 @@ export class ContratoDialogComponent implements OnInit {
   mode: 'crear' | 'editar';
   empresas = EMPRESAS_MOCK.filter(e => e.estado === 'ACTIVO');
 
+  // Usuarios Kallpa
+  usuariosKallpa = USUARIOS_KALLPA_MOCK.filter(u => u.estado === 'ACTIVO');
+  administradoresDisponibles: UsuarioKallpa[] = [];
+  supervisoresDisponibles: UsuarioKallpa[] = [];
+
+  administradoresSeleccionados: number[] = [];
+  supervisoresSeleccionados: number[] = [];
+
   constructor(
     public dialogRef: MatDialogRef<ContratoDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {
     this.mode = data.mode;
     this.contrato = data.contrato || this.getNewContrato();
+
+    // Cargar usuarios seleccionados si es modo editar
+    this.administradoresSeleccionados = this.contrato.administradores_contrato || [];
+    this.supervisoresSeleccionados = this.contrato.supervisores_ehs || [];
   }
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    // Filtrar usuarios por grupo
+    this.administradoresDisponibles = this.usuariosKallpa.filter(u => u.grupo_id === 1); // Administradores de Contrato
+    this.supervisoresDisponibles = this.usuariosKallpa.filter(u => u.grupo_id === 2); // Supervisores EHS
+  }
 
   getNewContrato(): Contrato {
     return {
@@ -56,6 +77,8 @@ export class ContratoDialogComponent implements OnInit {
       fecha_fin: '',
       nivel_riesgo: 'MEDIO',
       admin_contrato_kallpa: '',
+      administradores_contrato: [],
+      supervisores_ehs: [],
       monto_total: 0,
       estado: 'VIGENTE',
       estado_acreditacion: 'PENDIENTE',
@@ -73,6 +96,31 @@ export class ContratoDialogComponent implements OnInit {
     }
   }
 
+  agregarAdministrador(usuarioId: number): void {
+    if (!this.administradoresSeleccionados.includes(usuarioId)) {
+      this.administradoresSeleccionados.push(usuarioId);
+    }
+  }
+
+  eliminarAdministrador(usuarioId: number): void {
+    this.administradoresSeleccionados = this.administradoresSeleccionados.filter(id => id !== usuarioId);
+  }
+
+  agregarSupervisor(usuarioId: number): void {
+    if (!this.supervisoresSeleccionados.includes(usuarioId)) {
+      this.supervisoresSeleccionados.push(usuarioId);
+    }
+  }
+
+  eliminarSupervisor(usuarioId: number): void {
+    this.supervisoresSeleccionados = this.supervisoresSeleccionados.filter(id => id !== usuarioId);
+  }
+
+  getUsuarioNombre(usuarioId: number): string {
+    const usuario = this.usuariosKallpa.find(u => u.usuario_id === usuarioId);
+    return usuario ? `${usuario.nombres} ${usuario.apellidos}` : '';
+  }
+
   guardar(): void {
     // Validaciones básicas
     if (!this.contrato.numero_contrato || !this.contrato.descripcion) {
@@ -84,6 +132,10 @@ export class ContratoDialogComponent implements OnInit {
       alert('Por favor seleccione una empresa');
       return;
     }
+
+    // Asignar usuarios seleccionados
+    this.contrato.administradores_contrato = [...this.administradoresSeleccionados];
+    this.contrato.supervisores_ehs = [...this.supervisoresSeleccionados];
 
     // Generar QR code
     if (!this.contrato.qr_code) {

@@ -1,0 +1,277 @@
+.empresa-materiales-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+
+  .page-header {
+    background: white;
+    padding: 24px 32px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .btn-volver {
+      color: #666;
+    }
+
+    .header-content {
+      flex: 1;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      .header-info {
+        h1 {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          margin: 0 0 8px 0;
+          font-size: 28px;
+          font-weight: 600;
+          color: #333;
+
+          mat-icon {
+            font-size: 32px;
+            width: 32px;
+            height: 32px;
+            color: #f57c00;
+          }
+        }
+
+        p {
+          margin: 0;
+          color: #666;
+          font-size: 14px;
+        }
+      }
+
+      .header-stats {
+        display: flex;
+        gap: 16px;
+
+        .stat-card {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 20px;
+          border-radius: 8px;
+          min-width: 140px;
+
+          &.vigente {
+            background-color: #e8f5e9;
+
+            mat-icon {
+              color: #4caf50;
+              font-size: 32px;
+              width: 32px;
+              height: 32px;
+            }
+          }
+
+          &.por-vencer {
+            background-color: #fff8e1;
+
+            mat-icon {
+              color: #ff9800;
+              font-size: 32px;
+              width: 32px;
+              height: 32px;
+            }
+          }
+
+          &.vencido {
+            background-color: #ffebee;
+
+            mat-icon {
+              color: #f44336;
+              font-size: 32px;
+              width: 32px;
+              height: 32px;
+            }
+          }
+
+          .stat-info {
+            display: flex;
+            flex-direction: column;
+
+            .stat-value {
+              font-size: 24px;
+              font-weight: 700;
+              color: #333;
+              line-height: 1;
+            }
+
+            .stat-label {
+              font-size: 12px;
+              color: #666;
+              margin-top: 4px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .content {
+    padding: 24px 32px;
+
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+
+      h2 {
+        margin: 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      button {
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      .materiales-table {
+        width: 100%;
+
+        th {
+          background-color: #f5f5f5;
+          font-weight: 600;
+          color: #333;
+          padding: 16px;
+        }
+
+        td {
+          padding: 16px;
+          border-bottom: 1px solid #eee;
+        }
+
+        tr:hover {
+          background-color: #f9f9f9;
+        }
+
+        .custom-chip {
+          display: inline-block;
+          padding: 6px 12px;
+          border-radius: 12px;
+          font-size: 12px;
+          font-weight: 600;
+          color: white;
+        }
+
+        .docs-status {
+          display: flex;
+          gap: 12px;
+          align-items: center;
+
+          .doc-vigente {
+            color: #4caf50;
+            font-weight: 600;
+          }
+
+          .doc-vencido {
+            color: #f44336;
+            font-weight: 600;
+          }
+        }
+
+        .actions {
+          display: flex;
+          gap: 4px;
+        }
+      }
+    }
+
+    .empty-state {
+      background: white;
+      border-radius: 8px;
+      padding: 80px 40px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      mat-icon {
+        font-size: 64px;
+        width: 64px;
+        height: 64px;
+        color: #f57c00;
+        opacity: 0.5;
+      }
+
+      h3 {
+        margin: 16px 0 8px 0;
+        font-size: 20px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      p {
+        margin: 0 0 24px 0;
+        color: #666;
+        font-size: 14px;
+      }
+
+      button {
+        mat-icon {
+          margin-right: 8px;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .empresa-materiales-page {
+    .page-header {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
+
+        .header-stats {
+          width: 100%;
+          flex-wrap: wrap;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .empresa-materiales-page {
+    .page-header {
+      padding: 16px;
+
+      .header-stats {
+        flex-direction: column;
+
+        .stat-card {
+          width: 100%;
+        }
+      }
+    }
+
+    .content {
+      padding: 16px;
+
+      .content-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+
+        button {
+          width: 100%;
+        }
+      }
+    }
+  }
+}

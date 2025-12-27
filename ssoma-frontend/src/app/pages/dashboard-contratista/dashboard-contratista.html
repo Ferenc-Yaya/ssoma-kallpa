@@ -1,0 +1,243 @@
+<div class="dashboard-contratista">
+  <!-- Fila 1: 4 Tarjetas KPI -->
+  <div class="kpi-cards">
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container accent">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <h2 class="kpi-number">{{ stats.totalPersonal }}</h2>
+            <p class="kpi-label">Personal Registrado</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container tools">
+            <mat-icon>build</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <h2 class="kpi-number">{{ stats.totalActivos }}</h2>
+            <p class="kpi-label">Total Activos</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container warn">
+            <mat-icon>warning</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <h2 class="kpi-number">{{ stats.materialesPeligrosos }}</h2>
+            <p class="kpi-label">Materiales Peligrosos</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="kpi-card">
+      <mat-card-content>
+        <div class="kpi-layout">
+          <div class="kpi-icon-container success">
+            <mat-icon>assignment</mat-icon>
+          </div>
+          <div class="kpi-content">
+            <h2 class="kpi-number">{{ stats.contratosVigentes }}</h2>
+            <p class="kpi-label">Contratos Vigentes</p>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Nuevos Contratos - Requieren Acción -->
+  <mat-card class="contratos-nuevos-card" *ngIf="stats.contratosNuevos.length > 0">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon class="icon-alert">notification_important</mat-icon>
+        Nuevos Contratos - Requieren Acción
+        <span class="badge-count">{{ stats.contratosNuevos.length }}</span>
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="contratos-nuevos-list">
+        <div class="contrato-nuevo-item" *ngFor="let contrato of stats.contratosNuevos">
+          <div class="contrato-nuevo-header">
+            <div class="contrato-nuevo-badge"
+              [class.riesgo-alto]="contrato.nivel_riesgo === 'ALTO'"
+              [class.riesgo-medio]="contrato.nivel_riesgo === 'MEDIO'"
+              [class.riesgo-bajo]="contrato.nivel_riesgo === 'BAJO'">
+              <mat-icon>new_releases</mat-icon>
+              <span>NUEVO</span>
+            </div>
+            <span class="fecha-creacion">Creado: {{ contrato.fecha_creacion }}</span>
+          </div>
+
+          <div class="contrato-nuevo-info">
+            <h3 class="contrato-numero">{{ contrato.numero_contrato }}</h3>
+            <p class="contrato-descripcion">{{ contrato.descripcion }}</p>
+
+            <div class="contrato-detalles">
+              <div class="detalle-item">
+                <mat-icon>calendar_today</mat-icon>
+                <span><strong>Vigencia:</strong> {{ contrato.fecha_inicio }} - {{ contrato.fecha_fin }}</span>
+              </div>
+              <div class="detalle-item">
+                <mat-icon>attach_money</mat-icon>
+                <span><strong>Monto Estimado:</strong> S/ {{ contrato.monto_estimado | number:'1.2-2' }}</span>
+              </div>
+              <div class="detalle-item">
+                <mat-icon
+                  [class.riesgo-icon-alto]="contrato.nivel_riesgo === 'ALTO'"
+                  [class.riesgo-icon-medio]="contrato.nivel_riesgo === 'MEDIO'"
+                  [class.riesgo-icon-bajo]="contrato.nivel_riesgo === 'BAJO'">
+                  {{ contrato.nivel_riesgo === 'ALTO' ? 'report_problem' : contrato.nivel_riesgo === 'MEDIO' ? 'warning' : 'check_circle' }}
+                </mat-icon>
+                <span><strong>Nivel de Riesgo:</strong> {{ contrato.nivel_riesgo }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="contrato-requisitos">
+            <h4 class="requisitos-title">Requisitos para Vincular:</h4>
+            <div class="requisitos-grid">
+              <div class="requisito-item" [class.requerido]="contrato.requiere_personal">
+                <mat-icon [class.icon-required]="contrato.requiere_personal">people</mat-icon>
+                <span>Personal</span>
+                <mat-icon class="check-icon" *ngIf="contrato.requiere_personal">arrow_forward</mat-icon>
+              </div>
+              <div class="requisito-item" [class.requerido]="contrato.requiere_activos">
+                <mat-icon [class.icon-required]="contrato.requiere_activos">build</mat-icon>
+                <span>Activos</span>
+                <mat-icon class="check-icon" *ngIf="contrato.requiere_activos">arrow_forward</mat-icon>
+              </div>
+              <div class="requisito-item" [class.requerido]="contrato.requiere_materiales_peligrosos">
+                <mat-icon [class.icon-required]="contrato.requiere_materiales_peligrosos">warning</mat-icon>
+                <span>Mat. Peligrosos</span>
+                <mat-icon class="check-icon" *ngIf="contrato.requiere_materiales_peligrosos">arrow_forward</mat-icon>
+              </div>
+            </div>
+
+            <div class="documentos-requeridos">
+              <h5 class="docs-title">Documentos Requeridos:</h5>
+              <ul class="docs-list">
+                <li *ngFor="let doc of contrato.documentos_requeridos">
+                  <mat-icon>description</mat-icon>
+                  <span>{{ doc }}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="contrato-acciones">
+            <button mat-raised-button color="primary" class="btn-iniciar">
+              <mat-icon>play_arrow</mat-icon>
+              Iniciar Vinculación
+            </button>
+            <button mat-button class="btn-detalles">
+              Ver Detalles Completos
+            </button>
+          </div>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Detalle de Contratos -->
+  <mat-card class="contratos-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>folder_shared</mat-icon>
+        Mis Contratos
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="tabla-contratos-wrapper">
+        <table mat-table [dataSource]="stats.contratos" class="contratos-table">
+
+          <ng-container matColumnDef="contrato">
+            <th mat-header-cell *matHeaderCellDef>N° Contrato</th>
+            <td mat-cell *matCellDef="let item">
+              <strong>{{ item.numero_contrato }}</strong>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="descripcion">
+            <th mat-header-cell *matHeaderCellDef>Descripción</th>
+            <td mat-cell *matCellDef="let item">{{ item.descripcion }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="fechas">
+            <th mat-header-cell *matHeaderCellDef>Vigencia</th>
+            <td mat-cell *matCellDef="let item">
+              <div class="fechas-container">
+                <div class="fecha-item">
+                  <mat-icon class="fecha-icon">event</mat-icon>
+                  <span>{{ item.fecha_inicio }}</span>
+                </div>
+                <div class="fecha-separator">-</div>
+                <div class="fecha-item">
+                  <mat-icon class="fecha-icon">event</mat-icon>
+                  <span>{{ item.fecha_fin }}</span>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="personal">
+            <th mat-header-cell *matHeaderCellDef>Personal</th>
+            <td mat-cell *matCellDef="let item">{{ item.personal_asignado }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="activos">
+            <th mat-header-cell *matHeaderCellDef>Activos</th>
+            <td mat-cell *matCellDef="let item">{{ item.activos_asignados }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="materiales">
+            <th mat-header-cell *matHeaderCellDef>Mat. Pel.</th>
+            <td mat-cell *matCellDef="let item">{{ item.materiales_peligrosos }}</td>
+          </ng-container>
+
+          <ng-container matColumnDef="estado">
+            <th mat-header-cell *matHeaderCellDef>Estado</th>
+            <td mat-cell *matCellDef="let item">
+              <span
+                class="estado-badge"
+                [class.estado-apto]="item.estado_acreditacion === 'APTO'"
+                [class.estado-observado]="item.estado_acreditacion === 'OBSERVADO'"
+                [class.estado-pendiente]="item.estado_acreditacion === 'PENDIENTE'">
+                {{ item.estado_acreditacion }}
+              </span>
+            </td>
+          </ng-container>
+
+          <ng-container matColumnDef="progreso">
+            <th mat-header-cell *matHeaderCellDef>Progreso Documentos</th>
+            <td mat-cell *matCellDef="let item">
+              <div class="progreso-container">
+                <mat-progress-bar
+                  mode="determinate"
+                  [value]="item.progreso_documentos"
+                  [color]="getProgresoColor(item.progreso_documentos)">
+                </mat-progress-bar>
+                <span class="progreso-text">{{ item.progreso_documentos }}%</span>
+              </div>
+            </td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+        </table>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -43,7 +43,7 @@ export class EmpresaPersonalComponent implements OnInit {
   personas: Persona[] = [];
   personasFiltradas: Persona[] = [];
   searchTerm: string = '';
-  displayedColumns: string[] = ['foto', 'nombres', 'documento', 'cargo', 'estado_acreditacion', 'acciones'];
+  displayedColumns: string[] = ['foto', 'nombres', 'documento', 'cargo', 'estado', 'acciones'];
 
   constructor(
     private route: ActivatedRoute,
@@ -167,9 +167,7 @@ export class EmpresaPersonalComponent implements OnInit {
   }
 
   verDocumentos(persona: Persona): void {
-    this.router.navigate(['/acreditacion'], { 
-      queryParams: { persona: persona.persona_id } 
-    });
+    this.router.navigate(['/empresas', this.empresa!.id, 'personal', persona.persona_id, 'documentos']);
   }
 
   deletePersona(persona: Persona): void {

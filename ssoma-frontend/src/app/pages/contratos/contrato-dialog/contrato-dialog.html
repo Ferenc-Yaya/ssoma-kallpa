@@ -50,23 +50,79 @@
       </div>
     </div>
 
-    <!-- Fila 5: Nivel de Riesgo y Administrador -->
-    <div class="form-row">
-      <div class="form-group">
-        <label>Nivel de Riesgo</label>
-        <select [(ngModel)]="contrato.nivel_riesgo" class="form-input">
-          <option value="BAJO">BAJO</option>
-          <option value="MEDIO">MEDIO</option>
-          <option value="ALTO">ALTO</option>
-        </select>
+    <!-- Fila 5: Nivel de Riesgo -->
+    <div class="form-group">
+      <label>Nivel de Riesgo</label>
+      <select [(ngModel)]="contrato.nivel_riesgo" class="form-input">
+        <option value="BAJO">BAJO</option>
+        <option value="MEDIO">MEDIO</option>
+        <option value="ALTO">ALTO</option>
+      </select>
+    </div>
+
+    <!-- SECCIÓN: Administradores de Contrato -->
+    <div class="section">
+      <div class="section-header">
+        <h3 class="section-title">Administradores de Contrato</h3>
       </div>
 
       <div class="form-group">
-        <label>Administrador del Contrato</label>
-        <input type="text"
-               [(ngModel)]="contrato.admin_contrato_kallpa"
-               placeholder="Ing. Juan Pérez"
-               class="form-input">
+        <label>Seleccionar Administrador</label>
+        <select (change)="agregarAdministrador(+$any($event.target).value); $any($event.target).value='0'" class="form-input">
+          <option value="0">-- Seleccionar administrador --</option>
+          <option *ngFor="let admin of administradoresDisponibles"
+                  [value]="admin.usuario_id"
+                  [disabled]="administradoresSeleccionados.includes(admin.usuario_id)">
+            {{ admin.nombres }} {{ admin.apellidos }} - {{ admin.cargo }}
+          </option>
+        </select>
+      </div>
+
+      <div class="usuarios-seleccionados" *ngIf="administradoresSeleccionados.length > 0">
+        <div class="usuario-chip" *ngFor="let adminId of administradoresSeleccionados">
+          <span>{{ getUsuarioNombre(adminId) }}</span>
+          <button mat-icon-button (click)="eliminarAdministrador(adminId)" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="administradoresSeleccionados.length === 0">
+        <mat-icon>person_add</mat-icon>
+        <p>No hay administradores asignados</p>
+      </div>
+    </div>
+
+    <!-- SECCIÓN: Supervisores EHS -->
+    <div class="section">
+      <div class="section-header">
+        <h3 class="section-title">Supervisores EHS</h3>
+      </div>
+
+      <div class="form-group">
+        <label>Seleccionar Supervisor EHS</label>
+        <select (change)="agregarSupervisor(+$any($event.target).value); $any($event.target).value='0'" class="form-input">
+          <option value="0">-- Seleccionar supervisor EHS --</option>
+          <option *ngFor="let supervisor of supervisoresDisponibles"
+                  [value]="supervisor.usuario_id"
+                  [disabled]="supervisoresSeleccionados.includes(supervisor.usuario_id)">
+            {{ supervisor.nombres }} {{ supervisor.apellidos }} - {{ supervisor.cargo }}
+          </option>
+        </select>
+      </div>
+
+      <div class="usuarios-seleccionados" *ngIf="supervisoresSeleccionados.length > 0">
+        <div class="usuario-chip" *ngFor="let supervisorId of supervisoresSeleccionados">
+          <span>{{ getUsuarioNombre(supervisorId) }}</span>
+          <button mat-icon-button (click)="eliminarSupervisor(supervisorId)" type="button">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+      </div>
+
+      <div class="empty-state" *ngIf="supervisoresSeleccionados.length === 0">
+        <mat-icon>person_add</mat-icon>
+        <p>No hay supervisores EHS asignados</p>
       </div>
     </div>
 

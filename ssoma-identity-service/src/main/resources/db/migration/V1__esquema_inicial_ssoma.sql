@@ -15,9 +15,11 @@ CREATE TABLE IF NOT EXISTS tbl_tenants (
     config JSONB
 );
 
--- Insertar tenant por defecto
+-- Insertar tenants por defecto
 INSERT INTO tbl_tenants (tenant_id, nombre_empresa, plan, activo)
-VALUES ('KALLPA', 'Kallpa SAC', 'ENTERPRISE', TRUE)
+VALUES
+    ('SYSTEM', 'Sistema Central', 'ENTERPRISE', TRUE),
+    ('KALLPA', 'Kallpa SAC', 'ENTERPRISE', TRUE)
 ON CONFLICT (tenant_id) DO NOTHING;
 
 -- ---------------------------------------------------------------------------
@@ -31,6 +33,15 @@ CREATE TABLE IF NOT EXISTS cat_tipos_contratista (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (tenant_id) REFERENCES tbl_tenants(tenant_id)
 );
+
+-- Insertar tipos de contratista por defecto
+INSERT INTO cat_tipos_contratista (tenant_id, nombre, descripcion)
+VALUES
+    ('KALLPA', 'HOST', 'Empresa principal dueña del sistema'),
+    ('KALLPA', 'permanentes', 'Contratistas permanentes con contrato vigente de largo plazo'),
+    ('KALLPA', 'eventuales', 'Contratistas eventuales o temporales para proyectos específicos'),
+    ('KALLPA', 'visitas', 'Visitantes o personal externo temporal sin contrato formal')
+ON CONFLICT DO NOTHING;
 
 CREATE TABLE IF NOT EXISTS tbl_empresas (
     empresa_id SERIAL PRIMARY KEY,
