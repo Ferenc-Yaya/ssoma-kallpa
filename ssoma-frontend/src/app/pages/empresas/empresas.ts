@@ -1,7 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, ActivatedRoute } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
@@ -35,23 +35,41 @@ export class EmpresasComponent implements OnInit {
   searchTerm: string = '';
   displayedColumns: string[] = ['id', 'razonSocial', 'ruc', 'tipo', 'estado', 'acciones'];
 
+  // Filtro por tenant (para vista de contratistas de una empresa principal)
+  tenantFilter: string | null = null;
+  empresaPrincipalNombre: string = '';
+
   constructor(
     private empresasService: EmpresasService,
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private router: Router,
+    private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
-    this.loadEmpresas();
+    // Verificar si hay filtro por tenant en query params
+    this.route.queryParams.subscribe(params => {
+      this.tenantFilter = params['tenant'] || null;
+      if (this.tenantFilter) {
+        // Si hay tenant, estamos viendo contratistas de una empresa principal específica
+        this.empresaPrincipalNombre = this.tenantFilter;
+      }
+      this.loadEmpresas();
+    });
   }
 
   loadEmpresas(): void {
     this.empresasService.getEmpresas().subscribe({
       next: (data: Empresa[]) => {
-        this.empresas = data;
-        this.empresasFiltradas = data;
+        // Si hay filtro por tenant, mostrar solo contratistas de ese tenant
+        if (this.tenantFilter) {
+          this.empresas = data.filter(e => e.tenant_id === this.tenantFilter);
+        } else {
+          this.empresas = data;
+        }
+        this.empresasFiltradas = this.empresas;
         this.cdr.detectChanges();
       },
       error: (error: any) => {
@@ -152,6 +170,43 @@ export class EmpresasComponent implements OnInit {
     this.router.navigate(['/empresas', empresa.id, 'personal']);
   }
 
+  // Método para obtener el título de la página
+  getPageTitle(): string {
+    if (this.tenantFilter) {
+      return `Contratistas de ${this.empresaPrincipalNombre}`;
+    }
+    return 'Gestión de Empresas';
+  }
+
+  // Método para obtener el texto del botón nuevo
+  getNewButtonText(): string {
+    if (this.tenantFilter) {
+      return 'Nuevo Contratista';
+    }
+    return 'Nueva Empresa';
+  }
+
+  // Método para obtener el placeholder de búsqueda
+  getSearchPlaceholder(): string {
+    if (this.tenantFilter) {
+      return 'Buscar contratista por razón social o RUC...';
+    }
+    return 'Razón social o RUC...';
+  }
+
+  // Método para obtener el mensaje de no resultados
+  getNoResultsMessage(): string {
+    if (this.tenantFilter) {
+      return 'No se encontraron contratistas';
+    }
+    return 'No se encontraron empresas';
+  }
+
+  // Método para volver a empresas principales
+  volverAEmpresasPrincipales(): void {
+    this.router.navigate(['/empresa-principal']);
+  }
+
   private showMessage(message: string, type: 'success' | 'error' = 'success'): void {
     this.snackBar.open(message, 'Cerrar', {
       duration: 3000,
@@ -160,7 +215,7 @@ export class EmpresasComponent implements OnInit {
       verticalPosition: 'bottom'
     });
   }
-  
+
   verActivos(empresa: Empresa): void {
     this.router.navigate(['/empresas', empresa.id, 'activos']);
   }

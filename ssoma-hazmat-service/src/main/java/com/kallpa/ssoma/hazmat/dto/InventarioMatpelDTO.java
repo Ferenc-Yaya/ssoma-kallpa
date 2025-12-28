@@ -8,16 +8,17 @@ import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 public class InventarioMatpelDTO {
-    private Long inventarioId;
+    private UUID inventarioId;
     private String tenantId;
-    private Long empresaId;
-    private Long sustanciaId;
+    private UUID empresaId;
+    private UUID sustanciaId;
     private String sustanciaNombre;
     private String codigoUn;
     private String clasePeligro;

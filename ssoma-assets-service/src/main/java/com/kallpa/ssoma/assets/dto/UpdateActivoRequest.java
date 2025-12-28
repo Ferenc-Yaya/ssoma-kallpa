@@ -3,10 +3,12 @@ package com.kallpa.ssoma.assets.dto;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class UpdateActivoRequest {
 
-    private Long empresaId;
+    private UUID empresaId;
 
     @Size(max = 50, message = "El tipo de activo no puede exceder 50 caracteres")
     private String tipoActivo;

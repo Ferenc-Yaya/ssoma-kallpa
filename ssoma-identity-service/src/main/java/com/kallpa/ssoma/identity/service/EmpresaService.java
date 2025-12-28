@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,7 +34,7 @@ public class EmpresaService {
     }
 
     @Transactional(readOnly = true)
-    public EmpresaDTO findById(Long id) {
+    public EmpresaDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando empresa {} para tenant: {}", id, tenantId);
         Empresa empresa = empresaRepository.findByTenantIdAndEmpresaIdWithTipo(tenantId, id)
@@ -55,11 +56,12 @@ public class EmpresaService {
         empresa.setTenantId(tenantId);
         empresa.setRuc(request.getRuc());
         empresa.setRazonSocial(request.getRazonSocial());
-        empresa.setTipoContratistaId(request.getTipoContratistaId());
+        empresa.setTipoId(request.getTipoId());
         empresa.setDireccion(request.getDireccion());
         empresa.setTelefono(request.getTelefono());
         empresa.setEmail(request.getEmail());
-        empresa.setEstado(request.getEstado() != null ? request.getEstado() : "ACTIVO");
+        empresa.setEstadoHabilitacion(request.getEstadoHabilitacion() != null ? request.getEstadoHabilitacion() : "PENDIENTE");
+        empresa.setActivo(request.getActivo() != null ? request.getActivo() : true);
 
         // Agregar contactos si existen
         if (request.getContactos() != null) {
@@ -81,7 +83,7 @@ public class EmpresaService {
     }
 
     @Transactional
-    public EmpresaDTO update(Long id, UpdateEmpresaRequest request) {
+    public EmpresaDTO update(UUID id, UpdateEmpresaRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando empresa {} para tenant: {}", id, tenantId);
 
@@ -91,8 +93,8 @@ public class EmpresaService {
         if (request.getRazonSocial() != null) {
             empresa.setRazonSocial(request.getRazonSocial());
         }
-        if (request.getTipoContratistaId() != null) {
-            empresa.setTipoContratistaId(request.getTipoContratistaId());
+        if (request.getTipoId() != null) {
+            empresa.setTipoId(request.getTipoId());
         }
         if (request.getDireccion() != null) {
             empresa.setDireccion(request.getDireccion());
@@ -103,8 +105,11 @@ public class EmpresaService {
         if (request.getEmail() != null) {
             empresa.setEmail(request.getEmail());
         }
-        if (request.getEstado() != null) {
-            empresa.setEstado(request.getEstado());
+        if (request.getEstadoHabilitacion() != null) {
+            empresa.setEstadoHabilitacion(request.getEstadoHabilitacion());
+        }
+        if (request.getActivo() != null) {
+            empresa.setActivo(request.getActivo());
         }
 
         // Actualizar contactos si se proporcionan
@@ -128,7 +133,7 @@ public class EmpresaService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando empresa {} para tenant: {}", id, tenantId);
 
@@ -154,11 +159,11 @@ public class EmpresaService {
         dto.setTenantId(empresa.getTenantId());
         dto.setRuc(empresa.getRuc());
         dto.setRazonSocial(empresa.getRazonSocial());
-        dto.setTipoContratistaId(empresa.getTipoContratistaId());
+        dto.setTipoId(empresa.getTipoId());
 
-        log.debug("Empresa {} - tipoContratistaId: {}, tipoContratista: {}",
+        log.debug("Empresa {} - tipoId: {}, tipoContratista: {}",
             empresa.getEmpresaId(),
-            empresa.getTipoContratistaId(),
+            empresa.getTipoId(),
             empresa.getTipoContratista());
 
         if (empresa.getTipoContratista() != null) {
@@ -170,7 +175,8 @@ public class EmpresaService {
         dto.setDireccion(empresa.getDireccion());
         dto.setTelefono(empresa.getTelefono());
         dto.setEmail(empresa.getEmail());
-        dto.setEstado(empresa.getEstado());
+        dto.setEstadoHabilitacion(empresa.getEstadoHabilitacion());
+        dto.setActivo(empresa.getActivo());
         dto.setCreatedAt(empresa.getCreatedAt());
 
         if (empresa.getContactos() != null && !empresa.getContactos().isEmpty()) {

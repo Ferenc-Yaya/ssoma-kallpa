@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class DocumentoService {
     }
 
     @Transactional(readOnly = true)
-    public DocumentoDTO findById(Long id) {
+    public DocumentoDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando documento {} para tenant: {}", id, tenantId);
         Documento documento = documentoRepository.findByTenantIdAndDocumentoIdWithRequerible(tenantId, id)
@@ -64,7 +65,7 @@ public class DocumentoService {
     }
 
     @Transactional
-    public DocumentoDTO update(Long id, UpdateDocumentoRequest request) {
+    public DocumentoDTO update(UUID id, UpdateDocumentoRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando documento {} para tenant: {}", id, tenantId);
 
@@ -96,7 +97,7 @@ public class DocumentoService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando documento {} para tenant: {}", id, tenantId);
 
@@ -117,7 +118,7 @@ public class DocumentoService {
     }
 
     @Transactional(readOnly = true)
-    public List<DocumentoDTO> findByEntidad(String entidadTipo, Long entidadId) {
+    public List<DocumentoDTO> findByEntidad(String entidadTipo, UUID entidadId) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando documentos de {} {} para tenant: {}", entidadTipo, entidadId, tenantId);
         return documentoRepository.findByTenantIdAndEntidadTipoAndEntidadId(tenantId, entidadTipo, entidadId).stream()

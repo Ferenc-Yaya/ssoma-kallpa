@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -31,7 +32,7 @@ public class SustanciaPeligrosaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SustanciaPeligrosaDTO> getSustanciaById(@PathVariable Long id) {
+    public ResponseEntity<SustanciaPeligrosaDTO> getSustanciaById(@PathVariable UUID id) {
         log.info("GET /api/sustancias-peligrosas/{} - Obteniendo sustancia por ID", id);
         SustanciaPeligrosaDTO sustancia = sustanciaService.findById(id);
         return ResponseEntity.ok(sustancia);
@@ -46,7 +47,7 @@ public class SustanciaPeligrosaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<SustanciaPeligrosaDTO> updateSustancia(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateSustanciaRequest request) {
         log.info("PUT /api/sustancias-peligrosas/{} - Actualizando sustancia", id);
         SustanciaPeligrosaDTO sustancia = sustanciaService.update(id, request);
@@ -54,7 +55,7 @@ public class SustanciaPeligrosaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteSustancia(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSustancia(@PathVariable UUID id) {
         log.info("DELETE /api/sustancias-peligrosas/{} - Eliminando sustancia", id);
         sustanciaService.delete(id);
         return ResponseEntity.noContent().build();

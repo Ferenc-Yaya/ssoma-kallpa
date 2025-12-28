@@ -1,0 +1,110 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEdit ? 'edit' : 'add_circle' }}</mat-icon>
+  {{ isEdit ? 'Editar Rol' : 'Nuevo Rol' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="rolForm" class="rol-form">
+
+    <!-- Código -->
+    <div class="form-field">
+      <label>
+        Código del Rol *
+        <span class="hint-inline" *ngIf="!isEdit">(no se puede cambiar después)</span>
+      </label>
+      <input type="text"
+             formControlName="codigo"
+             placeholder="Ej: ADMIN_OPERACIONES"
+             maxlength="50">
+      <small class="hint" *ngIf="!isEdit">Solo letras mayúsculas y guiones bajos. Ej: ADMIN_OPERACIONES</small>
+      <small class="error" *ngIf="rolForm.get('codigo')?.invalid && rolForm.get('codigo')?.touched">
+        {{ getErrorMessage('codigo') }}
+      </small>
+    </div>
+
+    <!-- Nombre -->
+    <div class="form-field">
+      <label>Nombre del Rol *</label>
+      <input type="text"
+             formControlName="nombre"
+             placeholder="Nombre descriptivo del rol"
+             maxlength="100">
+      <small class="error" *ngIf="rolForm.get('nombre')?.invalid && rolForm.get('nombre')?.touched">
+        {{ getErrorMessage('nombre') }}
+      </small>
+    </div>
+
+    <!-- Descripción -->
+    <div class="form-field">
+      <label>Descripción *</label>
+      <textarea formControlName="descripcion"
+                rows="3"
+                placeholder="Describe las responsabilidades y alcance de este rol"
+                maxlength="500"></textarea>
+      <small class="hint">{{ rolForm.get('descripcion')?.value?.length || 0 }}/500 caracteres</small>
+      <small class="error" *ngIf="rolForm.get('descripcion')?.invalid && rolForm.get('descripcion')?.touched">
+        {{ getErrorMessage('descripcion') }}
+      </small>
+    </div>
+
+    <!-- Nivel de Jerarquía -->
+    <div class="form-field">
+      <label>Nivel de Jerarquía *</label>
+      <select formControlName="nivelJerarquia">
+        <option value="" disabled>Seleccionar nivel...</option>
+        <option *ngFor="let nivel of nivelesJerarquia" [value]="nivel.value">
+          {{ nivel.label }}
+        </option>
+      </select>
+      <small class="hint" *ngIf="rolForm.get('nivelJerarquia')?.value">
+        <mat-icon>info</mat-icon>
+        {{ getNivelDescription(rolForm.get('nivelJerarquia')?.value) }}
+      </small>
+      <small class="error" *ngIf="rolForm.get('nivelJerarquia')?.invalid && rolForm.get('nivelJerarquia')?.touched">
+        {{ getErrorMessage('nivelJerarquia') }}
+      </small>
+    </div>
+
+    <!-- Requiere Tenant -->
+    <div class="checkbox-field">
+      <label class="checkbox-container">
+        <input type="checkbox" formControlName="requiereTenant">
+        <span class="checkbox-label">
+          <mat-icon>{{ rolForm.get('requiereTenant')?.value ? 'business' : 'public' }}</mat-icon>
+          Requiere asignación a una empresa
+        </span>
+      </label>
+      <small class="hint">
+        Si está activado, los usuarios con este rol deben estar asociados a una empresa específica.
+        Los roles de nivel 1 (Sistema) generalmente no requieren empresa.
+      </small>
+    </div>
+
+    <!-- Estado Activo -->
+    <div class="checkbox-field">
+      <label class="checkbox-container">
+        <input type="checkbox" formControlName="activo">
+        <span class="checkbox-label">
+          <mat-icon>{{ rolForm.get('activo')?.value ? 'check_circle' : 'block' }}</mat-icon>
+          Rol activo
+        </span>
+      </label>
+      <small class="hint">Los roles inactivos no pueden ser asignados a nuevos usuarios</small>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button mat-raised-button
+          color="primary"
+          (click)="onSubmit()"
+          [disabled]="rolForm.invalid">
+    <mat-icon>{{ isEdit ? 'save' : 'add_circle' }}</mat-icon>
+    {{ isEdit ? 'Guardar Cambios' : 'Crear Rol' }}
+  </button>
+</mat-dialog-actions>

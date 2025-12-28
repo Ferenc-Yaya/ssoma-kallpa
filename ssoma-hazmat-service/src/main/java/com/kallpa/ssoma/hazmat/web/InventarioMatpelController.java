@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -31,14 +32,14 @@ public class InventarioMatpelController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<InventarioMatpelDTO> getInventarioById(@PathVariable Long id) {
+    public ResponseEntity<InventarioMatpelDTO> getInventarioById(@PathVariable UUID id) {
         log.info("GET /api/inventario-matpel/{} - Obteniendo inventario por ID", id);
         InventarioMatpelDTO inventario = inventarioService.findById(id);
         return ResponseEntity.ok(inventario);
     }
 
     @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<List<InventarioMatpelDTO>> getInventariosByEmpresa(@PathVariable Long empresaId) {
+    public ResponseEntity<List<InventarioMatpelDTO>> getInventariosByEmpresa(@PathVariable UUID empresaId) {
         log.info("GET /api/inventario-matpel/empresa/{} - Obteniendo inventario por empresa", empresaId);
         List<InventarioMatpelDTO> inventarios = inventarioService.findByEmpresaId(empresaId);
         log.info("Inventarios encontrados: {}", inventarios.size());
@@ -54,7 +55,7 @@ public class InventarioMatpelController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InventarioMatpelDTO> updateInventario(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateInventarioRequest request) {
         log.info("PUT /api/inventario-matpel/{} - Actualizando inventario", id);
         InventarioMatpelDTO inventario = inventarioService.update(id, request);
@@ -62,7 +63,7 @@ public class InventarioMatpelController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInventario(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteInventario(@PathVariable UUID id) {
         log.info("DELETE /api/inventario-matpel/{} - Eliminando inventario", id);
         inventarioService.delete(id);
         return ResponseEntity.noContent().build();

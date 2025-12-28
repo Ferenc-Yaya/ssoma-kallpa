@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @Entity
@@ -14,15 +15,18 @@ import java.time.LocalDateTime;
 public class Usuario extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "usuario_id")
-    private Long usuarioId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "usuario_id", columnDefinition = "UUID")
+    private UUID usuarioId;
 
     @Column(name = "username", nullable = false, unique = true)
     private String username;
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "nombre_completo")
+    private String nombreCompleto;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;

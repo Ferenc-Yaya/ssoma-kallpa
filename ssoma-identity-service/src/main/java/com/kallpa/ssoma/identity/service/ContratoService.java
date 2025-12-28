@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class ContratoService {
     }
 
     @Transactional(readOnly = true)
-    public ContratoDTO findById(Long id) {
+    public ContratoDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando contrato {} para tenant: {}", id, tenantId);
         Contrato contrato = contratoRepository.findByTenantIdAndContratoIdWithEmpresa(tenantId, id)
@@ -69,7 +70,7 @@ public class ContratoService {
     }
 
     @Transactional
-    public ContratoDTO update(Long id, UpdateContratoRequest request) {
+    public ContratoDTO update(UUID id, UpdateContratoRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando contrato {} para tenant: {}", id, tenantId);
 
@@ -113,7 +114,7 @@ public class ContratoService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando contrato {} para tenant: {}", id, tenantId);
 
@@ -134,7 +135,7 @@ public class ContratoService {
     }
 
     @Transactional(readOnly = true)
-    public List<ContratoDTO> findByEmpresaId(Long empresaId) {
+    public List<ContratoDTO> findByEmpresaId(UUID empresaId) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando contratos de la empresa {} para tenant: {}", empresaId, tenantId);
         return contratoRepository.findByTenantIdAndEmpresaId(tenantId, empresaId).stream()

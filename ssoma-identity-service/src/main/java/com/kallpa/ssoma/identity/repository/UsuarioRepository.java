@@ -1,13 +1,15 @@
 package com.kallpa.ssoma.identity.repository;
 
+import com.kallpa.ssoma.identity.domain.Rol;
 import com.kallpa.ssoma.identity.domain.Usuario;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
+public interface UsuarioRepository extends JpaRepository<Usuario, UUID> {
 
     Optional<Usuario> findByUsername(String username);
 
@@ -16,4 +18,6 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     boolean existsByUsername(String username);
 
     boolean existsByEmail(String email);
+
+    long countByRol(Rol rol);
 }

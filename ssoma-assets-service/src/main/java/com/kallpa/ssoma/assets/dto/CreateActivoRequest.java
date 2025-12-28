@@ -5,11 +5,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class CreateActivoRequest {
 
     @NotNull(message = "El ID de la empresa es obligatorio")
-    private Long empresaId;
+    private UUID empresaId;
 
     @NotBlank(message = "El tipo de activo es obligatorio")
     @Size(max = 50, message = "El tipo de activo no puede exceder 50 caracteres")

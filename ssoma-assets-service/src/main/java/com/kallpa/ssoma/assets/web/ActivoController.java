@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.assets.controller;
+package com.kallpa.ssoma.assets.web;
 
 import com.kallpa.ssoma.assets.dto.ActivoDTO;
 import com.kallpa.ssoma.assets.dto.CreateActivoRequest;
@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -32,7 +33,7 @@ public class ActivoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ActivoDTO> getActivoById(@PathVariable Long id) {
+    public ResponseEntity<ActivoDTO> getActivoById(@PathVariable UUID id) {
         log.info("GET /api/activos/{} - Obteniendo activo por ID", id);
         ActivoDTO activo = activoService.findById(id);
         return ResponseEntity.ok(activo);
@@ -47,7 +48,7 @@ public class ActivoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ActivoDTO> updateActivo(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateActivoRequest request) {
         log.info("PUT /api/activos/{} - Actualizando activo", id);
         ActivoDTO activo = activoService.update(id, request);
@@ -55,7 +56,7 @@ public class ActivoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteActivo(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteActivo(@PathVariable UUID id) {
         log.info("DELETE /api/activos/{} - Eliminando activo", id);
         activoService.delete(id);
         return ResponseEntity.noContent().build();
@@ -70,7 +71,7 @@ public class ActivoController {
     }
 
     @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<List<ActivoDTO>> getActivosByEmpresa(@PathVariable Long empresaId) {
+    public ResponseEntity<List<ActivoDTO>> getActivosByEmpresa(@PathVariable UUID empresaId) {
         log.info("GET /api/activos/empresa/{} - Obteniendo activos por empresa", empresaId);
         List<ActivoDTO> activos = activoService.findByEmpresaId(empresaId);
         log.info("Activos encontrados: {}", activos.size());

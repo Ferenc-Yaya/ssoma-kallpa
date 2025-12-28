@@ -1,9 +1,17 @@
 <div class="empresas-page">
+  <!-- Botón de volver cuando se está filtrando por tenant -->
+  <div *ngIf="tenantFilter" class="back-button-container">
+    <button mat-button (click)="volverAEmpresasPrincipales()">
+      <mat-icon>arrow_back</mat-icon>
+      Volver a Empresas Principales
+    </button>
+  </div>
+
   <div class="page-header">
-    <h1>Gestión de Empresas</h1>
+    <h1>{{ getPageTitle() }}</h1>
     <button mat-raised-button color="primary" (click)="openCreateDialog()">
       <mat-icon>add</mat-icon>
-      Nueva Empresa
+      {{ getNewButtonText() }}
     </button>
   </div>
 
@@ -13,7 +21,7 @@
     <input type="text"
            [(ngModel)]="searchTerm"
            (input)="filterEmpresas()"
-           placeholder="Razón social o RUC..."
+           [placeholder]="getSearchPlaceholder()"
            class="search-input">
   </div>
 
@@ -102,7 +110,7 @@
 
     <div *ngIf="empresasFiltradas.length === 0" class="no-results">
       <mat-icon>search_off</mat-icon>
-      <p>No se encontraron empresas</p>
+      <p>{{ getNoResultsMessage() }}</p>
     </div>
   </div>
 </div>

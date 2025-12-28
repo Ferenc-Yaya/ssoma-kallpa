@@ -6,6 +6,7 @@ import lombok.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Entity
 @Table(name = "tbl_inventario_matpel")
@@ -17,15 +18,15 @@ import java.time.LocalDate;
 public class InventarioMatpel extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "inventario_id")
-    private Long inventarioId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "inventario_id", columnDefinition = "UUID")
+    private UUID inventarioId;
 
-    @Column(name = "empresa_id", nullable = false)
-    private Long empresaId;
+    @Column(name = "empresa_id", nullable = false, columnDefinition = "UUID")
+    private UUID empresaId;
 
-    @Column(name = "sustancia_id", nullable = false)
-    private Long sustanciaId;
+    @Column(name = "sustancia_id", nullable = false, columnDefinition = "UUID")
+    private UUID sustanciaId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "sustancia_id", insertable = false, updatable = false)

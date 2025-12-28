@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Repository
-public interface ReglaRepository extends JpaRepository<ReglaNegocio, Long> {
+public interface ReglaRepository extends JpaRepository<ReglaNegocio, UUID> {
 
     @Query("SELECT r FROM ReglaNegocio r WHERE r.tenantId = :tenantId AND r.activa = true")
     List<ReglaNegocio> findReglasActivas(String tenantId);

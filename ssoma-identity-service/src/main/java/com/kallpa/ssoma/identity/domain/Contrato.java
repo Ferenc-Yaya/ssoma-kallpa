@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -16,12 +17,12 @@ import java.time.LocalDateTime;
 public class Contrato extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "contrato_id")
-    private Long contratoId;
+    private UUID contratoId;
 
     @Column(name = "empresa_id", nullable = false)
-    private Long empresaId;
+    private UUID empresaId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empresa_id", insertable = false, updatable = false)

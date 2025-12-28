@@ -1,19 +1,40 @@
-.dialog-title {
+h2[mat-dialog-title] {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 12px;
+  color: #1e293b;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 16px 0;
 
   mat-icon {
-    font-size: 24px;
-    width: 24px;
-    height: 24px;
+    font-size: 28px;
+    width: 28px;
+    height: 28px;
   }
 }
 
 mat-dialog-content {
+  min-width: 350px;
+  max-width: 500px;
+  padding: 0 24px;
+
   p {
-    margin: 1rem 0;
-    font-size: 1rem;
-    color: #555;
+    font-size: 15px;
+    color: #475569;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  margin: 0;
+  border-top: 1px solid #e2e8f0;
+}
+
+@media (max-width: 768px) {
+  mat-dialog-content {
+    min-width: unset;
   }
 }

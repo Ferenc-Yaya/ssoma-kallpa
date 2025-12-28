@@ -8,13 +8,14 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface DocumentoRequeribleRepository extends JpaRepository<DocumentoRequerible, Long> {
+public interface DocumentoRequeribleRepository extends JpaRepository<DocumentoRequerible, UUID> {
 
     List<DocumentoRequerible> findByTenantId(String tenantId);
 
-    Optional<DocumentoRequerible> findByTenantIdAndDocumentoRequeribleId(String tenantId, Long documentoRequeribleId);
+    Optional<DocumentoRequerible> findByTenantIdAndDocReqId(String tenantId, UUID docReqId);
 
     List<DocumentoRequerible> findByTenantIdAndCategoria(String tenantId, String categoria);
 

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -35,7 +36,7 @@ public class InventarioMatpelService {
     }
 
     @Transactional(readOnly = true)
-    public InventarioMatpelDTO findById(Long id) {
+    public InventarioMatpelDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando inventario con ID: {} para tenant: {}", id, tenantId);
         InventarioMatpel inventario = inventarioRepository.findById(id)
@@ -49,7 +50,7 @@ public class InventarioMatpelService {
     }
 
     @Transactional(readOnly = true)
-    public List<InventarioMatpelDTO> findByEmpresaId(Long empresaId) {
+    public List<InventarioMatpelDTO> findByEmpresaId(UUID empresaId) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando inventario para empresa ID: {} y tenant: {}", empresaId, tenantId);
         List<InventarioMatpel> inventarios = inventarioRepository.findByTenantIdAndEmpresaId(tenantId, empresaId);
@@ -90,7 +91,7 @@ public class InventarioMatpelService {
     }
 
     @Transactional
-    public InventarioMatpelDTO update(Long id, UpdateInventarioRequest request) {
+    public InventarioMatpelDTO update(UUID id, UpdateInventarioRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando inventario con ID: {} para tenant: {}", id, tenantId);
 
@@ -126,7 +127,7 @@ public class InventarioMatpelService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando inventario con ID: {} para tenant: {}", id, tenantId);
 

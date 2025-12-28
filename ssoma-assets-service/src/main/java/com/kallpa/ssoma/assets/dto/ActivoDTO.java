@@ -3,13 +3,14 @@ package com.kallpa.ssoma.assets.dto;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class ActivoDTO {
 
-    private Long id;
+    private UUID id;
     private String tenantId;
-    private Long empresaId;
+    private UUID empresaId;
     private String empresaNombre; // Razón social de la empresa (denormalizado)
     private String tipoActivo;
     private String codigo;

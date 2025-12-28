@@ -10,15 +10,33 @@ export interface MenuItem {
 export const MENU_ITEMS: MenuItem[] = [
   // ===== SUPER ADMIN =====
   {
-    label: 'Dashboard General',
+    label: 'Dashboard',
     icon: 'dashboard',
-    route: '/dashboard',
+    route: '/dashboard-superadmin',
     roles: ['SUPER_ADMIN']
   },
   {
-    label: 'Todas las Empresas',
+    label: 'Empresa Principal',
+    icon: 'domain',
+    route: '/empresa-principal',
+    roles: ['SUPER_ADMIN']
+  },
+  {
+    label: 'Todos los Contratistas',
     icon: 'business',
     route: '/empresas',
+    roles: ['SUPER_ADMIN']
+  },
+  {
+    label: 'Usuarios',
+    icon: 'group',
+    route: '/usuarios',
+    roles: ['SUPER_ADMIN']
+  },
+  {
+    label: 'Roles',
+    icon: 'admin_panel_settings',
+    route: '/roles',
     roles: ['SUPER_ADMIN']
   },
   {
@@ -88,7 +106,7 @@ export const MENU_ITEMS: MenuItem[] = [
   {
     label: 'Mi Dashboard',
     icon: 'dashboard',
-    route: '/dashboard',
+    route: '/dashboard-contratista',
     roles: ['ADMIN_CONTRATISTA']
   },
   {

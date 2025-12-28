@@ -4,13 +4,14 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class PersonaDTO {
 
-    private Long id;
+    private UUID id;
     private String tenantId;
-    private Long empresaId;
+    private UUID empresaId;
     private String empresaNombre; // Razón social de la empresa (denormalizado)
     private String tipoDocumento;
     private String numeroDocumento;

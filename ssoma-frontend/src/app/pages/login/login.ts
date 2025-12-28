@@ -54,8 +54,12 @@ export class LoginComponent {
           console.log('Login exitoso:', response);
 
           // Redirigir según el rol del usuario
-          if (response.rol === 'ADMIN_CONTRATISTA') {
+          if (response.rol === 'SUPER_ADMIN') {
+            this.router.navigate(['/dashboard-superadmin']);
+          } else if (response.rol === 'ADMIN_CONTRATISTA') {
             this.router.navigate(['/dashboard-contratista']);
+          } else if (response.rol === 'ADMIN_EMPRESA_PRINCIPAL') {
+            this.router.navigate(['/dashboard']);
           } else {
             this.router.navigate(['/dashboard']);
           }

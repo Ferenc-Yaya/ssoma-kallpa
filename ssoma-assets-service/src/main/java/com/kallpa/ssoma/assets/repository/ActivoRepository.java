@@ -8,19 +8,20 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface ActivoRepository extends JpaRepository<Activo, Long> {
+public interface ActivoRepository extends JpaRepository<Activo, UUID> {
 
     List<Activo> findByTenantId(String tenantId);
 
-    Optional<Activo> findByTenantIdAndActivoId(String tenantId, Long activoId);
+    Optional<Activo> findByTenantIdAndActivoId(String tenantId, UUID activoId);
 
     Optional<Activo> findByCodigo(String codigo);
 
     List<Activo> findByTenantIdAndEstado(String tenantId, String estado);
 
-    List<Activo> findByTenantIdAndEmpresaId(String tenantId, Long empresaId);
+    List<Activo> findByTenantIdAndEmpresaId(String tenantId, UUID empresaId);
 
     List<Activo> findByTenantIdAndTipoActivo(String tenantId, String tipoActivo);
 

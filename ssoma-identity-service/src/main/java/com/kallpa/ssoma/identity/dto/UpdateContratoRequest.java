@@ -5,11 +5,12 @@ import lombok.Data;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 public class UpdateContratoRequest {
 
-    private Long empresaId;
+    private UUID empresaId;
 
     @Size(max = 100, message = "El número de OC no puede exceder 100 caracteres")
     private String numeroOc;

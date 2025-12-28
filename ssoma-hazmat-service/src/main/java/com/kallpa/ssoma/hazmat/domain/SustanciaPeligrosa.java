@@ -4,6 +4,8 @@ import com.kallpa.ssoma.shared.domain.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.UUID;
+
 @Entity
 @Table(name = "cat_sustancias_peligrosas")
 @Data
@@ -14,9 +16,9 @@ import lombok.*;
 public class SustanciaPeligrosa extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "sustancia_id")
-    private Long sustanciaId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "sustancia_id", columnDefinition = "UUID")
+    private UUID sustanciaId;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;

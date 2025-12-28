@@ -1,0 +1,59 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEdit ? 'edit_location' : 'add_location' }}</mat-icon>
+  {{ isEdit ? 'Editar Sede' : 'Nueva Sede' }} - {{ empresaNombre }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="sedeForm" class="sede-form">
+    <div class="form-field">
+      <label>Nombre de Sede *</label>
+      <input type="text" formControlName="nombre" placeholder="Ej: Sede Central, Sucursal Norte, etc." maxlength="100">
+      <small class="error" *ngIf="sedeForm.get('nombre')?.invalid && sedeForm.get('nombre')?.touched">
+        {{ getErrorMessage('nombre') }}
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label>Dirección *</label>
+      <textarea formControlName="direccion" rows="3" placeholder="Ingrese dirección completa de la sede" maxlength="200"></textarea>
+      <small class="error" *ngIf="sedeForm.get('direccion')?.invalid && sedeForm.get('direccion')?.touched">
+        {{ getErrorMessage('direccion') }}
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="checkbox-field">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="esPrincipal">
+          <span class="checkbox-label">
+            <mat-icon>business</mat-icon>
+            Marcar como sede principal
+          </span>
+        </label>
+        <small class="hint">La sede principal es la ubicación central de la empresa</small>
+      </div>
+
+      <div class="checkbox-field">
+        <label class="checkbox-container">
+          <input type="checkbox" formControlName="activo">
+          <span class="checkbox-label">
+            <mat-icon>check_circle</mat-icon>
+            Sede activa
+          </span>
+        </label>
+        <small class="hint">Las sedes inactivas no aparecerán en los registros</small>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="sedeForm.invalid">
+    <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
+    {{ isEdit ? 'Guardar Cambios' : 'Crear Sede' }}
+  </button>
+</mat-dialog-actions>

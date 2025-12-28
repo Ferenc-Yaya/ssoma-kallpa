@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -32,7 +33,7 @@ public class DocumentoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DocumentoDTO> getDocumentoById(@PathVariable Long id) {
+    public ResponseEntity<DocumentoDTO> getDocumentoById(@PathVariable UUID id) {
         log.info("GET /api/documentos/{} - Obteniendo documento por ID", id);
         DocumentoDTO documento = documentoService.findById(id);
         return ResponseEntity.ok(documento);
@@ -47,7 +48,7 @@ public class DocumentoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DocumentoDTO> updateDocumento(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateDocumentoRequest request) {
         log.info("PUT /api/documentos/{} - Actualizando documento", id);
         DocumentoDTO documento = documentoService.update(id, request);
@@ -55,7 +56,7 @@ public class DocumentoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteDocumento(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteDocumento(@PathVariable UUID id) {
         log.info("DELETE /api/documentos/{} - Eliminando documento", id);
         documentoService.delete(id);
         return ResponseEntity.noContent().build();
@@ -72,7 +73,7 @@ public class DocumentoController {
     @GetMapping("/entidad/{entidadTipo}/{entidadId}")
     public ResponseEntity<List<DocumentoDTO>> getDocumentosByEntidad(
             @PathVariable String entidadTipo,
-            @PathVariable Long entidadId) {
+            @PathVariable UUID entidadId) {
         log.info("GET /api/documentos/entidad/{}/{} - Obteniendo documentos por entidad", entidadTipo, entidadId);
         List<DocumentoDTO> documentos = documentoService.findByEntidad(entidadTipo, entidadId);
         log.info("Documentos encontrados: {}", documentos.size());

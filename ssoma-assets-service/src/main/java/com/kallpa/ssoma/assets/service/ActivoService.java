@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class ActivoService {
     }
 
     @Transactional(readOnly = true)
-    public ActivoDTO findById(Long id) {
+    public ActivoDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando activo {} para tenant: {}", id, tenantId);
         Activo activo = activoRepository.findByTenantIdAndActivoId(tenantId, id)
@@ -68,7 +69,7 @@ public class ActivoService {
     }
 
     @Transactional
-    public ActivoDTO update(Long id, UpdateActivoRequest request) {
+    public ActivoDTO update(UUID id, UpdateActivoRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando activo {} para tenant: {}", id, tenantId);
 
@@ -109,7 +110,7 @@ public class ActivoService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando activo {} para tenant: {}", id, tenantId);
 
@@ -130,7 +131,7 @@ public class ActivoService {
     }
 
     @Transactional(readOnly = true)
-    public List<ActivoDTO> findByEmpresaId(Long empresaId) {
+    public List<ActivoDTO> findByEmpresaId(UUID empresaId) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando activos de la empresa {} para tenant: {}", empresaId, tenantId);
         return activoRepository.findByTenantIdAndEmpresaId(tenantId, empresaId).stream()

@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -14,9 +15,9 @@ import java.time.LocalDateTime;
 public class DocumentoRequerible extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "documento_requerible_id")
-    private Long documentoRequeribleId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "doc_req_id", columnDefinition = "UUID")
+    private UUID docReqId;
 
     @Column(name = "nombre", nullable = false)
     private String nombre;

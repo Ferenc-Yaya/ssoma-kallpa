@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @NoArgsConstructor
@@ -16,10 +17,10 @@ import java.time.LocalDate;
 @Builder
 public class CreateInventarioRequest {
     @NotNull(message = "El ID de empresa es obligatorio")
-    private Long empresaId;
+    private UUID empresaId;
 
     @NotNull(message = "El ID de sustancia es obligatorio")
-    private Long sustanciaId;
+    private UUID sustanciaId;
 
     @NotNull(message = "La cantidad es obligatoria")
     @Positive(message = "La cantidad debe ser mayor a cero")

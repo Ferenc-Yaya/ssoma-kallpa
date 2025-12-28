@@ -1,0 +1,98 @@
+<h2 mat-dialog-title>
+  <mat-icon>{{ isEdit ? 'edit' : 'add_business' }}</mat-icon>
+  {{ isEdit ? 'Editar Empresa Principal' : 'Nueva Empresa Principal' }}
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="empresaForm" class="empresa-form">
+    <div class="form-field">
+      <label>Tenant ID *</label>
+      <input type="text" formControlName="tenantId" placeholder="Ingrese Tenant ID" maxlength="50">
+      <small class="hint" *ngIf="!isEdit">Solo mayúsculas y guiones bajos</small>
+      <small class="error" *ngIf="empresaForm.get('tenantId')?.invalid && empresaForm.get('tenantId')?.touched">
+        {{ getErrorMessage('tenantId') }}
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label>Razón Social *</label>
+      <input type="text" formControlName="razonSocial" placeholder="Ingrese razón social">
+      <small class="error" *ngIf="empresaForm.get('razonSocial')?.invalid && empresaForm.get('razonSocial')?.touched">
+        {{ getErrorMessage('razonSocial') }}
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label>RUC *</label>
+        <input type="text" formControlName="ruc" placeholder="Ingrese RUC (11 dígitos)" maxlength="11">
+        <small class="error" *ngIf="empresaForm.get('ruc')?.invalid && empresaForm.get('ruc')?.touched">
+          {{ getErrorMessage('ruc') }}
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label>Teléfono *</label>
+        <input type="text" formControlName="telefono" placeholder="Ej: 01-4567890">
+        <small class="error" *ngIf="empresaForm.get('telefono')?.invalid && empresaForm.get('telefono')?.touched">
+          {{ getErrorMessage('telefono') }}
+        </small>
+      </div>
+    </div>
+
+    <div class="form-field">
+      <label>Email *</label>
+      <input type="email" formControlName="email" placeholder="correo@empresa.com">
+      <small class="error" *ngIf="empresaForm.get('email')?.invalid && empresaForm.get('email')?.touched">
+        {{ getErrorMessage('email') }}
+      </small>
+    </div>
+
+    <div class="form-field">
+      <label>Dirección *</label>
+      <textarea formControlName="direccion" rows="3" placeholder="Ingrese dirección completa"></textarea>
+      <small class="error" *ngIf="empresaForm.get('direccion')?.invalid && empresaForm.get('direccion')?.touched">
+        {{ getErrorMessage('direccion') }}
+      </small>
+    </div>
+
+    <div class="form-row">
+      <div class="form-field">
+        <label>Plan *</label>
+        <select formControlName="plan">
+          <option value="" disabled>Seleccionar...</option>
+          <option *ngFor="let plan of planes" [value]="plan.value">
+            {{ plan.label }}
+          </option>
+        </select>
+        <small class="error" *ngIf="empresaForm.get('plan')?.invalid && empresaForm.get('plan')?.touched">
+          {{ getErrorMessage('plan') }}
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label>Estado *</label>
+        <select formControlName="estado">
+          <option value="" disabled>Seleccionar...</option>
+          <option *ngFor="let estado of estados" [value]="estado.value">
+            {{ estado.label }}
+          </option>
+        </select>
+        <small class="error" *ngIf="empresaForm.get('estado')?.invalid && empresaForm.get('estado')?.touched">
+          {{ getErrorMessage('estado') }}
+        </small>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="empresaForm.invalid">
+    <mat-icon>{{ isEdit ? 'save' : 'add' }}</mat-icon>
+    {{ isEdit ? 'Guardar Cambios' : 'Crear Empresa' }}
+  </button>
+</mat-dialog-actions>

@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
+import java.util.UUID;
 
 @Data
 public class CreateEmpresaRequest {
@@ -18,7 +19,7 @@ public class CreateEmpresaRequest {
     @Size(max = 255, message = "La razón social no puede exceder 255 caracteres")
     private String razonSocial;
 
-    private Integer tipoContratistaId;
+    private UUID tipoId;
 
     private String direccion;
 
@@ -29,7 +30,9 @@ public class CreateEmpresaRequest {
     @Size(max = 100, message = "El email no puede exceder 100 caracteres")
     private String email;
 
-    private String estado;
+    private String estadoHabilitacion;
+
+    private Boolean activo;
 
     private List<EmpresaContactoDTO> contactos;
 }

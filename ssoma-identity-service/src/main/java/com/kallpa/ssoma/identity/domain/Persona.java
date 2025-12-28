@@ -15,12 +15,12 @@ import java.time.LocalDateTime;
 public class Persona extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "persona_id")
-    private Long personaId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "persona_id", columnDefinition = "UUID")
+    private java.util.UUID personaId;
 
-    @Column(name = "empresa_id")
-    private Long empresaId;
+    @Column(name = "empresa_id", columnDefinition = "UUID")
+    private java.util.UUID empresaId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empresa_id", insertable = false, updatable = false)

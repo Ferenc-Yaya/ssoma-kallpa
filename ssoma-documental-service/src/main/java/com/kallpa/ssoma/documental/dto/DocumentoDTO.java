@@ -4,15 +4,16 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class DocumentoDTO {
 
-    private Long id;
+    private UUID id;
     private String tenantId;
     private String entidadTipo;
-    private Long entidadId;
-    private Long documentoRequeribleId;
+    private UUID entidadId;
+    private UUID documentoRequeribleId;
     private String documentoRequeribleNombre; // Nombre del documento requerible (denormalizado)
     private String nombreArchivo;
     private String rutaArchivo;

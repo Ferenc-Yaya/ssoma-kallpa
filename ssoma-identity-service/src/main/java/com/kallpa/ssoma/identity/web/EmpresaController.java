@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.identity.controller;
+package com.kallpa.ssoma.identity.web;
 
 import com.kallpa.ssoma.identity.dto.CreateEmpresaRequest;
 import com.kallpa.ssoma.identity.dto.EmpresaDTO;
@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -30,7 +31,7 @@ public class EmpresaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmpresaDTO> getEmpresaById(@PathVariable Long id) {
+    public ResponseEntity<EmpresaDTO> getEmpresaById(@PathVariable UUID id) {
         log.info("GET /api/empresas/{} - Obteniendo empresa por ID", id);
         EmpresaDTO empresa = empresaService.findById(id);
         return ResponseEntity.ok(empresa);
@@ -45,7 +46,7 @@ public class EmpresaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<EmpresaDTO> updateEmpresa(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateEmpresaRequest request) {
         log.info("PUT /api/empresas/{} - Actualizando empresa", id);
         EmpresaDTO empresa = empresaService.update(id, request);
@@ -53,7 +54,7 @@ public class EmpresaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteEmpresa(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteEmpresa(@PathVariable UUID id) {
         log.info("DELETE /api/empresas/{} - Eliminando empresa", id);
         empresaService.delete(id);
         return ResponseEntity.noContent().build();

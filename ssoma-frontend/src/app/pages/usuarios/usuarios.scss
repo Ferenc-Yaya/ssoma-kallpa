@@ -1,0 +1,308 @@
+.usuarios-page {
+  padding: 0;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e2e8f0;
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .page-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #3b82f6;
+      }
+
+      h1 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 28px;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        margin: 4px 0 0 0;
+        color: #64748b;
+        font-size: 14px;
+      }
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 24px;
+      height: 44px;
+      font-weight: 500;
+    }
+  }
+
+  .filters-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+
+    .search-box {
+      position: relative;
+      margin-bottom: 1rem;
+
+      .search-icon {
+        position: absolute;
+        left: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #64748b;
+        z-index: 1;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 12px 12px 12px 44px;
+        border: 1px solid #cbd5e1;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.2s;
+
+        &:focus {
+          outline: none;
+          border-color: #3b82f6;
+          box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        &::placeholder {
+          color: #94a3b8;
+        }
+      }
+    }
+
+    .filter-selects {
+      display: flex;
+      gap: 1rem;
+
+      .filter-group {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+
+        label {
+          font-size: 13px;
+          font-weight: 500;
+          color: #475569;
+        }
+
+        .filter-select {
+          padding: 10px 12px;
+          border: 1px solid #cbd5e1;
+          border-radius: 6px;
+          font-size: 14px;
+          background: white;
+          cursor: pointer;
+          transition: all 0.2s;
+
+          &:focus {
+            outline: none;
+            border-color: #3b82f6;
+          }
+        }
+      }
+    }
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+
+    .usuarios-table {
+      width: 100%;
+
+      th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px;
+      }
+
+      td {
+        padding: 16px;
+        color: #1e293b;
+      }
+
+      .user-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .user-avatar {
+          color: #64748b;
+          font-size: 32px;
+          width: 32px;
+          height: 32px;
+        }
+
+        .username {
+          font-weight: 500;
+          color: #1e293b;
+        }
+      }
+
+      .email-link {
+        color: #3b82f6;
+        text-decoration: none;
+        transition: color 0.2s;
+
+        &:hover {
+          color: #2563eb;
+          text-decoration: underline;
+        }
+      }
+
+      .tenant-cell {
+        .tenant-name {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #1e293b;
+
+          .tenant-icon {
+            font-size: 18px;
+            width: 18px;
+            height: 18px;
+            color: #3b82f6;
+          }
+        }
+
+        .no-tenant {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          color: #94a3b8;
+          font-size: 13px;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+          }
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 4px;
+      }
+    }
+  }
+
+  .chip-super-admin {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.4);
+  }
+
+  .chip-admin-empresa {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+
+  .chip-admin-contratista {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+
+  .chip-activo {
+    background: #d1fae5 !important;
+    color: #065f46 !important;
+    font-weight: 500 !important;
+  }
+
+  .chip-inactivo {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    font-weight: 500 !important;
+  }
+
+  .no-results {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #94a3b8;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 0 0 8px 0;
+      color: #64748b;
+    }
+
+    small {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+  }
+
+  .info-footer {
+    background: #f8fafc;
+    padding: 12px 16px;
+    border-radius: 6px;
+    margin-top: 1rem;
+
+    p {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #64748b;
+      font-size: 14px;
+
+      mat-icon {
+        font-size: 18px;
+        width: 18px;
+        height: 18px;
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .usuarios-page {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
+    .filter-selects {
+      flex-direction: column;
+    }
+  }
+}

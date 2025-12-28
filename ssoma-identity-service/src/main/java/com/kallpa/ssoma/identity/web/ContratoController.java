@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.identity.controller;
+package com.kallpa.ssoma.identity.web;
 
 import com.kallpa.ssoma.identity.dto.ContratoDTO;
 import com.kallpa.ssoma.identity.dto.CreateContratoRequest;
@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -32,7 +33,7 @@ public class ContratoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ContratoDTO> getContratoById(@PathVariable Long id) {
+    public ResponseEntity<ContratoDTO> getContratoById(@PathVariable UUID id) {
         log.info("GET /api/contratos/{} - Obteniendo contrato por ID", id);
         ContratoDTO contrato = contratoService.findById(id);
         return ResponseEntity.ok(contrato);
@@ -47,7 +48,7 @@ public class ContratoController {
 
     @PutMapping("/{id}")
     public ResponseEntity<ContratoDTO> updateContrato(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdateContratoRequest request) {
         log.info("PUT /api/contratos/{} - Actualizando contrato", id);
         ContratoDTO contrato = contratoService.update(id, request);
@@ -55,7 +56,7 @@ public class ContratoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteContrato(@PathVariable Long id) {
+    public ResponseEntity<Void> deleteContrato(@PathVariable UUID id) {
         log.info("DELETE /api/contratos/{} - Eliminando contrato", id);
         contratoService.delete(id);
         return ResponseEntity.noContent().build();
@@ -70,7 +71,7 @@ public class ContratoController {
     }
 
     @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<List<ContratoDTO>> getContratosByEmpresa(@PathVariable Long empresaId) {
+    public ResponseEntity<List<ContratoDTO>> getContratosByEmpresa(@PathVariable UUID empresaId) {
         log.info("GET /api/contratos/empresa/{} - Obteniendo contratos por empresa", empresaId);
         List<ContratoDTO> contratos = contratoService.findByEmpresaId(empresaId);
         log.info("Contratos encontrados: {}", contratos.size());

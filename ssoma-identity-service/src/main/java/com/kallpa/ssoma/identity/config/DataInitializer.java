@@ -24,18 +24,12 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
 
         try {
-            log.info("🔧 Inicializando datos por defecto...");
+            log.info("🔧 Inicializando datos del sistema...");
 
-            // 1. CREAR USUARIO SUPERADMIN (SYSTEM)
+            // Crear SUPERADMIN esencial (si no existe)
             crearSuperAdmin();
 
-            // 2. CREAR USUARIO ADMIN KALLPA
-            crearAdminKallpa();
-
-            // 3. CREAR USUARIO CONTRATISTA
-            crearContratista();
-
-            log.info("✅ Datos iniciales creados exitosamente");
+            log.info("✅ Datos iniciales del sistema creados exitosamente");
 
         } finally {
             TenantContext.clear();
@@ -51,13 +45,17 @@ public class DataInitializer implements CommandLineRunner {
         }
 
         // Crear rol SUPER_ADMIN
-        Rol rolSuperAdmin = rolRepository.findByTenantIdAndNombreRol("SYSTEM", "SUPER_ADMIN")
+        Rol rolSuperAdmin = rolRepository.findByCodigo("SUPER_ADMIN")
                 .orElseGet(() -> {
                     log.info("📝 Creando rol SUPER_ADMIN...");
                     Rol nuevoRol = new Rol();
                     nuevoRol.setTenantId("SYSTEM");
-                    nuevoRol.setNombreRol("SUPER_ADMIN");
+                    nuevoRol.setCodigo("SUPER_ADMIN");
+                    nuevoRol.setNombreRol("Super Administrador");
                     nuevoRol.setDescripcion("Super Administrador del Sistema");
+                    nuevoRol.setNivelJerarquia(1);
+                    nuevoRol.setRequiereTenant(false);
+                    nuevoRol.setActivo(true);
                     return rolRepository.save(nuevoRol);
                 });
 
@@ -66,75 +64,12 @@ public class DataInitializer implements CommandLineRunner {
         superadmin.setTenantId("SYSTEM");
         superadmin.setUsername("superadmin");
         superadmin.setPasswordHash(passwordEncoder.encode("admin123"));
+        superadmin.setNombreCompleto("Super Administrador");
         superadmin.setEmail("admin@ssoma.com");
         superadmin.setRol(rolSuperAdmin);
         superadmin.setActivo(true);
         usuarioRepository.save(superadmin);
 
         log.info("✅ Usuario superadmin creado (SYSTEM / admin123)");
-    }
-
-    private void crearAdminKallpa() {
-        TenantContext.setTenantId("KALLPA");
-
-        if (usuarioRepository.existsByUsername("admin.kallpa")) {
-            log.info("✅ Usuario admin.kallpa ya existe");
-            return;
-        }
-
-        // Crear rol ADMIN_EMPRESA_PRINCIPAL
-        Rol rolAdmin = rolRepository.findByTenantIdAndNombreRol("KALLPA", "ADMIN_EMPRESA_PRINCIPAL")
-                .orElseGet(() -> {
-                    log.info("📝 Creando rol ADMIN_EMPRESA_PRINCIPAL...");
-                    Rol nuevoRol = new Rol();
-                    nuevoRol.setTenantId("KALLPA");
-                    nuevoRol.setNombreRol("ADMIN_EMPRESA_PRINCIPAL");
-                    nuevoRol.setDescripcion("Administrador de la Empresa Principal");
-                    return rolRepository.save(nuevoRol);
-                });
-
-        // Crear usuario admin.kallpa
-        Usuario adminKallpa = new Usuario();
-        adminKallpa.setTenantId("KALLPA");
-        adminKallpa.setUsername("admin.kallpa");
-        adminKallpa.setPasswordHash(passwordEncoder.encode("kallpa123"));
-        adminKallpa.setEmail("admin@kallpa.com");
-        adminKallpa.setRol(rolAdmin);
-        adminKallpa.setActivo(true);
-        usuarioRepository.save(adminKallpa);
-
-        log.info("✅ Usuario admin.kallpa creado (KALLPA / kallpa123)");
-    }
-
-    private void crearContratista() {
-        TenantContext.setTenantId("KALLPA");
-
-        if (usuarioRepository.existsByUsername("jperez")) {
-            log.info("✅ Usuario jperez ya existe");
-            return;
-        }
-
-        // Crear rol ADMIN_CONTRATISTA
-        Rol rolContratista = rolRepository.findByTenantIdAndNombreRol("KALLPA", "ADMIN_CONTRATISTA")
-                .orElseGet(() -> {
-                    log.info("📝 Creando rol ADMIN_CONTRATISTA...");
-                    Rol nuevoRol = new Rol();
-                    nuevoRol.setTenantId("KALLPA");
-                    nuevoRol.setNombreRol("ADMIN_CONTRATISTA");
-                    nuevoRol.setDescripcion("Administrador de Empresa Contratista");
-                    return rolRepository.save(nuevoRol);
-                });
-
-        // Crear usuario jperez
-        Usuario contratista = new Usuario();
-        contratista.setTenantId("KALLPA");
-        contratista.setUsername("jperez");
-        contratista.setPasswordHash(passwordEncoder.encode("contratista123"));
-        contratista.setEmail("jperez@contratista.com");
-        contratista.setRol(rolContratista);
-        contratista.setActivo(true);
-        usuarioRepository.save(contratista);
-
-        log.info("✅ Usuario jperez creado (KALLPA / contratista123)");
     }
 }

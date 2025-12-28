@@ -8,9 +8,10 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface PersonaRepository extends JpaRepository<Persona, Long> {
+public interface PersonaRepository extends JpaRepository<Persona, UUID> {
 
     @Query("SELECT p FROM Persona p LEFT JOIN FETCH p.empresa WHERE p.tenantId = :tenantId")
     List<Persona> findByTenantIdWithEmpresa(@Param("tenantId") String tenantId);
@@ -18,15 +19,15 @@ public interface PersonaRepository extends JpaRepository<Persona, Long> {
     List<Persona> findByTenantId(String tenantId);
 
     @Query("SELECT p FROM Persona p LEFT JOIN FETCH p.empresa WHERE p.tenantId = :tenantId AND p.personaId = :personaId")
-    Optional<Persona> findByTenantIdAndPersonaIdWithEmpresa(@Param("tenantId") String tenantId, @Param("personaId") Long personaId);
+    Optional<Persona> findByTenantIdAndPersonaIdWithEmpresa(@Param("tenantId") String tenantId, @Param("personaId") UUID personaId);
 
-    Optional<Persona> findByTenantIdAndPersonaId(String tenantId, Long personaId);
+    Optional<Persona> findByTenantIdAndPersonaId(String tenantId, UUID personaId);
 
     Optional<Persona> findByNumeroDocumento(String numeroDocumento);
 
     List<Persona> findByTenantIdAndEstado(String tenantId, String estado);
 
-    List<Persona> findByTenantIdAndEmpresaId(String tenantId, Long empresaId);
+    List<Persona> findByTenantIdAndEmpresaId(String tenantId, UUID empresaId);
 
     @Query("SELECT p FROM Persona p WHERE p.tenantId = :tenantId AND " +
            "(LOWER(p.nombres) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +

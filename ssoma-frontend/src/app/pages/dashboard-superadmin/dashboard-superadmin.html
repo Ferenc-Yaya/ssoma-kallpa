@@ -1,0 +1,111 @@
+<div class="dashboard-superadmin">
+  <div class="dashboard-header">
+    <h1>Panel de Super Administrador</h1>
+    <p class="subtitle">Vista general del sistema SSOMA Platform</p>
+  </div>
+
+  <!-- Tarjetas de estadísticas principales -->
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon tenant-icon">
+          <mat-icon>domain</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ stats.totalTenants }}</h3>
+          <p class="stat-label">Tenants Activos</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon user-icon">
+          <mat-icon>people</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ stats.totalUsuarios }}</h3>
+          <p class="stat-label">Total Usuarios</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon company-icon">
+          <mat-icon>business</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ stats.totalEmpresas }}</h3>
+          <p class="stat-label">Total Empresas</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-content>
+        <div class="stat-icon active-icon">
+          <mat-icon>check_circle</mat-icon>
+        </div>
+        <div class="stat-info">
+          <h3 class="stat-value">{{ stats.usuariosActivos }}</h3>
+          <p class="stat-label">Usuarios Activos</p>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Sección de acciones rápidas -->
+  <div class="quick-actions-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Acciones Rápidas</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="actions-grid">
+          <button mat-raised-button color="primary" routerLink="/empresa-principal">
+            <mat-icon>add_business</mat-icon>
+            Gestionar Empresa Principal
+          </button>
+          <button mat-raised-button color="primary" routerLink="/empresas">
+            <mat-icon>business</mat-icon>
+            Ver Todas las Empresas
+          </button>
+          <button mat-raised-button color="primary" routerLink="/reglas-negocio">
+            <mat-icon>rule</mat-icon>
+            Configurar Reglas
+          </button>
+          <button mat-raised-button color="primary" routerLink="/acreditacion">
+            <mat-icon>assignment_turned_in</mat-icon>
+            Acreditación Global
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Actividad reciente -->
+  <div class="activity-section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>Actividad Reciente del Sistema</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="activity-list">
+          <div *ngFor="let activity of recentActivity"
+               class="activity-item"
+               [ngClass]="getActivityColor(activity.type)">
+            <div class="activity-icon">
+              <mat-icon>{{ activity.icon }}</mat-icon>
+            </div>
+            <div class="activity-content">
+              <h4>{{ activity.title }}</h4>
+              <p>{{ activity.description }}</p>
+              <span class="activity-time">{{ activity.time }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>

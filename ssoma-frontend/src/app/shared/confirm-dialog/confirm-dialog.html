@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>
-  <mat-icon>warning</mat-icon>
+  <mat-icon [color]="data.confirmColor">warning</mat-icon>
   {{ data.title }}
 </h2>
 
@@ -11,9 +11,7 @@
   <button mat-button (click)="onCancel()">
     {{ data.cancelText }}
   </button>
-  <button mat-raised-button 
-          [color]="data.confirmColor"
-          (click)="onConfirm()">
+  <button mat-raised-button [color]="data.confirmColor" (click)="onConfirm()">
     {{ data.confirmText }}
   </button>
 </mat-dialog-actions>

@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.identity.controller;
+package com.kallpa.ssoma.identity.web;
 
 import com.kallpa.ssoma.identity.dto.CreatePersonaRequest;
 import com.kallpa.ssoma.identity.dto.PersonaDTO;
@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @RestController
@@ -32,7 +33,7 @@ public class PersonaController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PersonaDTO> getPersonaById(@PathVariable Long id) {
+    public ResponseEntity<PersonaDTO> getPersonaById(@PathVariable UUID id) {
         log.info("GET /api/personas/{} - Obteniendo persona por ID", id);
         PersonaDTO persona = personaService.findById(id);
         return ResponseEntity.ok(persona);
@@ -47,7 +48,7 @@ public class PersonaController {
 
     @PutMapping("/{id}")
     public ResponseEntity<PersonaDTO> updatePersona(
-            @PathVariable Long id,
+            @PathVariable UUID id,
             @Valid @RequestBody UpdatePersonaRequest request) {
         log.info("PUT /api/personas/{} - Actualizando persona", id);
         PersonaDTO persona = personaService.update(id, request);
@@ -55,7 +56,7 @@ public class PersonaController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletePersona(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePersona(@PathVariable UUID id) {
         log.info("DELETE /api/personas/{} - Eliminando persona", id);
         personaService.delete(id);
         return ResponseEntity.noContent().build();
@@ -70,7 +71,7 @@ public class PersonaController {
     }
 
     @GetMapping("/empresa/{empresaId}")
-    public ResponseEntity<List<PersonaDTO>> getPersonasByEmpresa(@PathVariable Long empresaId) {
+    public ResponseEntity<List<PersonaDTO>> getPersonasByEmpresa(@PathVariable UUID empresaId) {
         log.info("GET /api/personas/empresa/{} - Obteniendo personas por empresa", empresaId);
         List<PersonaDTO> personas = personaService.findByEmpresaId(empresaId);
         log.info("Personas encontradas: {}", personas.size());

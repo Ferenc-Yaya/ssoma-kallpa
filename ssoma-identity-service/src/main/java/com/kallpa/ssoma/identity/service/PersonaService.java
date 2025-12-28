@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -31,7 +32,7 @@ public class PersonaService {
     }
 
     @Transactional(readOnly = true)
-    public PersonaDTO findById(Long id) {
+    public PersonaDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando persona {} para tenant: {}", id, tenantId);
         Persona persona = personaRepository.findByTenantIdAndPersonaIdWithEmpresa(tenantId, id)
@@ -68,7 +69,7 @@ public class PersonaService {
     }
 
     @Transactional
-    public PersonaDTO update(Long id, UpdatePersonaRequest request) {
+    public PersonaDTO update(UUID id, UpdatePersonaRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando persona {} para tenant: {}", id, tenantId);
 
@@ -109,7 +110,7 @@ public class PersonaService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando persona {} para tenant: {}", id, tenantId);
 
@@ -130,7 +131,7 @@ public class PersonaService {
     }
 
     @Transactional(readOnly = true)
-    public List<PersonaDTO> findByEmpresaId(Long empresaId) {
+    public List<PersonaDTO> findByEmpresaId(UUID empresaId) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando personas de la empresa {} para tenant: {}", empresaId, tenantId);
         return personaRepository.findByTenantIdAndEmpresaId(tenantId, empresaId).stream()

@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login';
 import { MainLayoutComponent } from './pages/main-layout/main-layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
 import { DashboardContratistaComponent } from './pages/dashboard-contratista/dashboard-contratista';
+import { DashboardSuperadminComponent } from './pages/dashboard-superadmin/dashboard-superadmin';
 import { EmpresasComponent } from './pages/empresas/empresas';
 import { EmpresaDetalleComponent } from './pages/empresa-detalle/empresa-detalle';
 import { EmpresaPersonalComponent } from './pages/empresa-personal/empresa-personal';
@@ -25,6 +26,19 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'dashboard-contratista', component: DashboardContratistaComponent },
+      { path: 'dashboard-superadmin', component: DashboardSuperadminComponent },
+      {
+        path: 'empresa-principal',
+        loadComponent: () => import('./pages/empresa-principal/empresa-principal').then(m => m.EmpresaPrincipalComponent)
+      },
+      {
+        path: 'usuarios',
+        loadComponent: () => import('./pages/usuarios/usuarios').then(m => m.UsuariosComponent)
+      },
+      {
+        path: 'roles',
+        loadComponent: () => import('./pages/roles/roles').then(m => m.RolesComponent)
+      },
       { path: 'empresas', component: EmpresasComponent },
       { path: 'empresas/:id', component: EmpresaDetalleComponent },
       { path: 'empresas/:id/personal', component: EmpresaPersonalComponent },

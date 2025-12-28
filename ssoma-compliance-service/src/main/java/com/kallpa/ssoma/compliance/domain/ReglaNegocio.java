@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.util.UUID;
+
 @Data
 @Entity
 @Table(name = "tbl_reglas_negocio")
@@ -12,9 +14,9 @@ import lombok.EqualsAndHashCode;
 public class ReglaNegocio extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "regla_id")
-    private Long reglaId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "regla_id", columnDefinition = "UUID")
+    private UUID reglaId;
 
     @Column(name = "nombre_regla", nullable = false)
     private String nombreRegla;

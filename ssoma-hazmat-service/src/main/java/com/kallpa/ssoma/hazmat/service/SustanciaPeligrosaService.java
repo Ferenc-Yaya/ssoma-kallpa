@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -32,7 +33,7 @@ public class SustanciaPeligrosaService {
     }
 
     @Transactional(readOnly = true)
-    public SustanciaPeligrosaDTO findById(Long id) {
+    public SustanciaPeligrosaDTO findById(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando sustancia peligrosa con ID: {} para tenant: {}", id, tenantId);
         SustanciaPeligrosa sustancia = sustanciaRepository.findById(id)
@@ -66,7 +67,7 @@ public class SustanciaPeligrosaService {
     }
 
     @Transactional
-    public SustanciaPeligrosaDTO update(Long id, UpdateSustanciaRequest request) {
+    public SustanciaPeligrosaDTO update(UUID id, UpdateSustanciaRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando sustancia peligrosa con ID: {} para tenant: {}", id, tenantId);
 
@@ -99,7 +100,7 @@ public class SustanciaPeligrosaService {
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando sustancia peligrosa con ID: {} para tenant: {}", id, tenantId);
 

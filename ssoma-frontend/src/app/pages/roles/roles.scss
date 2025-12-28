@@ -1,0 +1,293 @@
+.roles-page {
+  padding: 0;
+
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 2px solid #e2e8f0;
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+
+      .page-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #dc2626;
+      }
+
+      h1 {
+        margin: 0;
+        color: #1e293b;
+        font-size: 28px;
+        font-weight: 600;
+      }
+
+      .subtitle {
+        margin: 4px 0 0 0;
+        color: #64748b;
+        font-size: 14px;
+      }
+    }
+
+    button {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0 24px;
+      height: 44px;
+      font-weight: 500;
+    }
+  }
+
+  .table-container {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+
+    .roles-table {
+      width: 100%;
+
+      th {
+        background: #f8fafc;
+        color: #475569;
+        font-weight: 600;
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        padding: 16px;
+      }
+
+      td {
+        padding: 16px;
+        color: #1e293b;
+      }
+
+      .rol-cell {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .rol-icon {
+          color: #dc2626;
+          font-size: 24px;
+          width: 24px;
+          height: 24px;
+        }
+
+        .rol-nombre {
+          font-weight: 600;
+          color: #1e293b;
+          font-size: 15px;
+        }
+      }
+
+      .codigo-badge {
+        display: inline-block;
+        background: #f1f5f9;
+        color: #475569;
+        padding: 4px 10px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-family: 'Courier New', monospace;
+        font-weight: 600;
+        border: 1px solid #cbd5e1;
+      }
+
+      .descripcion-text {
+        color: #64748b;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .tenant-cell {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-size: 14px;
+
+        mat-icon {
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+
+          &.tenant-required {
+            color: #3b82f6;
+          }
+
+          &.tenant-global {
+            color: #10b981;
+          }
+        }
+      }
+
+      .usuarios-count {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        font-weight: 600;
+        color: #1e293b;
+
+        mat-icon {
+          color: #64748b;
+          font-size: 20px;
+          width: 20px;
+          height: 20px;
+        }
+      }
+
+      .action-buttons {
+        display: flex;
+        gap: 4px;
+      }
+    }
+  }
+
+  // Chips de nivel jerárquico
+  .chip-nivel-1 {
+    background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 4px rgba(220, 38, 38, 0.3);
+  }
+
+  .chip-nivel-2 {
+    background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+
+  .chip-nivel-3 {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: white !important;
+    font-weight: 600 !important;
+  }
+
+  .chip-nivel-4 {
+    background: #e0e7ff !important;
+    color: #4338ca !important;
+    font-weight: 500 !important;
+  }
+
+  .chip-activo {
+    background: #d1fae5 !important;
+    color: #065f46 !important;
+    font-weight: 500 !important;
+  }
+
+  .chip-inactivo {
+    background: #fee2e2 !important;
+    color: #991b1b !important;
+    font-weight: 500 !important;
+  }
+
+  .no-results {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #94a3b8;
+
+    mat-icon {
+      font-size: 64px;
+      width: 64px;
+      height: 64px;
+      margin-bottom: 1rem;
+      color: #cbd5e1;
+    }
+
+    p {
+      font-size: 18px;
+      margin: 0 0 8px 0;
+      color: #64748b;
+    }
+
+    small {
+      font-size: 14px;
+      color: #94a3b8;
+    }
+  }
+
+  .info-card {
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    padding: 1.5rem;
+    border-radius: 8px;
+    border-left: 4px solid #3b82f6;
+    display: flex;
+    gap: 1rem;
+
+    > mat-icon {
+      color: #3b82f6;
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
+    .info-content {
+      flex: 1;
+
+      h3 {
+        margin: 0 0 12px 0;
+        color: #1e293b;
+        font-size: 16px;
+        font-weight: 600;
+      }
+
+      ul {
+        margin: 0 0 12px 0;
+        padding-left: 20px;
+        color: #475569;
+        font-size: 14px;
+        line-height: 1.8;
+
+        li {
+          margin-bottom: 6px;
+
+          strong {
+            color: #1e293b;
+          }
+        }
+      }
+
+      .warning {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 10px;
+        background: rgba(239, 68, 68, 0.1);
+        border-radius: 6px;
+        color: #991b1b;
+        font-size: 13px;
+        font-weight: 500;
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: #dc2626;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .roles-page {
+    .page-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 1rem;
+
+      button {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  }
+}

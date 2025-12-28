@@ -5,13 +5,14 @@ import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 public class ContratoDTO {
 
-    private Long id;
+    private UUID id;
     private String tenantId;
-    private Long empresaId;
+    private UUID empresaId;
     private String empresaNombre; // Razón social de la empresa (denormalizado)
     private String numeroContrato;
     private String numeroOc;

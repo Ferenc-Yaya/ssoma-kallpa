@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -14,12 +15,12 @@ import java.time.LocalDateTime;
 public class Activo extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "activo_id")
-    private Long activoId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "activo_id", columnDefinition = "UUID")
+    private UUID activoId;
 
-    @Column(name = "empresa_id", nullable = false)
-    private Long empresaId;
+    @Column(name = "empresa_id", nullable = false, columnDefinition = "UUID")
+    private UUID empresaId;
 
     @Column(name = "tipo_activo", nullable = false, length = 50)
     private String tipoActivo; // 'VEHICULO', 'HERRAMIENTA'

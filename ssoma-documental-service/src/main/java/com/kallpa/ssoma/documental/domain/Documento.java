@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,18 +16,18 @@ import java.time.LocalDateTime;
 public class Documento extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "documento_id")
-    private Long documentoId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "documento_id", columnDefinition = "UUID")
+    private UUID documentoId;
 
     @Column(name = "entidad_tipo", nullable = false, length = 50)
     private String entidadTipo; // 'EMPRESA', 'PERSONA', 'ACTIVO', 'CONTRATO'
 
-    @Column(name = "entidad_id", nullable = false)
-    private Long entidadId;
+    @Column(name = "entidad_id", nullable = false, columnDefinition = "UUID")
+    private UUID entidadId;
 
-    @Column(name = "documento_requerible_id")
-    private Long documentoRequeribleId;
+    @Column(name = "documento_requerible_id", columnDefinition = "UUID")
+    private UUID documentoRequeribleId;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "documento_requerible_id", insertable = false, updatable = false)

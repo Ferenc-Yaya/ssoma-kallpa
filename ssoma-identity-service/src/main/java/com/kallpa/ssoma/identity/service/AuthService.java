@@ -39,7 +39,7 @@ public class AuthService {
         String token = jwtTokenProvider.generateToken(
                 usuario.getUsername(),
                 usuario.getTenantId(),
-                usuario.getRol() != null ? usuario.getRol().getNombreRol() : "USER"
+                usuario.getRol() != null ? usuario.getRol().getCodigo() : "USER"
         );
 
         // 5. Actualizar último acceso
@@ -51,7 +51,7 @@ public class AuthService {
                 token,
                 usuario.getUsername(),
                 usuario.getTenantId(),
-                usuario.getRol() != null ? usuario.getRol().getNombreRol() : "USER",
+                usuario.getRol() != null ? usuario.getRol().getCodigo() : "USER",
                 "Login exitoso"
         );
     }

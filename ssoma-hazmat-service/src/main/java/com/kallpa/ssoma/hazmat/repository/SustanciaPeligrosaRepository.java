@@ -7,9 +7,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface SustanciaPeligrosaRepository extends JpaRepository<SustanciaPeligrosa, Long> {
+public interface SustanciaPeligrosaRepository extends JpaRepository<SustanciaPeligrosa, UUID> {
 
     List<SustanciaPeligrosa> findByTenantId(String tenantId);
 

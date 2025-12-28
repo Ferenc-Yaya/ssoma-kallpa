@@ -7,15 +7,16 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface InventarioMatpelRepository extends JpaRepository<InventarioMatpel, Long> {
+public interface InventarioMatpelRepository extends JpaRepository<InventarioMatpel, UUID> {
 
     List<InventarioMatpel> findByTenantId(String tenantId);
 
-    List<InventarioMatpel> findByTenantIdAndEmpresaId(String tenantId, Long empresaId);
+    List<InventarioMatpel> findByTenantIdAndEmpresaId(String tenantId, UUID empresaId);
 
-    List<InventarioMatpel> findByTenantIdAndSustanciaId(String tenantId, Long sustanciaId);
+    List<InventarioMatpel> findByTenantIdAndSustanciaId(String tenantId, UUID sustanciaId);
 
     List<InventarioMatpel> findByTenantIdAndEstado(String tenantId, String estado);
 

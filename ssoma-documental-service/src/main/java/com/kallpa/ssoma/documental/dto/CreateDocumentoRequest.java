@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 public class CreateDocumentoRequest {
@@ -15,9 +16,9 @@ public class CreateDocumentoRequest {
     private String entidadTipo; // 'EMPRESA', 'PERSONA', 'ACTIVO', 'CONTRATO'
 
     @NotNull(message = "El ID de la entidad es obligatorio")
-    private Long entidadId;
+    private UUID entidadId;
 
-    private Long documentoRequeribleId;
+    private UUID documentoRequeribleId;
 
     @NotBlank(message = "El nombre del archivo es obligatorio")
     @Size(max = 255, message = "El nombre del archivo no puede exceder 255 caracteres")

@@ -9,9 +9,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface DocumentoRepository extends JpaRepository<Documento, Long> {
+public interface DocumentoRepository extends JpaRepository<Documento, UUID> {
 
     @Query("SELECT d FROM Documento d LEFT JOIN FETCH d.documentoRequerible WHERE d.tenantId = :tenantId")
     List<Documento> findByTenantIdWithRequerible(@Param("tenantId") String tenantId);
@@ -19,11 +20,11 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
     List<Documento> findByTenantId(String tenantId);
 
     @Query("SELECT d FROM Documento d LEFT JOIN FETCH d.documentoRequerible WHERE d.tenantId = :tenantId AND d.documentoId = :documentoId")
-    Optional<Documento> findByTenantIdAndDocumentoIdWithRequerible(@Param("tenantId") String tenantId, @Param("documentoId") Long documentoId);
+    Optional<Documento> findByTenantIdAndDocumentoIdWithRequerible(@Param("tenantId") String tenantId, @Param("documentoId") UUID documentoId);
 
-    Optional<Documento> findByTenantIdAndDocumentoId(String tenantId, Long documentoId);
+    Optional<Documento> findByTenantIdAndDocumentoId(String tenantId, UUID documentoId);
 
-    List<Documento> findByTenantIdAndEntidadTipoAndEntidadId(String tenantId, String entidadTipo, Long entidadId);
+    List<Documento> findByTenantIdAndEntidadTipoAndEntidadId(String tenantId, String entidadTipo, UUID entidadId);
 
     List<Documento> findByTenantIdAndEstado(String tenantId, String estado);
 
@@ -43,5 +44,5 @@ public interface DocumentoRepository extends JpaRepository<Documento, Long> {
 
     long countByTenantIdAndEstado(String tenantId, String estado);
 
-    long countByTenantIdAndEntidadTipoAndEntidadId(String tenantId, String entidadTipo, Long entidadId);
+    long countByTenantIdAndEntidadTipoAndEntidadId(String tenantId, String entidadTipo, UUID entidadId);
 }
