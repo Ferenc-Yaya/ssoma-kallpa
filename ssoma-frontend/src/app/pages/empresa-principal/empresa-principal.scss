@@ -70,6 +70,16 @@
   flex: 1;
 }
 
+.empresa-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  padding: 4px;
+}
+
 .tenant-badge {
   display: flex;
   align-items: center;
@@ -148,6 +158,20 @@
       span {
         font-size: 14px;
         color: #1e293b;
+
+        &.text-muted {
+          color: #94a3b8;
+          font-style: italic;
+        }
+
+        a {
+          color: #3b82f6;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
       }
     }
   }
@@ -268,6 +292,30 @@
   background-color: #fee2e2 !important;
   color: #991b1b !important;
   font-weight: 500;
+  font-size: 12px !important;
+  height: 24px !important;
+}
+
+.chip-score-alto {
+  background-color: #dcfce7 !important;
+  color: #166534 !important;
+  font-weight: 600;
+  font-size: 12px !important;
+  height: 24px !important;
+}
+
+.chip-score-medio {
+  background-color: #fef3c7 !important;
+  color: #92400e !important;
+  font-weight: 600;
+  font-size: 12px !important;
+  height: 24px !important;
+}
+
+.chip-score-bajo {
+  background-color: #fee2e2 !important;
+  color: #991b1b !important;
+  font-weight: 600;
   font-size: 12px !important;
   height: 24px !important;
 }

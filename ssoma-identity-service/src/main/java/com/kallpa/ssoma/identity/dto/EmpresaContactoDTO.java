@@ -2,9 +2,11 @@ package com.kallpa.ssoma.identity.dto;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class EmpresaContactoDTO {
-    private Long id;
+    private UUID id;
     private String nombreCompleto;
     private String cargo;
     private String telefono;

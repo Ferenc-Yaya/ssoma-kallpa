@@ -16,6 +16,9 @@ public interface EmpresaRepository extends JpaRepository<Empresa, UUID> {
     @Query("SELECT e FROM Empresa e LEFT JOIN FETCH e.tipoContratista WHERE e.tenantId = :tenantId")
     List<Empresa> findByTenantIdWithTipo(@Param("tenantId") String tenantId);
 
+    @Query("SELECT e FROM Empresa e LEFT JOIN FETCH e.tipoContratista")
+    List<Empresa> findAllWithTipo();
+
     List<Empresa> findByTenantId(String tenantId);
 
     @Query("SELECT e FROM Empresa e LEFT JOIN FETCH e.tipoContratista WHERE e.tenantId = :tenantId AND e.empresaId = :empresaId")

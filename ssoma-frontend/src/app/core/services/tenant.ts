@@ -4,13 +4,13 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class TenantService {
-  private currentTenant: string = 'KALLPA'; // Por defecto
 
   getCurrentTenant(): string {
-    return this.currentTenant;
+    // Obtener del localStorage (guardado por AuthService al hacer login)
+    return localStorage.getItem('current_tenant') || 'SYSTEM';
   }
 
   setTenant(tenantId: string): void {
-    this.currentTenant = tenantId;
+    localStorage.setItem('current_tenant', tenantId);
   }
 }

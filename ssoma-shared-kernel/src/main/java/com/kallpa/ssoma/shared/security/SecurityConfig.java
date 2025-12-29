@@ -30,16 +30,17 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                .cors(cors -> cors.configurationSource(corsConfigurationSource())) // CORS configurado correctamente
-                .csrf(csrf -> csrf.disable()) // Deshabilitamos CSRF para API REST
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
                 .sessionManagement(session ->
-                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Sin sesiones, solo JWT
+                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll() // Login público
-                        .requestMatchers("/api/public/**").permitAll() // Endpoints públicos
-                        .anyRequest().authenticated() // Todo lo demás requiere autenticación
-                )
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                        .requestMatchers("/api/auth/**", "/api/public/**").permitAll()
+                        .anyRequest().authenticated()
+                );
+
+        // Solo agregar filtro JWT si no fue excluido por shouldNotFilter
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -47,10 +48,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
-        configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"));
-        configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(Arrays.asList("Authorization", "X-Tenant-ID"));
+        configuration.addAllowedOriginPattern("*"); // Permitir todos los orígenes en desarrollo
+        configuration.addAllowedMethod("*"); // Permitir todos los métodos
+        configuration.addAllowedHeader("*"); // Permitir todos los headers
+        configuration.addExposedHeader("Authorization");
+        configuration.addExposedHeader("X-Tenant-ID");
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
 

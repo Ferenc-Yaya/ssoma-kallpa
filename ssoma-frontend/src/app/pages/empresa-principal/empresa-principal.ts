@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { trigger, state, style, transition, animate } from '@angular/animations';
@@ -16,26 +16,34 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AuthService } from '../../core/services/auth';
+import { EmpresaService, EmpresaDTO } from '../../core/services/empresa.service';
+import { SedeService, SedeDTO } from '../../core/services/sede.service';
 import { EmpresaDialogComponent } from './empresa-dialog/empresa-dialog';
 import { SedeDialogComponent } from './sede-dialog/sede-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
 
 interface EmpresaPrincipal {
-  empresaId: number;
+  empresaId: string;
   tenantId: string;
   ruc: string;
   razonSocial: string;
+  tipo: string;
   direccion: string;
   telefono: string;
   email: string;
-  estado: string;
-  plan: string;
+  logoUrl: string;
+  sitioWeb: string;
+  rubroComercial: string;
+  scoreSeguridad: number;
+  estadoHabilitacion: string;
+  activo: boolean;
   cantidadSedes: number;
+  createdAt: string;
   sedes?: Sede[];
 }
 
 interface Sede {
-  sedeId: number;
+  sedeId: string;
   nombre: string;
   direccion: string;
   esPrincipal: boolean;
@@ -73,16 +81,21 @@ interface Sede {
 })
 export class EmpresaPrincipalComponent implements OnInit {
   empresasPrincipales: EmpresaPrincipal[] = [];
-  displayedColumns: string[] = ['tenantId', 'razonSocial', 'ruc', 'plan', 'cantidadSedes', 'estado', 'acciones'];
+  displayedColumns: string[] = ['tenantId', 'razonSocial', 'ruc', 'cantidadSedes', 'estadoHabilitacion', 'acciones'];
   displayedColumnsSedes: string[] = ['nombre', 'direccion', 'esPrincipal', 'activo', 'acciones'];
   expandedEmpresa: EmpresaPrincipal | null = null;
+  loading: boolean = false;
+  tipoHostId: string | null = null; // ID del tipo 'HOST' para crear nuevas empresas principales
 
   constructor(
     private authService: AuthService,
+    private empresaService: EmpresaService,
+    private sedeService: SedeService,
     private dialog: MatDialog,
     private fb: FormBuilder,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -90,58 +103,95 @@ export class EmpresaPrincipalComponent implements OnInit {
   }
 
   loadEmpresasPrincipales(): void {
-    // TODO: Replace with real API call to get all empresas with tipo='HOST'
-    this.empresasPrincipales = [
-      {
-        empresaId: 1,
-        tenantId: 'KALLPA',
-        ruc: '20123456789',
-        razonSocial: 'KALLPA SAC',
-        direccion: 'Av. Principal Kallpa, Lima',
-        telefono: '01-1234567',
-        email: 'contacto@kallpa.com',
-        estado: 'ACTIVO',
-        plan: 'ENTERPRISE',
-        cantidadSedes: 2,
-        sedes: [
-          {
-            sedeId: 1,
-            nombre: 'Cerro del Águila',
-            direccion: 'Central Hidroeléctrica Cerro del Águila, Huancavelica',
-            esPrincipal: true,
-            activo: true
-          },
-          {
-            sedeId: 2,
-            nombre: 'Cañón del Pato',
-            direccion: 'Central Hidroeléctrica Cañón del Pato, Áncash',
-            esPrincipal: false,
-            activo: true
+    console.log('🔄 Iniciando carga de empresas principales...');
+    console.log('🔑 Token:', localStorage.getItem('auth_token')?.substring(0, 50) + '...');
+    console.log('🏢 Tenant:', localStorage.getItem('current_tenant'));
+
+    this.loading = true;
+    this.empresaService.getAllEmpresas().subscribe({
+      next: (empresas: EmpresaDTO[]) => {
+        try {
+          console.log('📦 Empresas recibidas del backend:', empresas);
+
+          // Filtrar solo empresas principales (codigo='HOST')
+          const empresasPrincipales = empresas.filter(e =>
+            e.tipo === 'HOST'
+          );
+
+          console.log('✅ Empresas principales filtradas:', empresasPrincipales);
+
+          // Guardar tipoId de HOST para crear nuevas empresas
+          if (empresasPrincipales.length > 0 && empresasPrincipales[0].tipoId) {
+            this.tipoHostId = empresasPrincipales[0].tipoId;
           }
-        ]
+
+          // Mapear a la interfaz local
+          this.empresasPrincipales = empresasPrincipales.map(e => ({
+            empresaId: e.id,
+            tenantId: e.tenantId,
+            ruc: e.ruc,
+            razonSocial: e.razonSocial,
+            tipo: e.tipo,
+            direccion: e.direccion || '',
+            telefono: e.telefono || '',
+            email: e.email || '',
+            logoUrl: e.logoUrl || '',
+            sitioWeb: e.sitioWeb || '',
+            rubroComercial: e.rubroComercial || '',
+            scoreSeguridad: e.scoreSeguridad || 100,
+            estadoHabilitacion: e.estadoHabilitacion,
+            activo: e.activo,
+            cantidadSedes: 0,
+            createdAt: e.createdAt || '',
+            sedes: []
+          }));
+
+          console.log('✅ Empresas mapeadas:', this.empresasPrincipales);
+
+          // Cargar sedes para cada empresa
+          this.empresasPrincipales.forEach(empresa => {
+            this.loadSedesForEmpresa(empresa);
+          });
+
+          this.loading = false;
+          this.cdr.detectChanges();
+        } catch (error) {
+          console.error('❌ Error en el procesamiento:', error);
+          this.loading = false;
+          this.cdr.detectChanges();
+        }
       },
-      {
-        empresaId: 2,
-        tenantId: 'SYSTEM',
-        ruc: '20999999999',
-        razonSocial: 'Sistema Central',
-        direccion: 'Av. Sistema Central, Lima',
-        telefono: '01-9999999',
-        email: 'admin@system.com',
-        estado: 'ACTIVO',
-        plan: 'ENTERPRISE',
-        cantidadSedes: 1,
-        sedes: [
-          {
-            sedeId: 3,
-            nombre: 'Sede Central',
-            direccion: 'Oficina Principal, Lima',
-            esPrincipal: true,
-            activo: true
-          }
-        ]
+      error: (error) => {
+        console.error('❌ Error al cargar empresas principales:', error);
+        console.error('❌ Error status:', error.status);
+        console.error('❌ Error message:', error.message);
+        console.error('❌ Error completo:', JSON.stringify(error, null, 2));
+        this.showNotification('Error al cargar empresas principales', 'error');
+        this.loading = false;
+        this.cdr.detectChanges();
       }
-    ];
+    });
+  }
+
+  loadSedesForEmpresa(empresa: EmpresaPrincipal): void {
+    this.sedeService.getSedesByEmpresa(empresa.empresaId).subscribe({
+      next: (sedes: SedeDTO[]) => {
+        empresa.sedes = sedes.map(s => ({
+          sedeId: s.id,
+          nombre: s.nombre,
+          direccion: s.direccion,
+          esPrincipal: s.esPrincipal,
+          activo: s.activo
+        }));
+        empresa.cantidadSedes = sedes.length;
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error('Error al cargar sedes para empresa:', empresa.empresaId, error);
+        empresa.cantidadSedes = 0;
+        empresa.sedes = [];
+      }
+    });
   }
 
   toggleEmpresa(empresa: EmpresaPrincipal): void {
@@ -171,41 +221,36 @@ export class EmpresaPrincipalComponent implements OnInit {
   }
 
   createEmpresa(data: any): void {
-    // TODO: Reemplazar con llamada al API
-    const newEmpresa: EmpresaPrincipal = {
-      empresaId: this.empresasPrincipales.length + 1,
-      tenantId: data.tenantId,
-      ruc: data.ruc,
-      razonSocial: data.razonSocial,
-      direccion: data.direccion,
-      telefono: data.telefono,
-      email: data.email,
-      estado: data.estado,
-      plan: data.plan,
-      cantidadSedes: 0,
-      sedes: []
+    // Agregar tipoId de HOST al request
+    const request = {
+      ...data,
+      tipoId: this.tipoHostId
     };
 
-    this.empresasPrincipales.push(newEmpresa);
-    this.showNotification('Empresa principal creada exitosamente', 'success');
+    this.empresaService.createEmpresa(request).subscribe({
+      next: (empresa: EmpresaDTO) => {
+        this.showNotification('Empresa principal creada exitosamente', 'success');
+        this.loadEmpresasPrincipales(); // Recargar lista
+      },
+      error: (error) => {
+        console.error('Error al crear empresa:', error);
+        const errorMsg = error?.error?.message || 'Error al crear empresa principal';
+        this.showNotification(errorMsg, 'error');
+      }
+    });
   }
 
   updateEmpresa(empresa: EmpresaPrincipal, data: any): void {
-    // TODO: Reemplazar con llamada al API
-    const index = this.empresasPrincipales.findIndex(e => e.empresaId === empresa.empresaId);
-    if (index !== -1) {
-      this.empresasPrincipales[index] = {
-        ...this.empresasPrincipales[index],
-        razonSocial: data.razonSocial,
-        ruc: data.ruc,
-        direccion: data.direccion,
-        telefono: data.telefono,
-        email: data.email,
-        plan: data.plan,
-        estado: data.estado
-      };
-      this.showNotification('Empresa principal actualizada exitosamente', 'success');
-    }
+    this.empresaService.updateEmpresa(empresa.empresaId, data).subscribe({
+      next: (empresaActualizada: EmpresaDTO) => {
+        this.showNotification('Empresa principal actualizada exitosamente', 'success');
+        this.loadEmpresasPrincipales(); // Recargar lista
+      },
+      error: (error) => {
+        console.error('Error al actualizar empresa:', error);
+        this.showNotification('Error al actualizar empresa principal', 'error');
+      }
+    });
   }
 
   deleteEmpresa(empresa: EmpresaPrincipal): void {
@@ -222,12 +267,16 @@ export class EmpresaPrincipalComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
-        // TODO: Reemplazar con llamada al API
-        const index = this.empresasPrincipales.findIndex(e => e.empresaId === empresa.empresaId);
-        if (index !== -1) {
-          this.empresasPrincipales.splice(index, 1);
-          this.showNotification('Empresa principal eliminada exitosamente', 'success');
-        }
+        this.empresaService.deleteEmpresa(empresa.empresaId).subscribe({
+          next: () => {
+            this.showNotification('Empresa principal eliminada exitosamente', 'success');
+            this.loadEmpresasPrincipales(); // Recargar lista
+          },
+          error: (error) => {
+            console.error('Error al eliminar empresa:', error);
+            this.showNotification('Error al eliminar empresa principal', 'error');
+          }
+        });
       }
     });
   }
@@ -269,7 +318,7 @@ export class EmpresaPrincipalComponent implements OnInit {
     }
 
     const newSede: Sede = {
-      sedeId: empresa.sedes.length + 1,
+      sedeId: crypto.randomUUID(), // Generar UUID temporal
       nombre: data.nombre,
       direccion: data.direccion,
       esPrincipal: data.esPrincipal,

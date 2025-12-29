@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Data
 @EqualsAndHashCode(callSuper = true, exclude = "empresa")
@@ -14,9 +15,9 @@ import java.time.LocalDateTime;
 public class EmpresaContacto extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "contacto_id")
-    private Long contactoId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "contacto_id", columnDefinition = "UUID")
+    private UUID contactoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
@@ -27,6 +28,9 @@ public class EmpresaContacto extends BaseEntity {
 
     @Column(name = "cargo", length = 100)
     private String cargo;
+
+    @Column(name = "tipo_contacto", nullable = false, length = 50)
+    private String tipoContacto;
 
     @Column(name = "telefono", length = 20)
     private String telefono;

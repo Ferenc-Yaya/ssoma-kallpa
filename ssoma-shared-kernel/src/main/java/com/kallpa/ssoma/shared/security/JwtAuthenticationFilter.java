@@ -26,26 +26,32 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        String token = getTokenFromRequest(request);
-
-        if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
-            String tenantId = tokenProvider.getTenantId(token);
-            String username = tokenProvider.getUsername(token);
-
-            // 1. MAGIA SAAS: Configurar el contexto del Tenant para esta petición
-            TenantContext.setTenantId(tenantId);
-
-            // 2. Configurar Spring Security (Usuario Logueado)
-            UsernamePasswordAuthenticationToken auth =
-                    new UsernamePasswordAuthenticationToken(username, null, null);
-            SecurityContextHolder.getContext().setAuthentication(auth);
-        }
-
         try {
+            String token = getTokenFromRequest(request);
+
+            if (StringUtils.hasText(token) && tokenProvider.validateToken(token)) {
+                String tenantId = tokenProvider.getTenantId(token);
+                String username = tokenProvider.getUsername(token);
+
+                // 1. MAGIA SAAS: Configurar el contexto del Tenant para esta petición
+                TenantContext.setTenantId(tenantId);
+
+                // 2. Configurar Spring Security (Usuario Logueado)
+                UsernamePasswordAuthenticationToken auth =
+                        new UsernamePasswordAuthenticationToken(username, null, null);
+                SecurityContextHolder.getContext().setAuthentication(auth);
+            }
+
             filterChain.doFilter(request, response);
         } finally {
             TenantContext.clear(); // Limpieza obligatoria
         }
+    }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return path.startsWith("/api/auth") || path.startsWith("/api/public");
     }
 
     private String getTokenFromRequest(HttpServletRequest request) {

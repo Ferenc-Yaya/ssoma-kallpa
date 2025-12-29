@@ -32,7 +32,7 @@
       </div>
 
       <div class="form-field">
-        <label>Teléfono *</label>
+        <label>Teléfono</label>
         <input type="text" formControlName="telefono" placeholder="Ej: 01-4567890">
         <small class="error" *ngIf="empresaForm.get('telefono')?.invalid && empresaForm.get('telefono')?.touched">
           {{ getErrorMessage('telefono') }}
@@ -41,7 +41,7 @@
     </div>
 
     <div class="form-field">
-      <label>Email *</label>
+      <label>Email</label>
       <input type="email" formControlName="email" placeholder="correo@empresa.com">
       <small class="error" *ngIf="empresaForm.get('email')?.invalid && empresaForm.get('email')?.touched">
         {{ getErrorMessage('email') }}
@@ -49,39 +49,24 @@
     </div>
 
     <div class="form-field">
-      <label>Dirección *</label>
+      <label>Dirección</label>
       <textarea formControlName="direccion" rows="3" placeholder="Ingrese dirección completa"></textarea>
       <small class="error" *ngIf="empresaForm.get('direccion')?.invalid && empresaForm.get('direccion')?.touched">
         {{ getErrorMessage('direccion') }}
       </small>
     </div>
 
-    <div class="form-row">
-      <div class="form-field">
-        <label>Plan *</label>
-        <select formControlName="plan">
-          <option value="" disabled>Seleccionar...</option>
-          <option *ngFor="let plan of planes" [value]="plan.value">
-            {{ plan.label }}
-          </option>
-        </select>
-        <small class="error" *ngIf="empresaForm.get('plan')?.invalid && empresaForm.get('plan')?.touched">
-          {{ getErrorMessage('plan') }}
-        </small>
-      </div>
-
-      <div class="form-field">
-        <label>Estado *</label>
-        <select formControlName="estado">
-          <option value="" disabled>Seleccionar...</option>
-          <option *ngFor="let estado of estados" [value]="estado.value">
-            {{ estado.label }}
-          </option>
-        </select>
-        <small class="error" *ngIf="empresaForm.get('estado')?.invalid && empresaForm.get('estado')?.touched">
-          {{ getErrorMessage('estado') }}
-        </small>
-      </div>
+    <div class="form-field">
+      <label>Estado de Habilitación *</label>
+      <select formControlName="estadoHabilitacion">
+        <option value="" disabled>Seleccionar...</option>
+        <option *ngFor="let estado of estadosHabilitacion" [value]="estado.value">
+          {{ estado.label }}
+        </option>
+      </select>
+      <small class="error" *ngIf="empresaForm.get('estadoHabilitacion')?.invalid && empresaForm.get('estadoHabilitacion')?.touched">
+        {{ getErrorMessage('estadoHabilitacion') }}
+      </small>
     </div>
   </form>
 </mat-dialog-content>

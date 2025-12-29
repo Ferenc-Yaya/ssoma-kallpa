@@ -17,6 +17,10 @@ public class EmpresaDTO {
     private String direccion;
     private String telefono;
     private String email;
+    private String logoUrl;
+    private String sitioWeb;
+    private String rubroComercial;
+    private Integer scoreSeguridad;
     private String estadoHabilitacion;
     private Boolean activo;
     private LocalDateTime createdAt;

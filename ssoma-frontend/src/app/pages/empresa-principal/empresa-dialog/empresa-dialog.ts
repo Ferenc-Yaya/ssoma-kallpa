@@ -33,16 +33,10 @@ export class EmpresaDialogComponent implements OnInit {
   empresaForm: FormGroup;
   isEdit: boolean;
 
-  planes = [
-    { value: 'FREE', label: 'Free' },
-    { value: 'BASIC', label: 'Basic' },
-    { value: 'PROFESSIONAL', label: 'Professional' },
-    { value: 'ENTERPRISE', label: 'Enterprise' }
-  ];
-
-  estados = [
-    { value: 'ACTIVO', label: 'Activo' },
-    { value: 'INACTIVO', label: 'Inactivo' },
+  estadosHabilitacion = [
+    { value: 'APROBADO', label: 'Aprobado' },
+    { value: 'PENDIENTE', label: 'Pendiente' },
+    { value: 'RECHAZADO', label: 'Rechazado' },
     { value: 'SUSPENDIDO', label: 'Suspendido' }
   ];
 
@@ -64,12 +58,13 @@ export class EmpresaDialogComponent implements OnInit {
         direccion: this.data.empresa.direccion,
         telefono: this.data.empresa.telefono,
         email: this.data.empresa.email,
-        plan: this.data.empresa.plan,
-        estado: this.data.empresa.estado
+        estadoHabilitacion: this.data.empresa.estadoHabilitacion,
+        activo: this.data.empresa.activo
       });
 
-      // Deshabilitar tenant_id en edición (no se puede cambiar)
+      // Deshabilitar tenant_id y RUC en edición (no se pueden cambiar)
       this.empresaForm.get('tenantId')?.disable();
+      this.empresaForm.get('ruc')?.disable();
     }
   }
 
@@ -78,11 +73,12 @@ export class EmpresaDialogComponent implements OnInit {
       tenantId: ['', [Validators.required, Validators.pattern(/^[A-Z_]+$/)]],
       razonSocial: ['', [Validators.required, Validators.minLength(3)]],
       ruc: ['', [Validators.required, Validators.pattern(/^\d{11}$/)]],
-      direccion: ['', Validators.required],
-      telefono: ['', [Validators.required, Validators.pattern(/^[0-9\-\+\s]+$/)]],
-      email: ['', [Validators.required, Validators.email]],
-      plan: ['ENTERPRISE', Validators.required],
-      estado: ['ACTIVO', Validators.required]
+      tipoId: [''], // Se debe obtener el ID del tipo 'HOST' del backend
+      direccion: [''],
+      telefono: ['', [Validators.pattern(/^[0-9\-\+\s]+$/)]],
+      email: ['', [Validators.email]],
+      estadoHabilitacion: ['PENDIENTE', Validators.required],
+      activo: [true]
     });
   }
 

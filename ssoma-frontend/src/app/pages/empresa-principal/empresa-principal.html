@@ -12,13 +12,20 @@
     </div>
   </div>
 
+  <!-- Indicador de carga -->
+  <div *ngIf="loading" style="text-align: center; padding: 50px;">
+    <p>Cargando empresas principales...</p>
+  </div>
+
   <!-- Lista de Empresas Principales -->
-  <div class="empresas-list" *ngIf="empresasPrincipales.length > 0">
+  <div class="empresas-list" *ngIf="!loading && empresasPrincipales.length > 0">
     <mat-card *ngFor="let empresa of empresasPrincipales" class="empresa-card">
       <!-- Header de la Empresa -->
       <mat-card-header>
         <div class="empresa-header-content">
           <div class="empresa-title-section">
+            <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" alt="Logo {{ empresa.razonSocial }}"
+                 class="empresa-logo" />
             <div class="tenant-badge">
               <mat-icon>domain</mat-icon>
               <strong>{{ empresa.tenantId }}</strong>
@@ -70,16 +77,6 @@
             </div>
           </div>
           <div class="info-item">
-            <mat-icon>stars</mat-icon>
-            <div>
-              <label>Plan</label>
-              <mat-chip [class.chip-enterprise]="empresa.plan === 'ENTERPRISE'"
-                        [class.chip-free]="empresa.plan === 'FREE'">
-                {{ empresa.plan }}
-              </mat-chip>
-            </div>
-          </div>
-          <div class="info-item">
             <mat-icon>location_city</mat-icon>
             <div>
               <label>Sedes</label>
@@ -87,12 +84,47 @@
             </div>
           </div>
           <div class="info-item">
+            <mat-icon>language</mat-icon>
+            <div>
+              <label>Sitio Web</label>
+              <span *ngIf="empresa.sitioWeb">
+                <a [href]="empresa.sitioWeb" target="_blank" rel="noopener">{{ empresa.sitioWeb }}</a>
+              </span>
+              <span *ngIf="!empresa.sitioWeb" class="text-muted">No especificado</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>business_center</mat-icon>
+            <div>
+              <label>Rubro Comercial</label>
+              <span>{{ empresa.rubroComercial || 'No especificado' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>shield</mat-icon>
+            <div>
+              <label>Score de Seguridad</label>
+              <mat-chip [class.chip-score-alto]="empresa.scoreSeguridad >= 80"
+                        [class.chip-score-medio]="empresa.scoreSeguridad >= 50 && empresa.scoreSeguridad < 80"
+                        [class.chip-score-bajo]="empresa.scoreSeguridad < 50">
+                {{ empresa.scoreSeguridad }}/100
+              </mat-chip>
+            </div>
+          </div>
+          <div class="info-item">
+            <mat-icon>calendar_today</mat-icon>
+            <div>
+              <label>Fecha de Creación</label>
+              <span>{{ empresa.createdAt | date:'dd/MM/yyyy' }}</span>
+            </div>
+          </div>
+          <div class="info-item">
             <mat-icon>verified</mat-icon>
             <div>
               <label>Estado</label>
-              <mat-chip [class.chip-activo]="empresa.estado === 'ACTIVO'"
-                        [class.chip-inactivo]="empresa.estado !== 'ACTIVO'">
-                {{ empresa.estado }}
+              <mat-chip [class.chip-activo]="empresa.estadoHabilitacion === 'APROBADO'"
+                        [class.chip-inactivo]="empresa.estadoHabilitacion !== 'APROBADO'">
+                {{ empresa.estadoHabilitacion }}
               </mat-chip>
             </div>
           </div>
@@ -160,7 +192,7 @@
   </div>
 
   <!-- Estado vacío -->
-  <mat-card *ngIf="empresasPrincipales.length === 0" class="empty-state">
+  <mat-card *ngIf="!loading && empresasPrincipales.length === 0" class="empty-state">
     <mat-icon>domain_disabled</mat-icon>
     <h3>No hay empresas principales registradas</h3>
     <p>Comienza creando tu primera empresa principal para gestionar sus sedes y configuración.</p>

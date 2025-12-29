@@ -28,6 +28,21 @@ public class EmpresaService {
     public List<EmpresaDTO> findAll() {
         String tenantId = TenantContext.getTenantId();
         log.debug("Buscando todas las empresas para tenant: {}", tenantId);
+
+        // SUPER_ADMIN (tenant SYSTEM) puede ver empresas de todos los tenants
+        if ("SYSTEM".equals(tenantId)) {
+            log.info("SUPER_ADMIN: Buscando empresas de TODOS los tenants");
+            List<Empresa> empresas = empresaRepository.findAllWithTipo();
+            log.info("🔍 Empresas encontradas en BD: {}", empresas.size());
+            empresas.forEach(e -> log.info("  - Empresa: {} ({})", e.getRazonSocial(), e.getTenantId()));
+
+            List<EmpresaDTO> dtos = empresas.stream()
+                    .map(this::toDTO)
+                    .collect(Collectors.toList());
+            log.info("📦 DTOs generados: {}", dtos.size());
+            return dtos;
+        }
+
         return empresaRepository.findByTenantIdWithTipo(tenantId).stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
@@ -167,14 +182,19 @@ public class EmpresaService {
             empresa.getTipoContratista());
 
         if (empresa.getTipoContratista() != null) {
-            dto.setTipo(empresa.getTipoContratista().getNombre());
-            log.debug("Tipo asignado: {}", empresa.getTipoContratista().getNombre());
+            // Usar el código en lugar del nombre para consistencia
+            dto.setTipo(empresa.getTipoContratista().getCodigo());
+            log.debug("Tipo asignado: {}", empresa.getTipoContratista().getCodigo());
         } else {
             log.warn("TipoContratista es null para empresa {}", empresa.getEmpresaId());
         }
         dto.setDireccion(empresa.getDireccion());
         dto.setTelefono(empresa.getTelefono());
         dto.setEmail(empresa.getEmail());
+        dto.setLogoUrl(empresa.getLogoUrl());
+        dto.setSitioWeb(empresa.getSitioWeb());
+        dto.setRubroComercial(empresa.getRubroComercial());
+        dto.setScoreSeguridad(empresa.getScoreSeguridad());
         dto.setEstadoHabilitacion(empresa.getEstadoHabilitacion());
         dto.setActivo(empresa.getActivo());
         dto.setCreatedAt(empresa.getCreatedAt());

@@ -43,6 +43,18 @@ public class Empresa extends BaseEntity {
     @Column(name = "email", length = 100)
     private String email;
 
+    @Column(name = "logo_url", columnDefinition = "TEXT")
+    private String logoUrl;
+
+    @Column(name = "sitio_web", length = 100)
+    private String sitioWeb;
+
+    @Column(name = "rubro_comercial", length = 100)
+    private String rubroComercial;
+
+    @Column(name = "score_seguridad")
+    private Integer scoreSeguridad = 100;
+
     @Column(name = "estado_habilitacion", length = 20)
     private String estadoHabilitacion = "PENDIENTE";
 

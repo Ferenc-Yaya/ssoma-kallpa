@@ -1,15 +1,16 @@
 -- ==================================================================================
 -- MIGRACIÓN V2: Datos de Prueba Iniciales
--- Incluye: Tenants, Tipos de Contratista y Roles del Sistema
+-- Incluye: Tenants, Tipos de Contratista, Empresas Principales, Sedes, Contratistas y Roles
 -- ==================================================================================
 
 -- ==================================================================================
--- TENANTS INICIALES
+-- TENANTS INICIALES (Solo namespaces)
 -- ==================================================================================
-INSERT INTO tbl_tenants (tenant_id, nombre_comercial, ruc, plan, activo)
+INSERT INTO tbl_tenants (tenant_id, activo)
 VALUES
-    ('SYSTEM', 'SSOMA Platform', '00000000000', 'ENTERPRISE', TRUE),
-    ('KALLPA', 'KALLPA Security', '20123456789', 'ENTERPRISE', TRUE)
+    ('SYSTEM', TRUE),
+    ('KALLPA', TRUE),
+    ('LUZDELSUR', TRUE)
 ON CONFLICT (tenant_id) DO NOTHING;
 
 -- ==================================================================================
@@ -22,6 +23,244 @@ VALUES
     ('SYSTEM', 'EVENTUAL', 'Contratista Eventual', 'Contratistas eventuales o temporales para proyectos específicos'),
     ('SYSTEM', 'VISITA', 'Visitante', 'Visitantes o personal externo temporal sin contrato formal')
 ON CONFLICT (codigo) DO NOTHING;
+
+-- ==================================================================================
+-- EMPRESAS PRINCIPALES (tipo='HOST')
+-- ==================================================================================
+
+-- Empresa principal KALLPA
+INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, logo_url, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+SELECT
+    'KALLPA',
+    '20123456789',
+    'Kallpa Generación S.A.',
+    tipo_id,
+    'Av. Jorge Basadre 592, San Isidro, Lima',
+    '+51 1 612-8585',
+    'contacto@kallpa.com.pe',
+    'https://via.placeholder.com/150/2196F3/FFFFFF?text=KALLPA',
+    'https://www.kallpa.com.pe',
+    'Generación de Energía Eléctrica',
+    95,
+    'APROBADO',
+    TRUE
+FROM cat_tipos_contratista
+WHERE codigo = 'HOST'
+ON CONFLICT (tenant_id, ruc) DO NOTHING;
+
+-- Empresa principal LUZ DEL SUR
+INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, logo_url, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+SELECT
+    'LUZDELSUR',
+    '20331898008',
+    'Luz del Sur S.A.A.',
+    tipo_id,
+    'Av. Canaval y Moreyra 380, San Isidro, Lima',
+    '+51 1 617-5000',
+    'contacto@luzdelsur.com.pe',
+    'https://via.placeholder.com/150/FF9800/FFFFFF?text=LUZ',
+    'https://www.luzdelsur.com.pe',
+    'Distribución de Energía Eléctrica',
+    92,
+    'APROBADO',
+    TRUE
+FROM cat_tipos_contratista
+WHERE codigo = 'HOST'
+ON CONFLICT (tenant_id, ruc) DO NOTHING;
+
+-- ==================================================================================
+-- SEDES DE EMPRESAS PRINCIPALES
+-- ==================================================================================
+
+-- Sedes para KALLPA
+INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+SELECT
+    'KALLPA',
+    e.empresa_id,
+    'Cañón del Pato',
+    'Central Hidroeléctrica Cañón del Pato, Santa Cruz, Áncash',
+    TRUE,
+    TRUE
+FROM tbl_empresas e
+WHERE e.ruc = '20123456789'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+SELECT
+    'KALLPA',
+    e.empresa_id,
+    'Cerro del Águila',
+    'Central Hidroeléctrica Cerro del Águila, Colcabamba, Huancavelica',
+    FALSE,
+    TRUE
+FROM tbl_empresas e
+WHERE e.ruc = '20123456789'
+ON CONFLICT DO NOTHING;
+
+-- Sedes para LUZ DEL SUR
+INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+SELECT
+    'LUZDELSUR',
+    e.empresa_id,
+    'Lima',
+    'Av. Canaval y Moreyra 380, San Isidro, Lima',
+    TRUE,
+    TRUE
+FROM tbl_empresas e
+WHERE e.ruc = '20331898008'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+SELECT
+    'LUZDELSUR',
+    e.empresa_id,
+    'Cañete',
+    'Av. Bolognesi 450, San Vicente de Cañete',
+    FALSE,
+    TRUE
+FROM tbl_empresas e
+WHERE e.ruc = '20331898008'
+ON CONFLICT DO NOTHING;
+
+-- ==================================================================================
+-- EMPRESAS CONTRATISTAS
+-- ==================================================================================
+
+-- Contratistas para KALLPA (2 empresas)
+INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+SELECT
+    'KALLPA',
+    '20456789123',
+    'Constructora Andina S.A.C.',
+    tipo_id,
+    'Jr. Los Ingenieros 245, Miraflores, Lima',
+    '+51 1 445-6789',
+    'ventas@constructoraandina.com',
+    'https://www.constructoraandina.com',
+    'Construcción y Mantenimiento Industrial',
+    88,
+    'APROBADO',
+    TRUE
+FROM cat_tipos_contratista
+WHERE codigo = 'PERMANENTE'
+ON CONFLICT (tenant_id, ruc) DO NOTHING;
+
+INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+SELECT
+    'KALLPA',
+    '20567891234',
+    'Servicios Técnicos Huascarán E.I.R.L.',
+    tipo_id,
+    'Av. Industrial 890, Independencia, Lima',
+    '+51 1 533-2211',
+    'contacto@huascaran.pe',
+    'https://www.huascaran.pe',
+    'Servicios de Mantenimiento Eléctrico',
+    75,
+    'APROBADO',
+    TRUE
+FROM cat_tipos_contratista
+WHERE codigo = 'EVENTUAL'
+ON CONFLICT (tenant_id, ruc) DO NOTHING;
+
+-- Contratistas para LUZ DEL SUR (2 empresas)
+INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+SELECT
+    'LUZDELSUR',
+    '20678912345',
+    'Instalaciones Eléctricas del Sur S.A.',
+    tipo_id,
+    'Av. Tomás Marsano 2850, Surquillo, Lima',
+    '+51 1 275-8844',
+    'info@ielectricas.com.pe',
+    'https://www.ielectricas.com.pe',
+    'Instalaciones Eléctricas Residenciales',
+    90,
+    'APROBADO',
+    TRUE
+FROM cat_tipos_contratista
+WHERE codigo = 'PERMANENTE'
+ON CONFLICT (tenant_id, ruc) DO NOTHING;
+
+INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+SELECT
+    'LUZDELSUR',
+    '20789123456',
+    'Grupo Mantto Perú S.R.L.',
+    tipo_id,
+    'Jr. Las Palmeras 156, Villa El Salvador, Lima',
+    '+51 1 287-9933',
+    'ventas@manttoperu.com',
+    'https://www.manttoperu.com',
+    'Mantenimiento de Redes Eléctricas',
+    82,
+    'PENDIENTE',
+    TRUE
+FROM cat_tipos_contratista
+WHERE codigo = 'EVENTUAL'
+ON CONFLICT (tenant_id, ruc) DO NOTHING;
+
+-- ==================================================================================
+-- CONTACTOS DE EMPRESAS
+-- ==================================================================================
+
+-- Contactos para Kallpa Generación
+INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+SELECT
+    'KALLPA',
+    e.empresa_id,
+    'Carlos Mendoza Rojas',
+    'Gerente General',
+    'GERENCIAL',
+    '+51 999 888 777',
+    'cmendoza@kallpa.com.pe',
+    TRUE
+FROM tbl_empresas e
+WHERE e.ruc = '20123456789'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+SELECT
+    'KALLPA',
+    e.empresa_id,
+    'Ana López García',
+    'Jefe de SSOMA',
+    'TECNICO',
+    '+51 988 777 666',
+    'alopez@kallpa.com.pe',
+    FALSE
+FROM tbl_empresas e
+WHERE e.ruc = '20123456789'
+ON CONFLICT DO NOTHING;
+
+-- Contactos para Luz del Sur
+INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+SELECT
+    'LUZDELSUR',
+    e.empresa_id,
+    'Roberto Castillo Pérez',
+    'Gerente de Operaciones',
+    'GERENCIAL',
+    '+51 977 666 555',
+    'rcastillo@luzdelsur.com.pe',
+    TRUE
+FROM tbl_empresas e
+WHERE e.ruc = '20331898008'
+ON CONFLICT DO NOTHING;
+
+INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+SELECT
+    'LUZDELSUR',
+    e.empresa_id,
+    'María Torres Sánchez',
+    'Coordinadora de Seguridad',
+    'TECNICO',
+    '+51 966 555 444',
+    'mtorres@luzdelsur.com.pe',
+    FALSE
+FROM tbl_empresas e
+WHERE e.ruc = '20331898008'
+ON CONFLICT DO NOTHING;
 
 -- ==================================================================================
 -- ROLES DEL SISTEMA
@@ -37,28 +276,56 @@ ON CONFLICT (codigo) DO NOTHING;
 -- USUARIOS DE PRUEBA
 -- ==================================================================================
 
--- Usuario Admin KALLPA (para testing)
+-- Usuario Admin KALLPA (para testing) - password: admin123
 INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
 SELECT
     'KALLPA',
     'admin.kallpa',
-    '$2b$10$M93nN6NBpAVOkmcV4JqzE.jDlcXDDl/wUOlD.T.YGJ7L47zGdMQMe',
+    '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
     'Administrador KALLPA',
-    'admin@kallpa.com',
+    'admin@kallpa.com.pe',
     rol_id,
     TRUE
 FROM tbl_roles
 WHERE codigo = 'ADMIN_EMPRESA_PRINCIPAL'
 ON CONFLICT (username, tenant_id) DO NOTHING;
 
--- Usuario Contratista (para testing)
+-- Usuario Admin LUZ DEL SUR (para testing) - password: admin123
+INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
+SELECT
+    'LUZDELSUR',
+    'admin.luzdelsur',
+    '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
+    'Administrador Luz del Sur',
+    'admin@luzdelsur.com.pe',
+    rol_id,
+    TRUE
+FROM tbl_roles
+WHERE codigo = 'ADMIN_EMPRESA_PRINCIPAL'
+ON CONFLICT (username, tenant_id) DO NOTHING;
+
+-- Usuario Contratista en KALLPA (para testing) - password: admin123
 INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
 SELECT
     'KALLPA',
     'jperez',
-    '$2b$10$kxw5bR7Wi/Pt85UxwyOKw.jQa7OUNdc4j//bTjmQSAuwYpAbJsueO',
-    'Juan Pérez',
-    'jperez@contratista.com',
+    '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
+    'Juan Pérez Rojas',
+    'jperez@constructoraandina.com',
+    rol_id,
+    TRUE
+FROM tbl_roles
+WHERE codigo = 'ADMIN_CONTRATISTA'
+ON CONFLICT (username, tenant_id) DO NOTHING;
+
+-- Usuario Contratista en LUZ DEL SUR (para testing) - password: admin123
+INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
+SELECT
+    'LUZDELSUR',
+    'mgarcia',
+    '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
+    'María García Silva',
+    'mgarcia@ielectricas.com.pe',
     rol_id,
     TRUE
 FROM tbl_roles

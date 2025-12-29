@@ -9,16 +9,12 @@ CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 -- ==================================================================================
 -- MÓDULO 0: TENANTS (Multi-tenancy)
 -- ==================================================================================
+-- Tenant es solo un namespace/contenedor para aislar datos entre clientes
+-- TODOS los datos de negocio están en tbl_empresas (incluida la empresa principal)
 CREATE TABLE IF NOT EXISTS tbl_tenants (
     tenant_id VARCHAR(50) PRIMARY KEY,
-    nombre_comercial VARCHAR(100) NOT NULL,
-    ruc VARCHAR(20),
-    dominio_personalizado VARCHAR(100),
-    logo_url TEXT,
-    plan VARCHAR(50) DEFAULT 'FREE',
     activo BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    config JSONB
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 -- ==================================================================================
@@ -45,6 +41,7 @@ CREATE TABLE IF NOT EXISTS tbl_empresas (
     direccion VARCHAR(255),
     telefono VARCHAR(20),
     email VARCHAR(100),
+    logo_url TEXT,
     sitio_web VARCHAR(100),
     rubro_comercial VARCHAR(100),
     score_seguridad INT DEFAULT 100,
