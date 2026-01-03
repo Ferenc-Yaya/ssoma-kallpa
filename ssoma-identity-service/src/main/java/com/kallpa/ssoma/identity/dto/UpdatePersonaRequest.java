@@ -12,6 +12,8 @@ public class UpdatePersonaRequest {
 
     private UUID empresaId;
 
+    private UUID contratoActivoId;
+
     @Size(max = 20, message = "El tipo de documento no puede exceder 20 caracteres")
     private String tipoDocumento;
 
@@ -33,6 +35,13 @@ public class UpdatePersonaRequest {
     @Size(max = 100, message = "El cargo no puede exceder 100 caracteres")
     private String cargo;
 
-    @Size(max = 50, message = "El estado no puede exceder 50 caracteres")
-    private String estado;
+    private Boolean esConductor;
+
+    @Size(max = 10, message = "El grupo sanguíneo no puede exceder 10 caracteres")
+    private String grupoSanguineo;
+
+    private String fotoPerfilUrl;
+
+    @Size(max = 20, message = "El estado no puede exceder 20 caracteres")
+    private String estadoGlobal;
 }

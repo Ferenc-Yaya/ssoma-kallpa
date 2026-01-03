@@ -13,10 +13,13 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class UpdateInventarioRequest {
+    private String descripcionUso;
+    private String ubicacionAlmacenamiento;
     private BigDecimal cantidad;
+    private BigDecimal cantidadEstimada;
     private String unidadMedida;
-    private String ubicacion;
     private LocalDate fechaIngreso;
     private String lote;
     private String estado;
+    private String estadoAutorizacion;
 }

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -43,11 +44,35 @@ public class Activo extends BaseEntity {
     @Column(name = "serie", length = 100)
     private String serie;
 
-    @Column(name = "estado", length = 50)
-    private String estado = "OPERATIVO";
+    @Column(name = "categoria_activo", nullable = false, length = 50)
+    private String categoriaActivo;
+
+    @Column(name = "anio_fabricacion")
+    private Integer anioFabricacion;
+
+    @Column(name = "kilometraje_actual")
+    private Integer kilometrajeActual;
+
+    @Column(name = "tiene_rops")
+    private Boolean tieneRops = false;
+
+    @Column(name = "tiene_fops")
+    private Boolean tieneFops = false;
+
+    @Column(name = "fecha_ultima_calibracion")
+    private LocalDate fechaUltimaCalibracion;
+
+    @Column(name = "tiene_guardas_seguridad")
+    private Boolean tieneGuardasSeguridad = false;
+
+    @Column(name = "sistema_proteccion_fugas")
+    private Boolean sistemaProteccionFugas = false;
+
+    @Column(name = "estado_operativo", length = 20)
+    private String estadoOperativo = "OPERATIVO";
 
     @Column(name = "metadata", columnDefinition = "jsonb")
-    private String metadata; // Datos específicos por tipo
+    private String metadata;
 
     @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
@@ -57,8 +82,20 @@ public class Activo extends BaseEntity {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
-        if (estado == null) {
-            estado = "OPERATIVO";
+        if (estadoOperativo == null) {
+            estadoOperativo = "OPERATIVO";
+        }
+        if (tieneRops == null) {
+            tieneRops = false;
+        }
+        if (tieneFops == null) {
+            tieneFops = false;
+        }
+        if (tieneGuardasSeguridad == null) {
+            tieneGuardasSeguridad = false;
+        }
+        if (sistemaProteccionFugas == null) {
+            sistemaProteccionFugas = false;
         }
     }
 }

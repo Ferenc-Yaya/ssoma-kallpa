@@ -11,8 +11,10 @@ import java.util.UUID;
 @Data
 public class CreateUsuarioRequest {
 
+    private UUID personaId;
+
     @NotBlank(message = "El username es requerido")
-    @Size(min = 4, max = 50, message = "El username debe tener entre 4 y 50 caracteres")
+    @Size(min = 4, max = 100, message = "El username debe tener entre 4 y 100 caracteres")
     private String username;
 
     @NotBlank(message = "La contraseña es requerida")

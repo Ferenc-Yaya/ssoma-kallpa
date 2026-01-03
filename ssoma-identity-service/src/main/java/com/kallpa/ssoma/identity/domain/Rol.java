@@ -7,38 +7,58 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.hibernate.annotations.Type;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Data
-@Entity
-@Table(name = "tbl_roles")
 @EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(
+        name = "tbl_roles",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"tenant_id", "nombre_rol"}),
+                @UniqueConstraint(columnNames = {"codigo"})
+        }
+)
 public class Rol extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "rol_id", columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "rol_id")
     private UUID rolId;
 
-    @Column(name = "codigo", unique = true)
+    @Column(name = "tenant_id", nullable = false, length = 50)
+    private String tenantId;
+
+    @Column(name = "codigo", nullable = false, length = 50)
     private String codigo;
 
-    @Column(name = "nombre_rol", nullable = false)
+    @Column(name = "nombre_rol", nullable = false, length = 100)
     private String nombreRol;
 
-    @Column(name = "descripcion")
+    @Column(name = "descripcion", columnDefinition = "TEXT")
     private String descripcion;
 
     @Column(name = "nivel_jerarquia")
     private Integer nivelJerarquia;
 
     @Column(name = "requiere_tenant")
-    private Boolean requiereTenant = true;
-
-    @Column(name = "activo")
-    private Boolean activo = true;
+    private Boolean requiereTenant;
 
     @Type(JsonBinaryType.class)
     @Column(name = "permisos", columnDefinition = "jsonb")
-    private String permisos;
+    private Object permisos;
+
+    @Column(name = "activo")
+    private Boolean activo;
+
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
+    @PrePersist
+    protected void onCreate() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+        if (activo == null) activo = true;
+        if (requiereTenant == null) requiereTenant = true;
+    }
 }

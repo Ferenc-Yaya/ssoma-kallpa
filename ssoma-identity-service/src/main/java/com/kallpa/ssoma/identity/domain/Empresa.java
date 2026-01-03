@@ -13,24 +13,28 @@ import java.util.UUID;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @Entity
-@Table(name = "tbl_empresas")
+@Table(name = "tbl_empresas",
+        uniqueConstraints = @UniqueConstraint(columnNames = {"tenant_id", "ruc"}))
 public class Empresa extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "empresa_id", columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "empresa_id")
     private UUID empresaId;
 
-    @Column(name = "ruc", nullable = false, unique = true, length = 11)
+    @Column(name = "tenant_id", nullable = false, length = 50)
+    private String tenantId;
+
+    @Column(name = "ruc", nullable = false, length = 11)
     private String ruc;
 
-    @Column(name = "razon_social", nullable = false)
+    @Column(name = "razon_social", nullable = false, length = 200)
     private String razonSocial;
 
     @Column(name = "tipo_id", columnDefinition = "UUID")
     private UUID tipoId;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tipo_id", insertable = false, updatable = false)
     private TipoContratista tipoContratista;
 
@@ -55,9 +59,6 @@ public class Empresa extends BaseEntity {
     @Column(name = "score_seguridad")
     private Integer scoreSeguridad = 100;
 
-    @Column(name = "estado_habilitacion", length = 20)
-    private String estadoHabilitacion = "PENDIENTE";
-
     @Column(name = "activo")
     private Boolean activo = true;
 
@@ -72,15 +73,8 @@ public class Empresa extends BaseEntity {
         if (createdAt == null) {
             createdAt = LocalDateTime.now();
         }
-        if (estadoHabilitacion == null) {
-            estadoHabilitacion = "PENDIENTE";
-        }
-        if (activo == null) {
-            activo = true;
-        }
     }
 
-    // Métodos helper para gestionar contactos
     public void addContacto(EmpresaContacto contacto) {
         contactos.add(contacto);
         contacto.setEmpresa(this);

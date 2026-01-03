@@ -20,13 +20,34 @@ public class SustanciaPeligrosa extends BaseEntity {
     @Column(name = "sustancia_id", columnDefinition = "UUID")
     private UUID sustanciaId;
 
-    @Column(name = "nombre", nullable = false)
-    private String nombre;
+    @Column(name = "nombre_producto", nullable = false, length = 200)
+    private String nombreProducto;
 
-    @Column(name = "codigo_un")
+    @Column(name = "marca_fabricante", nullable = false, length = 100)
+    private String marcaFabricante;
+
+    @Column(name = "estado_fisico", length = 20)
+    private String estadoFisico;
+
+    @Column(name = "nfpa_salud")
+    private Integer nfpaSalud = 0;
+
+    @Column(name = "nfpa_inflamabilidad")
+    private Integer nfpaInflamabilidad = 0;
+
+    @Column(name = "nfpa_reactividad")
+    private Integer nfpaReactividad = 0;
+
+    @Column(name = "nfpa_riesgo_especifico", length = 10)
+    private String nfpaRiesgoEspecifico;
+
+    @Column(name = "numero_un", length = 50)
+    private String numeroUn;
+
+    @Column(name = "codigo_un", length = 20)
     private String codigoUn;
 
-    @Column(name = "clase_peligro")
+    @Column(name = "clase_peligro", length = 50)
     private String clasePeligro;
 
     @Column(name = "descripcion", columnDefinition = "TEXT")

@@ -115,11 +115,13 @@ public class RolService {
     private RolDTO toDTO(Rol rol) {
         RolDTO dto = new RolDTO();
         dto.setRolId(rol.getRolId());
+        dto.setTenantId(rol.getTenantId());
         dto.setCodigo(rol.getCodigo());
         dto.setNombre(rol.getNombreRol());
         dto.setDescripcion(rol.getDescripcion());
         dto.setNivelJerarquia(rol.getNivelJerarquia());
         dto.setRequiereTenant(rol.getRequiereTenant());
+        dto.setPermisos(rol.getPermisos());
         dto.setActivo(rol.getActivo());
         dto.setCreatedAt(rol.getCreatedAt());
 

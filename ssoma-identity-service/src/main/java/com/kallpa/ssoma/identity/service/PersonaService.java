@@ -53,6 +53,7 @@ public class PersonaService {
         Persona persona = new Persona();
         persona.setTenantId(tenantId);
         persona.setEmpresaId(request.getEmpresaId());
+        persona.setContratoActivoId(request.getContratoActivoId());
         persona.setTipoDocumento(request.getTipoDocumento() != null ? request.getTipoDocumento() : "DNI");
         persona.setNumeroDocumento(request.getNumeroDocumento());
         persona.setNombres(request.getNombres());
@@ -61,7 +62,10 @@ public class PersonaService {
         persona.setTelefono(request.getTelefono());
         persona.setEmail(request.getEmail());
         persona.setCargo(request.getCargo());
-        persona.setEstado(request.getEstado() != null ? request.getEstado() : "ACTIVO");
+        persona.setEsConductor(request.getEsConductor() != null ? request.getEsConductor() : false);
+        persona.setGrupoSanguineo(request.getGrupoSanguineo());
+        persona.setFotoPerfilUrl(request.getFotoPerfilUrl());
+        persona.setEstadoGlobal(request.getEstadoGlobal() != null ? request.getEstadoGlobal() : "ACTIVO");
 
         Persona savedPersona = personaRepository.save(persona);
         log.info("Persona creada exitosamente con ID: {}", savedPersona.getPersonaId());
@@ -78,6 +82,9 @@ public class PersonaService {
 
         if (request.getEmpresaId() != null) {
             persona.setEmpresaId(request.getEmpresaId());
+        }
+        if (request.getContratoActivoId() != null) {
+            persona.setContratoActivoId(request.getContratoActivoId());
         }
         if (request.getTipoDocumento() != null) {
             persona.setTipoDocumento(request.getTipoDocumento());
@@ -100,8 +107,17 @@ public class PersonaService {
         if (request.getCargo() != null) {
             persona.setCargo(request.getCargo());
         }
-        if (request.getEstado() != null) {
-            persona.setEstado(request.getEstado());
+        if (request.getEsConductor() != null) {
+            persona.setEsConductor(request.getEsConductor());
+        }
+        if (request.getGrupoSanguineo() != null) {
+            persona.setGrupoSanguineo(request.getGrupoSanguineo());
+        }
+        if (request.getFotoPerfilUrl() != null) {
+            persona.setFotoPerfilUrl(request.getFotoPerfilUrl());
+        }
+        if (request.getEstadoGlobal() != null) {
+            persona.setEstadoGlobal(request.getEstadoGlobal());
         }
 
         Persona updatedPersona = personaRepository.save(persona);
@@ -157,6 +173,7 @@ public class PersonaService {
             log.debug("Empresa es null para persona {} (puede ser válido si no está asignada)", persona.getPersonaId());
         }
 
+        dto.setContratoActivoId(persona.getContratoActivoId());
         dto.setTipoDocumento(persona.getTipoDocumento());
         dto.setNumeroDocumento(persona.getNumeroDocumento());
         dto.setNombres(persona.getNombres());
@@ -166,7 +183,10 @@ public class PersonaService {
         dto.setTelefono(persona.getTelefono());
         dto.setEmail(persona.getEmail());
         dto.setCargo(persona.getCargo());
-        dto.setEstado(persona.getEstado());
+        dto.setEsConductor(persona.getEsConductor());
+        dto.setGrupoSanguineo(persona.getGrupoSanguineo());
+        dto.setFotoPerfilUrl(persona.getFotoPerfilUrl());
+        dto.setEstadoGlobal(persona.getEstadoGlobal());
         dto.setCreatedAt(persona.getCreatedAt());
 
         return dto;

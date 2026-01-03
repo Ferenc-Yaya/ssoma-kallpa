@@ -15,7 +15,14 @@ import java.util.UUID;
 public class SustanciaPeligrosaDTO {
     private UUID sustanciaId;
     private String tenantId;
-    private String nombre;
+    private String nombreProducto;
+    private String marcaFabricante;
+    private String estadoFisico;
+    private Integer nfpaSalud;
+    private Integer nfpaInflamabilidad;
+    private Integer nfpaReactividad;
+    private String nfpaRiesgoEspecifico;
+    private String numeroUn;
     private String codigoUn;
     private String clasePeligro;
     private String descripcion;

@@ -75,6 +75,10 @@ public class EmpresaService {
         empresa.setDireccion(request.getDireccion());
         empresa.setTelefono(request.getTelefono());
         empresa.setEmail(request.getEmail());
+        empresa.setLogoUrl(request.getLogoUrl());
+        empresa.setSitioWeb(request.getSitioWeb());
+        empresa.setRubroComercial(request.getRubroComercial());
+        empresa.setScoreSeguridad(request.getScoreSeguridad() != null ? request.getScoreSeguridad() : 100);
         empresa.setEstadoHabilitacion(request.getEstadoHabilitacion() != null ? request.getEstadoHabilitacion() : "PENDIENTE");
         empresa.setActivo(request.getActivo() != null ? request.getActivo() : true);
 
@@ -85,6 +89,7 @@ public class EmpresaService {
                 contacto.setTenantId(tenantId);
                 contacto.setNombreCompleto(contactoDTO.getNombreCompleto());
                 contacto.setCargo(contactoDTO.getCargo());
+                contacto.setTipoContacto(contactoDTO.getTipoContacto() != null ? contactoDTO.getTipoContacto() : "GENERAL");
                 contacto.setTelefono(contactoDTO.getTelefono());
                 contacto.setEmail(contactoDTO.getEmail());
                 contacto.setEsPrincipal(contactoDTO.getEsPrincipal());
@@ -126,6 +131,18 @@ public class EmpresaService {
         if (request.getActivo() != null) {
             empresa.setActivo(request.getActivo());
         }
+        if (request.getLogoUrl() != null) {
+            empresa.setLogoUrl(request.getLogoUrl());
+        }
+        if (request.getSitioWeb() != null) {
+            empresa.setSitioWeb(request.getSitioWeb());
+        }
+        if (request.getRubroComercial() != null) {
+            empresa.setRubroComercial(request.getRubroComercial());
+        }
+        if (request.getScoreSeguridad() != null) {
+            empresa.setScoreSeguridad(request.getScoreSeguridad());
+        }
 
         // Actualizar contactos si se proporcionan
         if (request.getContactos() != null) {
@@ -135,6 +152,7 @@ public class EmpresaService {
                 contacto.setTenantId(tenantId);
                 contacto.setNombreCompleto(contactoDTO.getNombreCompleto());
                 contacto.setCargo(contactoDTO.getCargo());
+                contacto.setTipoContacto(contactoDTO.getTipoContacto() != null ? contactoDTO.getTipoContacto() : "GENERAL");
                 contacto.setTelefono(contactoDTO.getTelefono());
                 contacto.setEmail(contactoDTO.getEmail());
                 contacto.setEsPrincipal(contactoDTO.getEsPrincipal());
@@ -214,6 +232,7 @@ public class EmpresaService {
         dto.setId(contacto.getContactoId());
         dto.setNombreCompleto(contacto.getNombreCompleto());
         dto.setCargo(contacto.getCargo());
+        dto.setTipoContacto(contacto.getTipoContacto());
         dto.setTelefono(contacto.getTelefono());
         dto.setEmail(contacto.getEmail());
         dto.setEsPrincipal(contacto.getEsPrincipal());

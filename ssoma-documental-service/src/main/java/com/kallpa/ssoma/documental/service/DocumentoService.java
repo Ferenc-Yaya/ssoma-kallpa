@@ -51,12 +51,15 @@ public class DocumentoService {
         documento.setTenantId(tenantId);
         documento.setEntidadTipo(request.getEntidadTipo());
         documento.setEntidadId(request.getEntidadId());
-        documento.setDocumentoRequeribleId(request.getDocumentoRequeribleId());
+        documento.setDocReqId(request.getDocReqId());
         documento.setNombreArchivo(request.getNombreArchivo());
+        documento.setNumeroDocumento(request.getNumeroDocumento());
         documento.setRutaArchivo(request.getRutaArchivo());
+        documento.setArchivoUrl(request.getArchivoUrl());
         documento.setFechaEmision(request.getFechaEmision());
         documento.setFechaVencimiento(request.getFechaVencimiento());
         documento.setEstado(request.getEstado() != null ? request.getEstado() : "VIGENTE");
+        documento.setEstadoValidacion(request.getEstadoValidacion() != null ? request.getEstadoValidacion() : "PENDIENTE");
         documento.setObservaciones(request.getObservaciones());
 
         Documento savedDocumento = documentoRepository.save(documento);
@@ -75,8 +78,14 @@ public class DocumentoService {
         if (request.getNombreArchivo() != null) {
             documento.setNombreArchivo(request.getNombreArchivo());
         }
+        if (request.getNumeroDocumento() != null) {
+            documento.setNumeroDocumento(request.getNumeroDocumento());
+        }
         if (request.getRutaArchivo() != null) {
             documento.setRutaArchivo(request.getRutaArchivo());
+        }
+        if (request.getArchivoUrl() != null) {
+            documento.setArchivoUrl(request.getArchivoUrl());
         }
         if (request.getFechaEmision() != null) {
             documento.setFechaEmision(request.getFechaEmision());
@@ -86,6 +95,9 @@ public class DocumentoService {
         }
         if (request.getEstado() != null) {
             documento.setEstado(request.getEstado());
+        }
+        if (request.getEstadoValidacion() != null) {
+            documento.setEstadoValidacion(request.getEstadoValidacion());
         }
         if (request.getObservaciones() != null) {
             documento.setObservaciones(request.getObservaciones());
@@ -152,26 +164,29 @@ public class DocumentoService {
         dto.setTenantId(documento.getTenantId());
         dto.setEntidadTipo(documento.getEntidadTipo());
         dto.setEntidadId(documento.getEntidadId());
-        dto.setDocumentoRequeribleId(documento.getDocumentoRequeribleId());
+        dto.setDocReqId(documento.getDocReqId());
 
-        log.debug("Documento {} - documentoRequeribleId: {}, documentoRequerible: {}",
+        log.debug("Documento {} - docReqId: {}, documentoRequerible: {}",
             documento.getDocumentoId(),
-            documento.getDocumentoRequeribleId(),
+            documento.getDocReqId(),
             documento.getDocumentoRequerible());
 
         if (documento.getDocumentoRequerible() != null) {
-            dto.setDocumentoRequeribleNombre(documento.getDocumentoRequerible().getNombre());
-            log.debug("Documento requerible asignado: {}", documento.getDocumentoRequerible().getNombre());
+            dto.setDocumentoRequeribleNombre(documento.getDocumentoRequerible().getNombreMostrar());
+            log.debug("Documento requerible asignado: {}", documento.getDocumentoRequerible().getNombreMostrar());
         } else {
             log.debug("Documento requerible es null para documento {} (puede ser válido si es documento libre)",
                     documento.getDocumentoId());
         }
 
         dto.setNombreArchivo(documento.getNombreArchivo());
+        dto.setNumeroDocumento(documento.getNumeroDocumento());
         dto.setRutaArchivo(documento.getRutaArchivo());
+        dto.setArchivoUrl(documento.getArchivoUrl());
         dto.setFechaEmision(documento.getFechaEmision());
         dto.setFechaVencimiento(documento.getFechaVencimiento());
         dto.setEstado(documento.getEstado());
+        dto.setEstadoValidacion(documento.getEstadoValidacion());
         dto.setObservaciones(documento.getObservaciones());
         dto.setCreatedAt(documento.getCreatedAt());
 

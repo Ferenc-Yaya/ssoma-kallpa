@@ -13,13 +13,16 @@ public class DocumentoDTO {
     private String tenantId;
     private String entidadTipo;
     private UUID entidadId;
-    private UUID documentoRequeribleId;
-    private String documentoRequeribleNombre; // Nombre del documento requerible (denormalizado)
+    private UUID docReqId;
+    private String documentoRequeribleNombre;
     private String nombreArchivo;
+    private String numeroDocumento;
     private String rutaArchivo;
+    private String archivoUrl;
     private LocalDate fechaEmision;
     private LocalDate fechaVencimiento;
     private String estado;
+    private String estadoValidacion;
     private String observaciones;
     private LocalDateTime createdAt;
 }

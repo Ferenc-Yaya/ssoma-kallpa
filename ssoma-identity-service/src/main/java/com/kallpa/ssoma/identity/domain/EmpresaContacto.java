@@ -15,15 +15,18 @@ import java.util.UUID;
 public class EmpresaContacto extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "contacto_id", columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "contacto_id")
     private UUID contactoId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id", nullable = false)
     private Empresa empresa;
 
-    @Column(name = "nombre_completo", nullable = false)
+    @Column(name = "tenant_id", nullable = false, length = 50)
+    private String tenantId;
+
+    @Column(name = "nombre_completo", nullable = false, length = 150)
     private String nombreCompleto;
 
     @Column(name = "cargo", length = 100)
@@ -35,7 +38,7 @@ public class EmpresaContacto extends BaseEntity {
     @Column(name = "telefono", length = 20)
     private String telefono;
 
-    @Column(name = "email", length = 100)
+    @Column(name = "email", length = 150)
     private String email;
 
     @Column(name = "es_principal")

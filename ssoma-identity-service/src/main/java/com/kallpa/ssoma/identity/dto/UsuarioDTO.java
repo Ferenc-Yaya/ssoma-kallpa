@@ -7,6 +7,8 @@ import java.util.UUID;
 @Data
 public class UsuarioDTO {
     private UUID usuarioId;
+    private UUID personaId;
+    private String personaNombre;
     private String username;
     private String nombreCompleto;
     private String email;

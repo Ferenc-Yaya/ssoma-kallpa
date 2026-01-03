@@ -15,16 +15,15 @@ public class CreateContratoRequest {
     @NotNull(message = "El ID de la empresa es obligatorio")
     private UUID empresaId;
 
-    @NotBlank(message = "El número de contrato es obligatorio")
     @Size(max = 100, message = "El número de contrato no puede exceder 100 caracteres")
     private String numeroContrato;
 
-    @Size(max = 100, message = "El número de OC no puede exceder 100 caracteres")
+    @NotBlank(message = "El número de OC es obligatorio")
+    @Size(max = 50, message = "El número de OC no puede exceder 50 caracteres")
     private String numeroOc;
 
-    private String descripcion;
+    private String descripcionServicio;
 
-    @NotNull(message = "La fecha de inicio es obligatoria")
     private LocalDate fechaInicio;
 
     private LocalDate fechaFin;

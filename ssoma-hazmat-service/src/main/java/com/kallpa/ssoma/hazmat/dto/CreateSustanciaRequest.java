@@ -11,8 +11,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Builder
 public class CreateSustanciaRequest {
-    @NotBlank(message = "El nombre es obligatorio")
-    private String nombre;
+    @NotBlank(message = "El nombre del producto es obligatorio")
+    private String nombreProducto;
+
+    @NotBlank(message = "La marca/fabricante es obligatoria")
+    private String marcaFabricante;
+
+    private String estadoFisico;
+
+    private Integer nfpaSalud;
+
+    private Integer nfpaInflamabilidad;
+
+    private Integer nfpaReactividad;
+
+    private String nfpaRiesgoEspecifico;
+
+    private String numeroUn;
 
     private String codigoUn;
 

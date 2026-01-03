@@ -49,10 +49,17 @@ public class SustanciaPeligrosaService {
     @Transactional
     public SustanciaPeligrosaDTO create(CreateSustanciaRequest request) {
         String tenantId = TenantContext.getTenantId();
-        log.info("Creando nueva sustancia peligrosa: {} para tenant: {}", request.getNombre(), tenantId);
+        log.info("Creando nueva sustancia peligrosa: {} para tenant: {}", request.getNombreProducto(), tenantId);
 
         SustanciaPeligrosa sustancia = SustanciaPeligrosa.builder()
-                .nombre(request.getNombre())
+                .nombreProducto(request.getNombreProducto())
+                .marcaFabricante(request.getMarcaFabricante())
+                .estadoFisico(request.getEstadoFisico())
+                .nfpaSalud(request.getNfpaSalud() != null ? request.getNfpaSalud() : 0)
+                .nfpaInflamabilidad(request.getNfpaInflamabilidad() != null ? request.getNfpaInflamabilidad() : 0)
+                .nfpaReactividad(request.getNfpaReactividad() != null ? request.getNfpaReactividad() : 0)
+                .nfpaRiesgoEspecifico(request.getNfpaRiesgoEspecifico())
+                .numeroUn(request.getNumeroUn())
                 .codigoUn(request.getCodigoUn())
                 .clasePeligro(request.getClasePeligro())
                 .descripcion(request.getDescripcion())
@@ -78,8 +85,29 @@ public class SustanciaPeligrosaService {
             throw new RuntimeException("Acceso denegado a esta sustancia peligrosa");
         }
 
-        if (request.getNombre() != null) {
-            sustancia.setNombre(request.getNombre());
+        if (request.getNombreProducto() != null) {
+            sustancia.setNombreProducto(request.getNombreProducto());
+        }
+        if (request.getMarcaFabricante() != null) {
+            sustancia.setMarcaFabricante(request.getMarcaFabricante());
+        }
+        if (request.getEstadoFisico() != null) {
+            sustancia.setEstadoFisico(request.getEstadoFisico());
+        }
+        if (request.getNfpaSalud() != null) {
+            sustancia.setNfpaSalud(request.getNfpaSalud());
+        }
+        if (request.getNfpaInflamabilidad() != null) {
+            sustancia.setNfpaInflamabilidad(request.getNfpaInflamabilidad());
+        }
+        if (request.getNfpaReactividad() != null) {
+            sustancia.setNfpaReactividad(request.getNfpaReactividad());
+        }
+        if (request.getNfpaRiesgoEspecifico() != null) {
+            sustancia.setNfpaRiesgoEspecifico(request.getNfpaRiesgoEspecifico());
+        }
+        if (request.getNumeroUn() != null) {
+            sustancia.setNumeroUn(request.getNumeroUn());
         }
         if (request.getCodigoUn() != null) {
             sustancia.setCodigoUn(request.getCodigoUn());
@@ -139,7 +167,14 @@ public class SustanciaPeligrosaService {
         return SustanciaPeligrosaDTO.builder()
                 .sustanciaId(sustancia.getSustanciaId())
                 .tenantId(sustancia.getTenantId())
-                .nombre(sustancia.getNombre())
+                .nombreProducto(sustancia.getNombreProducto())
+                .marcaFabricante(sustancia.getMarcaFabricante())
+                .estadoFisico(sustancia.getEstadoFisico())
+                .nfpaSalud(sustancia.getNfpaSalud())
+                .nfpaInflamabilidad(sustancia.getNfpaInflamabilidad())
+                .nfpaReactividad(sustancia.getNfpaReactividad())
+                .nfpaRiesgoEspecifico(sustancia.getNfpaRiesgoEspecifico())
+                .numeroUn(sustancia.getNumeroUn())
                 .codigoUn(sustancia.getCodigoUn())
                 .clasePeligro(sustancia.getClasePeligro())
                 .descripcion(sustancia.getDescripcion())

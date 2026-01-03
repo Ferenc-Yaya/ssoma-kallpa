@@ -11,6 +11,8 @@ import java.util.UUID;
 @Data
 public class UpdateUsuarioRequest {
 
+    private UUID personaId;
+
     @NotBlank(message = "El nombre completo es requerido")
     @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
     private String nombreCompleto;

@@ -55,6 +55,7 @@ public class UsuarioService {
 
         // Crear usuario
         Usuario usuario = new Usuario();
+        usuario.setPersonaId(request.getPersonaId());
         usuario.setUsername(request.getUsername());
         usuario.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         usuario.setNombreCompleto(request.getNombreCompleto());
@@ -82,6 +83,9 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + request.getRolId()));
 
         // Actualizar campos
+        if (request.getPersonaId() != null) {
+            usuario.setPersonaId(request.getPersonaId());
+        }
         usuario.setNombreCompleto(request.getNombreCompleto());
         usuario.setEmail(request.getEmail());
         usuario.setRol(rol);
@@ -120,6 +124,10 @@ public class UsuarioService {
     private UsuarioDTO toDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setUsuarioId(usuario.getUsuarioId());
+        dto.setPersonaId(usuario.getPersonaId());
+        if (usuario.getPersona() != null) {
+            dto.setPersonaNombre(usuario.getPersona().getNombreCompleto());
+        }
         dto.setUsername(usuario.getUsername());
         dto.setNombreCompleto(usuario.getNombreCompleto());
         dto.setEmail(usuario.getEmail());

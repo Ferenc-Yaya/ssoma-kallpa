@@ -13,10 +13,10 @@ public class ContratoDTO {
     private UUID id;
     private String tenantId;
     private UUID empresaId;
-    private String empresaNombre; // Razón social de la empresa (denormalizado)
+    private String empresaNombre;
     private String numeroContrato;
     private String numeroOc;
-    private String descripcion;
+    private String descripcionServicio;
     private LocalDate fechaInicio;
     private LocalDate fechaFin;
     private String nivelRiesgo;

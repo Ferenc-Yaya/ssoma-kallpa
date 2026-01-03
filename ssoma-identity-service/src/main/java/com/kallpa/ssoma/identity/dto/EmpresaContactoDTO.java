@@ -9,6 +9,7 @@ public class EmpresaContactoDTO {
     private UUID id;
     private String nombreCompleto;
     private String cargo;
+    private String tipoContacto;
     private String telefono;
     private String email;
     private Boolean esPrincipal;

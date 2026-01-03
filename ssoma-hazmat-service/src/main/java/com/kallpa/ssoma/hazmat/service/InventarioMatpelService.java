@@ -64,23 +64,28 @@ public class InventarioMatpelService {
         String tenantId = TenantContext.getTenantId();
         log.info("Creando nuevo inventario de material peligroso para tenant: {}", tenantId);
 
-        // Verificar que la sustancia existe
-        SustanciaPeligrosa sustancia = sustanciaRepository.findById(request.getSustanciaId())
-                .orElseThrow(() -> new RuntimeException("Sustancia peligrosa no encontrada con ID: " + request.getSustanciaId()));
+        // Verificar que la sustancia existe (si se proporciona)
+        if (request.getSustanciaId() != null) {
+            SustanciaPeligrosa sustancia = sustanciaRepository.findById(request.getSustanciaId())
+                    .orElseThrow(() -> new RuntimeException("Sustancia peligrosa no encontrada con ID: " + request.getSustanciaId()));
 
-        if (!sustancia.getTenantId().equals(tenantId)) {
-            throw new RuntimeException("Acceso denegado a esta sustancia peligrosa");
+            if (!sustancia.getTenantId().equals(tenantId)) {
+                throw new RuntimeException("Acceso denegado a esta sustancia peligrosa");
+            }
         }
 
         InventarioMatpel inventario = InventarioMatpel.builder()
                 .empresaId(request.getEmpresaId())
                 .sustanciaId(request.getSustanciaId())
+                .descripcionUso(request.getDescripcionUso())
+                .ubicacionAlmacenamiento(request.getUbicacionAlmacenamiento())
                 .cantidad(request.getCantidad())
+                .cantidadEstimada(request.getCantidadEstimada())
                 .unidadMedida(request.getUnidadMedida())
-                .ubicacion(request.getUbicacion())
                 .fechaIngreso(request.getFechaIngreso())
                 .lote(request.getLote())
                 .estado(request.getEstado() != null ? request.getEstado() : "ALMACENADO")
+                .estadoAutorizacion(request.getEstadoAutorizacion() != null ? request.getEstadoAutorizacion() : "PENDIENTE")
                 .build();
 
         inventario.setTenantId(tenantId);
@@ -102,14 +107,20 @@ public class InventarioMatpelService {
             throw new RuntimeException("Acceso denegado a este inventario");
         }
 
+        if (request.getDescripcionUso() != null) {
+            inventario.setDescripcionUso(request.getDescripcionUso());
+        }
+        if (request.getUbicacionAlmacenamiento() != null) {
+            inventario.setUbicacionAlmacenamiento(request.getUbicacionAlmacenamiento());
+        }
         if (request.getCantidad() != null) {
             inventario.setCantidad(request.getCantidad());
         }
+        if (request.getCantidadEstimada() != null) {
+            inventario.setCantidadEstimada(request.getCantidadEstimada());
+        }
         if (request.getUnidadMedida() != null) {
             inventario.setUnidadMedida(request.getUnidadMedida());
-        }
-        if (request.getUbicacion() != null) {
-            inventario.setUbicacion(request.getUbicacion());
         }
         if (request.getFechaIngreso() != null) {
             inventario.setFechaIngreso(request.getFechaIngreso());
@@ -119,6 +130,9 @@ public class InventarioMatpelService {
         }
         if (request.getEstado() != null) {
             inventario.setEstado(request.getEstado());
+        }
+        if (request.getEstadoAutorizacion() != null) {
+            inventario.setEstadoAutorizacion(request.getEstadoAutorizacion());
         }
 
         inventario = inventarioRepository.save(inventario);
@@ -168,17 +182,20 @@ public class InventarioMatpelService {
                 .tenantId(inventario.getTenantId())
                 .empresaId(inventario.getEmpresaId())
                 .sustanciaId(inventario.getSustanciaId())
+                .descripcionUso(inventario.getDescripcionUso())
+                .ubicacionAlmacenamiento(inventario.getUbicacionAlmacenamiento())
                 .cantidad(inventario.getCantidad())
+                .cantidadEstimada(inventario.getCantidadEstimada())
                 .unidadMedida(inventario.getUnidadMedida())
-                .ubicacion(inventario.getUbicacion())
                 .fechaIngreso(inventario.getFechaIngreso())
                 .lote(inventario.getLote())
                 .estado(inventario.getEstado())
+                .estadoAutorizacion(inventario.getEstadoAutorizacion())
                 .createdAt(inventario.getCreatedAt())
                 .build();
 
         if (inventario.getSustancia() != null) {
-            dto.setSustanciaNombre(inventario.getSustancia().getNombre());
+            dto.setSustanciaNombreProducto(inventario.getSustancia().getNombreProducto());
             dto.setCodigoUn(inventario.getSustancia().getCodigoUn());
             dto.setClasePeligro(inventario.getSustancia().getClasePeligro());
         }

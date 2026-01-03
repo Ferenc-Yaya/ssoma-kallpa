@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS tbl_tenants (
 
 -- Catálogo de Tipos de Contratista
 CREATE TABLE IF NOT EXISTS cat_tipos_contratista (
-    tipo_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    tipo_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     codigo VARCHAR(50) NOT NULL UNIQUE,
     nombre VARCHAR(100) NOT NULL,
@@ -33,9 +33,9 @@ CREATE TABLE IF NOT EXISTS cat_tipos_contratista (
 
 -- Tabla de Empresas
 CREATE TABLE IF NOT EXISTS tbl_empresas (
-    empresa_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    empresa_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
-    ruc VARCHAR(20) NOT NULL,
+    ruc VARCHAR(11) NOT NULL,
     razon_social VARCHAR(200) NOT NULL,
     tipo_id UUID REFERENCES cat_tipos_contratista(tipo_id),
     direccion VARCHAR(255),
@@ -45,7 +45,6 @@ CREATE TABLE IF NOT EXISTS tbl_empresas (
     sitio_web VARCHAR(100),
     rubro_comercial VARCHAR(100),
     score_seguridad INT DEFAULT 100,
-    estado_habilitacion VARCHAR(20) DEFAULT 'PENDIENTE',
     activo BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(tenant_id, ruc)
@@ -53,7 +52,7 @@ CREATE TABLE IF NOT EXISTS tbl_empresas (
 
 -- Sedes de empresas
 CREATE TABLE IF NOT EXISTS tbl_sedes (
-    sede_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    sede_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     empresa_id UUID NOT NULL REFERENCES tbl_empresas(empresa_id) ON DELETE CASCADE,
     nombre VARCHAR(255) NOT NULL,
@@ -65,7 +64,7 @@ CREATE TABLE IF NOT EXISTS tbl_sedes (
 
 -- Contactos de empresas
 CREATE TABLE IF NOT EXISTS tbl_empresa_contactos (
-    contacto_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    contacto_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     empresa_id UUID REFERENCES tbl_empresas(empresa_id) ON DELETE CASCADE,
     nombre_completo VARCHAR(150) NOT NULL,
@@ -81,7 +80,7 @@ CREATE TABLE IF NOT EXISTS tbl_empresa_contactos (
 -- MÓDULO 1.5: CONTRATOS
 -- ==================================================================================
 CREATE TABLE IF NOT EXISTS tbl_contratos (
-    contrato_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    contrato_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     empresa_id UUID REFERENCES tbl_empresas(empresa_id) ON DELETE CASCADE,
     numero_contrato VARCHAR(100),
@@ -102,7 +101,7 @@ CREATE TABLE IF NOT EXISTS tbl_contratos (
 -- MÓDULO 2: PERSONAS
 -- ==================================================================================
 CREATE TABLE IF NOT EXISTS tbl_personas (
-    persona_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    persona_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     empresa_id UUID REFERENCES tbl_empresas(empresa_id),
     contrato_activo_id UUID REFERENCES tbl_contratos(contrato_id),
@@ -128,7 +127,7 @@ CREATE TABLE IF NOT EXISTS tbl_personas (
 
 -- Tabla de Roles
 CREATE TABLE IF NOT EXISTS tbl_roles (
-    rol_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    rol_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     codigo VARCHAR(50) NOT NULL UNIQUE,
     nombre_rol VARCHAR(100) NOT NULL,
@@ -143,7 +142,7 @@ CREATE TABLE IF NOT EXISTS tbl_roles (
 
 -- Tabla de Usuarios
 CREATE TABLE IF NOT EXISTS tbl_usuarios (
-    usuario_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    usuario_id UUID PRIMARY KEY,
     tenant_id VARCHAR(50) NOT NULL REFERENCES tbl_tenants(tenant_id),
     persona_id UUID REFERENCES tbl_personas(persona_id),
     rol_id UUID REFERENCES tbl_roles(rol_id),

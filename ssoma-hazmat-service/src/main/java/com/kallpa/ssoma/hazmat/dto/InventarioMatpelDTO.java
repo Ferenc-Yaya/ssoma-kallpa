@@ -19,14 +19,17 @@ public class InventarioMatpelDTO {
     private String tenantId;
     private UUID empresaId;
     private UUID sustanciaId;
-    private String sustanciaNombre;
+    private String sustanciaNombreProducto;
     private String codigoUn;
     private String clasePeligro;
+    private String descripcionUso;
+    private String ubicacionAlmacenamiento;
     private BigDecimal cantidad;
+    private BigDecimal cantidadEstimada;
     private String unidadMedida;
-    private String ubicacion;
     private LocalDate fechaIngreso;
     private String lote;
     private String estado;
+    private String estadoAutorizacion;
     private LocalDateTime createdAt;
 }

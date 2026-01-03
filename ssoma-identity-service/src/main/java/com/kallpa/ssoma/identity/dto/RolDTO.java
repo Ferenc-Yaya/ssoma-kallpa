@@ -7,11 +7,13 @@ import java.util.UUID;
 @Data
 public class RolDTO {
     private UUID rolId;
+    private String tenantId;
     private String codigo;
     private String nombre;
     private String descripcion;
     private Integer nivelJerarquia;
     private Boolean requiereTenant;
+    private String permisos;
     private Long cantidadUsuarios;
     private Boolean activo;
     private LocalDateTime createdAt;

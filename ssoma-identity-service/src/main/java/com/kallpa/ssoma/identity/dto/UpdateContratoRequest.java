@@ -12,10 +12,10 @@ public class UpdateContratoRequest {
 
     private UUID empresaId;
 
-    @Size(max = 100, message = "El número de OC no puede exceder 100 caracteres")
+    @Size(max = 50, message = "El número de OC no puede exceder 50 caracteres")
     private String numeroOc;
 
-    private String descripcion;
+    private String descripcionServicio;
 
     private LocalDate fechaInicio;
 

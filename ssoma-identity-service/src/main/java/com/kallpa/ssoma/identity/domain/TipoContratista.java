@@ -15,11 +15,14 @@ import java.util.UUID;
 public class TipoContratista extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(name = "tipo_id", columnDefinition = "UUID")
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "tipo_id")
     private UUID tipoId;
 
-    @Column(name = "codigo", unique = true, length = 50)
+    @Column(name = "tenant_id", nullable = false, length = 50)
+    private String tenantId;
+
+    @Column(name = "codigo", nullable = false, unique = true, length = 50)
     private String codigo;
 
     @Column(name = "nombre", nullable = false, length = 100)

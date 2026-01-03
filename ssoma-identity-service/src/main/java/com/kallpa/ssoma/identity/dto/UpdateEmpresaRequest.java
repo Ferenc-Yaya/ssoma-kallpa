@@ -24,6 +24,16 @@ public class UpdateEmpresaRequest {
     @Size(max = 100, message = "El email no puede exceder 100 caracteres")
     private String email;
 
+    private String logoUrl;
+
+    @Size(max = 100, message = "El sitio web no puede exceder 100 caracteres")
+    private String sitioWeb;
+
+    @Size(max = 100, message = "El rubro comercial no puede exceder 100 caracteres")
+    private String rubroComercial;
+
+    private Integer scoreSeguridad;
+
     private String estadoHabilitacion;
 
     private Boolean activo;

@@ -55,14 +55,14 @@ public class ContratoService {
         contrato.setEmpresaId(request.getEmpresaId());
         contrato.setNumeroContrato(request.getNumeroContrato());
         contrato.setNumeroOc(request.getNumeroOc());
-        contrato.setDescripcion(request.getDescripcion());
+        contrato.setDescripcionServicio(request.getDescripcionServicio());
         contrato.setFechaInicio(request.getFechaInicio());
         contrato.setFechaFin(request.getFechaFin());
         contrato.setNivelRiesgo(request.getNivelRiesgo() != null ? request.getNivelRiesgo() : "MEDIO");
         contrato.setAdminContratoKallpa(request.getAdminContratoKallpa());
         contrato.setMontoTotal(request.getMontoTotal());
         contrato.setActividadesCriticas(request.getActividadesCriticas());
-        contrato.setEstado(request.getEstado() != null ? request.getEstado() : "VIGENTE");
+        contrato.setEstado(request.getEstado() != null ? request.getEstado() : "ACTIVO");
 
         Contrato savedContrato = contratoRepository.save(contrato);
         log.info("Contrato creado exitosamente con ID: {}", savedContrato.getContratoId());
@@ -83,8 +83,8 @@ public class ContratoService {
         if (request.getNumeroOc() != null) {
             contrato.setNumeroOc(request.getNumeroOc());
         }
-        if (request.getDescripcion() != null) {
-            contrato.setDescripcion(request.getDescripcion());
+        if (request.getDescripcionServicio() != null) {
+            contrato.setDescripcionServicio(request.getDescripcionServicio());
         }
         if (request.getFechaInicio() != null) {
             contrato.setFechaInicio(request.getFechaInicio());
@@ -163,7 +163,7 @@ public class ContratoService {
 
         dto.setNumeroContrato(contrato.getNumeroContrato());
         dto.setNumeroOc(contrato.getNumeroOc());
-        dto.setDescripcion(contrato.getDescripcion());
+        dto.setDescripcionServicio(contrato.getDescripcionServicio());
         dto.setFechaInicio(contrato.getFechaInicio());
         dto.setFechaFin(contrato.getFechaFin());
         dto.setNivelRiesgo(contrato.getNivelRiesgo());

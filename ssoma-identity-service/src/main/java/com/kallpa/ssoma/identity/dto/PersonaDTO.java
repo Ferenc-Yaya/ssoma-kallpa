@@ -13,6 +13,7 @@ public class PersonaDTO {
     private String tenantId;
     private UUID empresaId;
     private String empresaNombre; // Razón social de la empresa (denormalizado)
+    private UUID contratoActivoId;
     private String tipoDocumento;
     private String numeroDocumento;
     private String nombres;
@@ -22,6 +23,9 @@ public class PersonaDTO {
     private String telefono;
     private String email;
     private String cargo;
-    private String estado;
+    private Boolean esConductor;
+    private String grupoSanguineo;
+    private String fotoPerfilUrl;
+    private String estadoGlobal;
     private LocalDateTime createdAt;
 }

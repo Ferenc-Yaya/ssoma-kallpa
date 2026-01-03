@@ -60,7 +60,15 @@ public class ActivoService {
         activo.setModelo(request.getModelo());
         activo.setPlaca(request.getPlaca());
         activo.setSerie(request.getSerie());
-        activo.setEstado(request.getEstado() != null ? request.getEstado() : "OPERATIVO");
+        activo.setCategoriaActivo(request.getCategoriaActivo());
+        activo.setAnioFabricacion(request.getAnioFabricacion());
+        activo.setKilometrajeActual(request.getKilometrajeActual());
+        activo.setTieneRops(request.getTieneRops() != null ? request.getTieneRops() : false);
+        activo.setTieneFops(request.getTieneFops() != null ? request.getTieneFops() : false);
+        activo.setFechaUltimaCalibracion(request.getFechaUltimaCalibracion());
+        activo.setTieneGuardasSeguridad(request.getTieneGuardasSeguridad() != null ? request.getTieneGuardasSeguridad() : false);
+        activo.setSistemaProteccionFugas(request.getSistemaProteccionFugas() != null ? request.getSistemaProteccionFugas() : false);
+        activo.setEstadoOperativo(request.getEstadoOperativo() != null ? request.getEstadoOperativo() : "OPERATIVO");
         activo.setMetadata(request.getMetadata());
 
         Activo savedActivo = activoRepository.save(activo);
@@ -97,8 +105,32 @@ public class ActivoService {
         if (request.getSerie() != null) {
             activo.setSerie(request.getSerie());
         }
-        if (request.getEstado() != null) {
-            activo.setEstado(request.getEstado());
+        if (request.getCategoriaActivo() != null) {
+            activo.setCategoriaActivo(request.getCategoriaActivo());
+        }
+        if (request.getAnioFabricacion() != null) {
+            activo.setAnioFabricacion(request.getAnioFabricacion());
+        }
+        if (request.getKilometrajeActual() != null) {
+            activo.setKilometrajeActual(request.getKilometrajeActual());
+        }
+        if (request.getTieneRops() != null) {
+            activo.setTieneRops(request.getTieneRops());
+        }
+        if (request.getTieneFops() != null) {
+            activo.setTieneFops(request.getTieneFops());
+        }
+        if (request.getFechaUltimaCalibracion() != null) {
+            activo.setFechaUltimaCalibracion(request.getFechaUltimaCalibracion());
+        }
+        if (request.getTieneGuardasSeguridad() != null) {
+            activo.setTieneGuardasSeguridad(request.getTieneGuardasSeguridad());
+        }
+        if (request.getSistemaProteccionFugas() != null) {
+            activo.setSistemaProteccionFugas(request.getSistemaProteccionFugas());
+        }
+        if (request.getEstadoOperativo() != null) {
+            activo.setEstadoOperativo(request.getEstadoOperativo());
         }
         if (request.getMetadata() != null) {
             activo.setMetadata(request.getMetadata());
@@ -169,7 +201,15 @@ public class ActivoService {
         dto.setModelo(activo.getModelo());
         dto.setPlaca(activo.getPlaca());
         dto.setSerie(activo.getSerie());
-        dto.setEstado(activo.getEstado());
+        dto.setCategoriaActivo(activo.getCategoriaActivo());
+        dto.setAnioFabricacion(activo.getAnioFabricacion());
+        dto.setKilometrajeActual(activo.getKilometrajeActual());
+        dto.setTieneRops(activo.getTieneRops());
+        dto.setTieneFops(activo.getTieneFops());
+        dto.setFechaUltimaCalibracion(activo.getFechaUltimaCalibracion());
+        dto.setTieneGuardasSeguridad(activo.getTieneGuardasSeguridad());
+        dto.setSistemaProteccionFugas(activo.getSistemaProteccionFugas());
+        dto.setEstadoOperativo(activo.getEstadoOperativo());
         dto.setMetadata(activo.getMetadata());
         dto.setCreatedAt(activo.getCreatedAt());
 
