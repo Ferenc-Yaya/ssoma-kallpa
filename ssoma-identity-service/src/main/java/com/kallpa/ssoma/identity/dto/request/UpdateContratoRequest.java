@@ -1,7 +1,5 @@
-package com.kallpa.ssoma.identity.dto;
+package com.kallpa.ssoma.identity.dto.request;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
@@ -10,15 +8,13 @@ import java.time.LocalDate;
 import java.util.UUID;
 
 @Data
-public class CreateContratoRequest {
+public class UpdateContratoRequest {
 
-    @NotNull(message = "El ID de la empresa es obligatorio")
     private UUID empresaId;
 
     @Size(max = 100, message = "El número de contrato no puede exceder 100 caracteres")
     private String numeroContrato;
 
-    @NotBlank(message = "El número de OC es obligatorio")
     @Size(max = 50, message = "El número de OC no puede exceder 50 caracteres")
     private String numeroOc;
 

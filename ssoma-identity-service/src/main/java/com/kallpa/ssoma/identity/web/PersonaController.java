@@ -1,8 +1,8 @@
 package com.kallpa.ssoma.identity.web;
 
-import com.kallpa.ssoma.identity.dto.CreatePersonaRequest;
+import com.kallpa.ssoma.identity.dto.request.CreatePersonaRequest;
 import com.kallpa.ssoma.identity.dto.PersonaDTO;
-import com.kallpa.ssoma.identity.dto.UpdatePersonaRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdatePersonaRequest;
 import com.kallpa.ssoma.identity.service.PersonaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

@@ -1,7 +1,7 @@
 package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Usuario;
-import com.kallpa.ssoma.identity.dto.LoginRequest;
+import com.kallpa.ssoma.identity.dto.request.LoginRequest;
 import com.kallpa.ssoma.identity.dto.LoginResponse;
 import com.kallpa.ssoma.identity.repository.UsuarioRepository;
 import com.kallpa.ssoma.shared.security.JwtTokenProvider;

@@ -1,6 +1,6 @@
 package com.kallpa.ssoma.identity.web;
 
-import com.kallpa.ssoma.identity.dto.LoginRequest;
+import com.kallpa.ssoma.identity.dto.request.LoginRequest;
 import com.kallpa.ssoma.identity.dto.LoginResponse;
 import com.kallpa.ssoma.identity.service.AuthService;
 import lombok.RequiredArgsConstructor;

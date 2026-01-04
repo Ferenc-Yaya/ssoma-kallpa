@@ -1,11 +1,12 @@
 package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Rol;
-import com.kallpa.ssoma.identity.dto.CreateRolRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateRolRequest;
 import com.kallpa.ssoma.identity.dto.RolDTO;
-import com.kallpa.ssoma.identity.dto.UpdateRolRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateRolRequest;
 import com.kallpa.ssoma.identity.repository.RolRepository;
 import com.kallpa.ssoma.identity.repository.UsuarioRepository;
+import com.kallpa.ssoma.shared.context.TenantContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -50,18 +51,21 @@ public class RolService {
         }
 
         // Validar nombre único
-        if (rolRepository.findByNombreRol(request.getNombre()).isPresent()) {
-            throw new RuntimeException("El nombre de rol ya existe: " + request.getNombre());
+        if (rolRepository.findByNombreRol(request.getNombreRol()).isPresent()) {
+            throw new RuntimeException("El nombre de rol ya existe: " + request.getNombreRol());
         }
 
         // Crear rol
+        String tenantId = TenantContext.getTenantId();
         Rol rol = new Rol();
+        rol.setTenantId(tenantId);
         rol.setCodigo(request.getCodigo());
-        rol.setNombreRol(request.getNombre());
+        rol.setNombreRol(request.getNombreRol());
         rol.setDescripcion(request.getDescripcion());
         rol.setNivelJerarquia(request.getNivelJerarquia());
-        rol.setRequiereTenant(request.getRequiereTenant());
-        rol.setActivo(request.getActivo());
+        rol.setRequiereTenant(request.getRequiereTenant() != null ? request.getRequiereTenant() : true);
+        rol.setPermisos(request.getPermisos());
+        rol.setActivo(request.getActivo() != null ? request.getActivo() : true);
 
         Rol savedRol = rolRepository.save(rol);
         return toDTO(savedRol);
@@ -73,17 +77,30 @@ public class RolService {
                 .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + id));
 
         // Validar nombre único (excluyendo el rol actual)
-        if (!rol.getNombreRol().equals(request.getNombre()) &&
-                rolRepository.findByNombreRol(request.getNombre()).isPresent()) {
-            throw new RuntimeException("El nombre de rol ya existe: " + request.getNombre());
+        if (request.getNombreRol() != null && !rol.getNombreRol().equals(request.getNombreRol()) &&
+                rolRepository.findByNombreRol(request.getNombreRol()).isPresent()) {
+            throw new RuntimeException("El nombre de rol ya existe: " + request.getNombreRol());
         }
 
         // Actualizar campos (el código no se puede cambiar)
-        rol.setNombreRol(request.getNombre());
-        rol.setDescripcion(request.getDescripcion());
-        rol.setNivelJerarquia(request.getNivelJerarquia());
-        rol.setRequiereTenant(request.getRequiereTenant());
-        rol.setActivo(request.getActivo());
+        if (request.getNombreRol() != null) {
+            rol.setNombreRol(request.getNombreRol());
+        }
+        if (request.getDescripcion() != null) {
+            rol.setDescripcion(request.getDescripcion());
+        }
+        if (request.getNivelJerarquia() != null) {
+            rol.setNivelJerarquia(request.getNivelJerarquia());
+        }
+        if (request.getRequiereTenant() != null) {
+            rol.setRequiereTenant(request.getRequiereTenant());
+        }
+        if (request.getPermisos() != null) {
+            rol.setPermisos(request.getPermisos());
+        }
+        if (request.getActivo() != null) {
+            rol.setActivo(request.getActivo());
+        }
 
         Rol updatedRol = rolRepository.save(rol);
         return toDTO(updatedRol);
@@ -121,7 +138,7 @@ public class RolService {
         dto.setDescripcion(rol.getDescripcion());
         dto.setNivelJerarquia(rol.getNivelJerarquia());
         dto.setRequiereTenant(rol.getRequiereTenant());
-        dto.setPermisos(rol.getPermisos());
+        dto.setPermisos(rol.getPermisos() != null ? rol.getPermisos().toString() : null);
         dto.setActivo(rol.getActivo());
         dto.setCreatedAt(rol.getCreatedAt());
 

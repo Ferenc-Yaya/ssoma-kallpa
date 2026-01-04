@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.identity.dto;
+package com.kallpa.ssoma.identity.dto.request;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -9,9 +9,17 @@ import lombok.Data;
 import java.util.UUID;
 
 @Data
-public class UpdateUsuarioRequest {
+public class CreateUsuarioRequest {
 
     private UUID personaId;
+
+    @NotBlank(message = "El username es requerido")
+    @Size(min = 4, max = 100, message = "El username debe tener entre 4 y 100 caracteres")
+    private String username;
+
+    @NotBlank(message = "La contraseña es requerida")
+    @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
+    private String password;
 
     @NotBlank(message = "El nombre completo es requerido")
     @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
@@ -24,10 +32,5 @@ public class UpdateUsuarioRequest {
     @NotNull(message = "El rol es requerido")
     private UUID rolId;
 
-    private String tenantId;
-
-    private String empresaNombre;
-
-    @NotNull(message = "El estado es requerido")
-    private Boolean activo;
+    private Boolean activo = true;
 }

@@ -2,6 +2,7 @@ package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Sede;
 import com.kallpa.ssoma.identity.dto.SedeDTO;
+import com.kallpa.ssoma.identity.mapper.SedeMapper;
 import com.kallpa.ssoma.identity.repository.SedeRepository;
 import com.kallpa.ssoma.shared.context.TenantContext;
 import lombok.RequiredArgsConstructor;
@@ -19,16 +20,15 @@ import java.util.stream.Collectors;
 public class SedeService {
 
     private final SedeRepository sedeRepository;
+    private final SedeMapper sedeMapper;
 
+    // ---------------- Read ----------------
     @Transactional(readOnly = true)
     public List<SedeDTO> findByEmpresaId(UUID empresaId) {
         String tenantId = TenantContext.getTenantId();
-        log.debug("Buscando sedes para empresa {} y tenant: {}", empresaId, tenantId);
-
-        // SUPER_ADMIN puede ver sedes de cualquier tenant
         List<Sede> sedes;
+
         if ("SYSTEM".equals(tenantId)) {
-            log.info("SUPER_ADMIN: Buscando sedes para empresa {} en TODOS los tenants", empresaId);
             sedes = sedeRepository.findAll().stream()
                     .filter(s -> s.getEmpresaId().equals(empresaId))
                     .collect(Collectors.toList());
@@ -37,7 +37,7 @@ public class SedeService {
         }
 
         return sedes.stream()
-                .map(this::toDTO)
+                .map(sedeMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
@@ -54,16 +54,47 @@ public class SedeService {
         return sedeRepository.countByTenantIdAndEmpresaId(tenantId, empresaId);
     }
 
-    private SedeDTO toDTO(Sede sede) {
-        SedeDTO dto = new SedeDTO();
-        dto.setId(sede.getSedeId());
-        dto.setEmpresaId(sede.getEmpresaId());
-        dto.setTenantId(sede.getTenantId());
-        dto.setNombre(sede.getNombre());
-        dto.setDireccion(sede.getDireccion());
-        dto.setEsPrincipal(sede.getEsPrincipal());
-        dto.setActivo(sede.getActivo());
-        dto.setCreatedAt(sede.getCreatedAt());
-        return dto;
+    @Transactional
+    public SedeDTO createSede(SedeDTO dto) {
+        Sede sede = sedeMapper.toEntity(dto);
+        sede.setTenantId(TenantContext.getTenantId());
+        if (sede.getEsPrincipal() == null) sede.setEsPrincipal(false);
+        if (sede.getActivo() == null) sede.setActivo(true);
+
+        Sede saved = sedeRepository.save(sede);
+        return sedeMapper.toDTO(saved);
+    }
+
+    @Transactional
+    public SedeDTO updateSede(UUID id, SedeDTO dto) {
+        Sede sede = sedeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sede no encontrada"));
+
+        // Validar tenant
+        if (!TenantContext.getTenantId().equals("SYSTEM") &&
+                !sede.getTenantId().equals(TenantContext.getTenantId())) {
+            throw new RuntimeException("No autorizado para actualizar esta sede");
+        }
+
+        sede.setNombre(dto.getNombre());
+        sede.setDireccion(dto.getDireccion());
+        sede.setEsPrincipal(dto.getEsPrincipal() != null ? dto.getEsPrincipal() : false);
+        sede.setActivo(dto.getActivo() != null ? dto.getActivo() : true);
+
+        return sedeMapper.toDTO(sedeRepository.save(sede));
+    }
+
+    @Transactional
+    public void deleteSede(UUID id) {
+        Sede sede = sedeRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Sede no encontrada"));
+
+        // Validar tenant
+        if (!TenantContext.getTenantId().equals("SYSTEM") &&
+                !sede.getTenantId().equals(TenantContext.getTenantId())) {
+            throw new RuntimeException("No autorizado para eliminar esta sede");
+        }
+
+        sedeRepository.deleteById(id);
     }
 }

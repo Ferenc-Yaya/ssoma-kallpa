@@ -5,7 +5,8 @@
       "Bash(TOKEN=\"eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzdXBlcmFkbWluIiwidGVuYW50SWQiOiJTWVNURU0iLCJyb2wiOiJTVVBFUl9BRE1JTiIsImlhdCI6MTc2Njk4MDA3NiwiZXhwIjoxNzY3MDY2NDc2fQ.mpx-kq9WFSQIpHe_f9gfgkIsn7YxT1fezq_mH7Qeihk\")",
       "Bash(ls:*)",
       "Bash(docker-compose logs:*)",
-      "Bash(python3:*)"
+      "Bash(python3:*)",
+      "Bash(mvn clean compile:*)"
     ]
   }
 }

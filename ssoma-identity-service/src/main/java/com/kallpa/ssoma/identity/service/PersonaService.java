@@ -1,9 +1,9 @@
 package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Persona;
-import com.kallpa.ssoma.identity.dto.CreatePersonaRequest;
+import com.kallpa.ssoma.identity.dto.request.CreatePersonaRequest;
 import com.kallpa.ssoma.identity.dto.PersonaDTO;
-import com.kallpa.ssoma.identity.dto.UpdatePersonaRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdatePersonaRequest;
 import com.kallpa.ssoma.identity.repository.PersonaRepository;
 import com.kallpa.ssoma.shared.context.TenantContext;
 import lombok.RequiredArgsConstructor;

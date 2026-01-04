@@ -1,8 +1,8 @@
 package com.kallpa.ssoma.identity.web;
 
 import com.kallpa.ssoma.identity.dto.ContratoDTO;
-import com.kallpa.ssoma.identity.dto.CreateContratoRequest;
-import com.kallpa.ssoma.identity.dto.UpdateContratoRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateContratoRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateContratoRequest;
 import com.kallpa.ssoma.identity.service.ContratoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

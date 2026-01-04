@@ -1,6 +1,9 @@
 package com.kallpa.ssoma.identity.web;
 
-import com.kallpa.ssoma.identity.dto.*;
+import com.kallpa.ssoma.identity.dto.UsuarioDTO;
+import com.kallpa.ssoma.identity.dto.request.ChangePasswordRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateUsuarioRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateUsuarioRequest;
 import com.kallpa.ssoma.identity.service.UsuarioService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

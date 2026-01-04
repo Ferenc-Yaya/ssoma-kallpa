@@ -1,8 +1,8 @@
 package com.kallpa.ssoma.identity.web;
 
-import com.kallpa.ssoma.identity.dto.CreateRolRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateRolRequest;
 import com.kallpa.ssoma.identity.dto.RolDTO;
-import com.kallpa.ssoma.identity.dto.UpdateRolRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateRolRequest;
 import com.kallpa.ssoma.identity.service.RolService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

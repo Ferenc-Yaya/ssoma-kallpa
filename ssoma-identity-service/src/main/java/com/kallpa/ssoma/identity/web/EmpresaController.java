@@ -1,8 +1,8 @@
 package com.kallpa.ssoma.identity.web;
 
-import com.kallpa.ssoma.identity.dto.CreateEmpresaRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateEmpresaRequest;
 import com.kallpa.ssoma.identity.dto.EmpresaDTO;
-import com.kallpa.ssoma.identity.dto.UpdateEmpresaRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateEmpresaRequest;
 import com.kallpa.ssoma.identity.service.EmpresaService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

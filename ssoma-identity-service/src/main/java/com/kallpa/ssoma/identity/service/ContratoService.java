@@ -2,8 +2,8 @@ package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Contrato;
 import com.kallpa.ssoma.identity.dto.ContratoDTO;
-import com.kallpa.ssoma.identity.dto.CreateContratoRequest;
-import com.kallpa.ssoma.identity.dto.UpdateContratoRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateContratoRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateContratoRequest;
 import com.kallpa.ssoma.identity.repository.ContratoRepository;
 import com.kallpa.ssoma.shared.context.TenantContext;
 import lombok.RequiredArgsConstructor;
@@ -79,6 +79,9 @@ public class ContratoService {
 
         if (request.getEmpresaId() != null) {
             contrato.setEmpresaId(request.getEmpresaId());
+        }
+        if (request.getNumeroContrato() != null) {
+            contrato.setNumeroContrato(request.getNumeroContrato());
         }
         if (request.getNumeroOc() != null) {
             contrato.setNumeroOc(request.getNumeroOc());
@@ -169,7 +172,7 @@ public class ContratoService {
         dto.setNivelRiesgo(contrato.getNivelRiesgo());
         dto.setAdminContratoKallpa(contrato.getAdminContratoKallpa());
         dto.setMontoTotal(contrato.getMontoTotal());
-        dto.setActividadesCriticas(contrato.getActividadesCriticas());
+        dto.setActividadesCriticas(contrato.getActividadesCriticas() != null ? contrato.getActividadesCriticas().toString() : null);
         dto.setEstado(contrato.getEstado());
         dto.setCreatedAt(contrato.getCreatedAt());
 

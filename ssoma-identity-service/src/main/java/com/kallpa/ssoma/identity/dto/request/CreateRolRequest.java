@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.identity.dto;
+package com.kallpa.ssoma.identity.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,17 +14,15 @@ public class CreateRolRequest {
 
     @NotBlank(message = "El nombre es requerido")
     @Size(min = 3, max = 100, message = "El nombre debe tener entre 3 y 100 caracteres")
-    private String nombre;
+    private String nombreRol;
 
-    @NotBlank(message = "La descripción es requerida")
-    @Size(min = 10, max = 500, message = "La descripción debe tener entre 10 y 500 caracteres")
     private String descripcion;
 
-    @NotNull(message = "El nivel de jerarquía es requerido")
     private Integer nivelJerarquia;
 
-    @NotNull(message = "El campo requiereTenant es requerido")
     private Boolean requiereTenant;
+
+    private Object permisos;
 
     private Boolean activo = true;
 }

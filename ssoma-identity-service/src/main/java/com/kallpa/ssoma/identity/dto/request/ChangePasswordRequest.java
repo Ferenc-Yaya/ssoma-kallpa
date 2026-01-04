@@ -1,4 +1,4 @@
-package com.kallpa.ssoma.identity.dto;
+package com.kallpa.ssoma.identity.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

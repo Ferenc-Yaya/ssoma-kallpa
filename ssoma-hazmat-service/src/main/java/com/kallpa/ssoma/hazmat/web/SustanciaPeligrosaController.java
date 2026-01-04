@@ -40,7 +40,7 @@ public class SustanciaPeligrosaController {
 
     @PostMapping
     public ResponseEntity<SustanciaPeligrosaDTO> createSustancia(@Valid @RequestBody CreateSustanciaRequest request) {
-        log.info("POST /api/sustancias-peligrosas - Creando nueva sustancia: {}", request.getNombre());
+        log.info("POST /api/sustancias-peligrosas - Creando nueva sustancia: {}", request.getNombreProducto());
         SustanciaPeligrosaDTO sustancia = sustanciaService.create(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(sustancia);
     }

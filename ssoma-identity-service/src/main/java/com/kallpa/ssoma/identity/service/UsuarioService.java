@@ -2,7 +2,10 @@ package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Rol;
 import com.kallpa.ssoma.identity.domain.Usuario;
-import com.kallpa.ssoma.identity.dto.*;
+import com.kallpa.ssoma.identity.dto.UsuarioDTO;
+import com.kallpa.ssoma.identity.dto.request.ChangePasswordRequest;
+import com.kallpa.ssoma.identity.dto.request.CreateUsuarioRequest;
+import com.kallpa.ssoma.identity.dto.request.UpdateUsuarioRequest;
 import com.kallpa.ssoma.identity.repository.RolRepository;
 import com.kallpa.ssoma.identity.repository.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
@@ -73,23 +76,29 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ID: " + id));
 
         // Validar email único (excluyendo el usuario actual)
-        if (!usuario.getEmail().equals(request.getEmail()) &&
+        if (request.getEmail() != null && !usuario.getEmail().equals(request.getEmail()) &&
                 usuarioRepository.existsByEmail(request.getEmail())) {
             throw new RuntimeException("El email ya existe: " + request.getEmail());
         }
-
-        // Buscar rol
-        Rol rol = rolRepository.findById(request.getRolId())
-                .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + request.getRolId()));
 
         // Actualizar campos
         if (request.getPersonaId() != null) {
             usuario.setPersonaId(request.getPersonaId());
         }
-        usuario.setNombreCompleto(request.getNombreCompleto());
-        usuario.setEmail(request.getEmail());
-        usuario.setRol(rol);
-        usuario.setActivo(request.getActivo());
+        if (request.getNombreCompleto() != null) {
+            usuario.setNombreCompleto(request.getNombreCompleto());
+        }
+        if (request.getEmail() != null) {
+            usuario.setEmail(request.getEmail());
+        }
+        if (request.getRolId() != null) {
+            Rol rol = rolRepository.findById(request.getRolId())
+                    .orElseThrow(() -> new RuntimeException("Rol no encontrado con ID: " + request.getRolId()));
+            usuario.setRol(rol);
+        }
+        if (request.getActivo() != null) {
+            usuario.setActivo(request.getActivo());
+        }
 
         Usuario updatedUsuario = usuarioRepository.save(usuario);
         return toDTO(updatedUsuario);

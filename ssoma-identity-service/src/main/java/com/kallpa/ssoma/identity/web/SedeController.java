@@ -19,17 +19,33 @@ public class SedeController {
 
     private final SedeService sedeService;
 
+    // ---------------- Read ----------------
     @GetMapping("/empresa/{empresaId}")
     public ResponseEntity<List<SedeDTO>> getSedesByEmpresa(@PathVariable UUID empresaId) {
-        log.info("GET /api/sedes/empresa/{} - Obteniendo sedes de empresa", empresaId);
-        List<SedeDTO> sedes = sedeService.findByEmpresaId(empresaId);
-        return ResponseEntity.ok(sedes);
+        return ResponseEntity.ok(sedeService.findByEmpresaId(empresaId));
     }
 
     @GetMapping("/empresa/{empresaId}/count")
     public ResponseEntity<Long> countSedesByEmpresa(@PathVariable UUID empresaId) {
-        log.info("GET /api/sedes/empresa/{}/count - Contando sedes de empresa", empresaId);
-        long count = sedeService.countByEmpresaId(empresaId);
-        return ResponseEntity.ok(count);
+        return ResponseEntity.ok(sedeService.countByEmpresaId(empresaId));
+    }
+
+    // ---------------- Create ----------------
+    @PostMapping
+    public ResponseEntity<SedeDTO> createSede(@RequestBody SedeDTO dto) {
+        return ResponseEntity.ok(sedeService.createSede(dto));
+    }
+
+    // ---------------- Update ----------------
+    @PutMapping("/{id}")
+    public ResponseEntity<SedeDTO> updateSede(@PathVariable UUID id, @RequestBody SedeDTO dto) {
+        return ResponseEntity.ok(sedeService.updateSede(id, dto));
+    }
+
+    // ---------------- Delete ----------------
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSede(@PathVariable UUID id) {
+        sedeService.deleteSede(id);
+        return ResponseEntity.noContent().build();
     }
 }

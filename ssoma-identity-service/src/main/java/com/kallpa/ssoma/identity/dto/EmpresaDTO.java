@@ -13,7 +13,7 @@ public class EmpresaDTO {
     private String ruc;
     private String razonSocial;
     private UUID tipoId;
-    private String tipo; // Nombre del tipo de contratista
+    private String tipoNombre; // Nombre del tipo de contratista
     private String direccion;
     private String telefono;
     private String email;
@@ -21,7 +21,6 @@ public class EmpresaDTO {
     private String sitioWeb;
     private String rubroComercial;
     private Integer scoreSeguridad;
-    private String estadoHabilitacion;
     private Boolean activo;
     private LocalDateTime createdAt;
     private List<EmpresaContactoDTO> contactos;
