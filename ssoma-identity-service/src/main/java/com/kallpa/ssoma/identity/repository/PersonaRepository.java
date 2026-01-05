@@ -25,7 +25,7 @@ public interface PersonaRepository extends JpaRepository<Persona, UUID> {
 
     Optional<Persona> findByNumeroDocumento(String numeroDocumento);
 
-    List<Persona> findByTenantIdAndEstado(String tenantId, String estado);
+    List<Persona> findByTenantIdAndEstadoGlobal(String tenantId, String estadoGlobal);
 
     List<Persona> findByTenantIdAndEmpresaId(String tenantId, UUID empresaId);
 
@@ -39,5 +39,5 @@ public interface PersonaRepository extends JpaRepository<Persona, UUID> {
 
     boolean existsByNumeroDocumento(String numeroDocumento);
 
-    long countByTenantIdAndEstado(String tenantId, String estado);
+    long countByTenantIdAndEstadoGlobal(String tenantId, String estadoGlobal);
 }

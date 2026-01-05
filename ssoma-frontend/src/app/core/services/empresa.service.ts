@@ -10,7 +10,7 @@ export interface EmpresaDTO {
   ruc: string;
   razonSocial: string;
   tipoId: string;
-  tipo: string;
+  tipoNombre: string;
   direccion: string;
   telefono: string;
   email: string;
@@ -18,7 +18,6 @@ export interface EmpresaDTO {
   sitioWeb: string;
   rubroComercial: string;
   scoreSeguridad: number;
-  estadoHabilitacion: string;
   activo: boolean;
   createdAt: string;
   contactos?: any[];
@@ -38,7 +37,6 @@ export interface UpdateEmpresaRequest {
   direccion?: string;
   telefono?: string;
   email?: string;
-  estadoHabilitacion?: string;
   activo?: boolean;
 }
 

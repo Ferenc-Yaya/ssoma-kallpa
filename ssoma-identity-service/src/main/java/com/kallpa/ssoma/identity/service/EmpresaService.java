@@ -92,8 +92,10 @@ public class EmpresaService {
     public EmpresaDTO update(UUID id, UpdateEmpresaRequest request) {
         String tenantId = TenantContext.getTenantId();
         log.info("Actualizando empresa {} para tenant: {}", id, tenantId);
+        log.info("UPDATE Empresa -> tenantId='{}', empresaId='{}'", tenantId, id);
 
-        Empresa empresa = empresaRepository.findByTenantIdAndEmpresaId(tenantId, id)
+        // Buscar por ID directamente sin filtrar por tenant (permite que superadmin edite cualquier empresa)
+        Empresa empresa = empresaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con ID: " + id));
 
         // Actualizar solo campos no nulos
@@ -151,7 +153,8 @@ public class EmpresaService {
         String tenantId = TenantContext.getTenantId();
         log.info("Eliminando empresa {} para tenant: {}", id, tenantId);
 
-        Empresa empresa = empresaRepository.findByTenantIdAndEmpresaId(tenantId, id)
+        // Buscar por ID directamente sin filtrar por tenant (permite que superadmin elimine cualquier empresa)
+        Empresa empresa = empresaRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Empresa no encontrada con ID: " + id));
 
         empresaRepository.delete(empresa);

@@ -14,6 +14,21 @@ export interface SedeDTO {
   createdAt: string;
 }
 
+export interface CreateSedeRequest {
+  empresaId: string;
+  nombre: string;
+  direccion: string;
+  esPrincipal: boolean;
+  activo: boolean;
+}
+
+export interface UpdateSedeRequest {
+  nombre?: string;
+  direccion?: string;
+  esPrincipal?: boolean;
+  activo?: boolean;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -28,5 +43,17 @@ export class SedeService {
 
   countSedesByEmpresa(empresaId: string): Observable<number> {
     return this.http.get<number>(`${this.apiUrl}/empresa/${empresaId}/count`);
+  }
+
+  createSede(request: CreateSedeRequest): Observable<SedeDTO> {
+    return this.http.post<SedeDTO>(this.apiUrl, request);
+  }
+
+  updateSede(id: string, request: UpdateSedeRequest): Observable<SedeDTO> {
+    return this.http.put<SedeDTO>(`${this.apiUrl}/${id}`, request);
+  }
+
+  deleteSede(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 }

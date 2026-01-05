@@ -6,20 +6,17 @@
 <mat-dialog-content>
   <form [formGroup]="empresaForm" class="empresa-form">
     <div class="form-field">
-      <label>Tenant ID *</label>
-      <input type="text" formControlName="tenantId" placeholder="Ingrese Tenant ID" maxlength="50">
-      <small class="hint" *ngIf="!isEdit">Solo mayúsculas y guiones bajos</small>
-      <small class="error" *ngIf="empresaForm.get('tenantId')?.invalid && empresaForm.get('tenantId')?.touched">
-        {{ getErrorMessage('tenantId') }}
-      </small>
-    </div>
-
-    <div class="form-field">
       <label>Razón Social *</label>
       <input type="text" formControlName="razonSocial" placeholder="Ingrese razón social">
       <small class="error" *ngIf="empresaForm.get('razonSocial')?.invalid && empresaForm.get('razonSocial')?.touched">
         {{ getErrorMessage('razonSocial') }}
       </small>
+    </div>
+
+    <div class="form-field" *ngIf="!isEdit">
+      <label>Tenant ID (Generado automáticamente)</label>
+      <input type="text" formControlName="tenantId" placeholder="Se genera automáticamente" readonly>
+      <small class="hint">Se genera automáticamente desde la razón social</small>
     </div>
 
     <div class="form-row">
@@ -50,23 +47,47 @@
 
     <div class="form-field">
       <label>Dirección</label>
-      <textarea formControlName="direccion" rows="3" placeholder="Ingrese dirección completa"></textarea>
-      <small class="error" *ngIf="empresaForm.get('direccion')?.invalid && empresaForm.get('direccion')?.touched">
-        {{ getErrorMessage('direccion') }}
+      <textarea formControlName="direccion" rows="2" placeholder="Ingrese dirección completa"></textarea>
+    </div>
+
+    <div class="form-field">
+      <label>Rubro Comercial</label>
+      <input type="text" formControlName="rubroComercial" placeholder="Ej: Generación de Energía">
+      <small class="error" *ngIf="empresaForm.get('rubroComercial')?.invalid && empresaForm.get('rubroComercial')?.touched">
+        {{ getErrorMessage('rubroComercial') }}
       </small>
     </div>
 
     <div class="form-field">
-      <label>Estado de Habilitación *</label>
-      <select formControlName="estadoHabilitacion">
-        <option value="" disabled>Seleccionar...</option>
-        <option *ngFor="let estado of estadosHabilitacion" [value]="estado.value">
-          {{ estado.label }}
-        </option>
-      </select>
-      <small class="error" *ngIf="empresaForm.get('estadoHabilitacion')?.invalid && empresaForm.get('estadoHabilitacion')?.touched">
-        {{ getErrorMessage('estadoHabilitacion') }}
+      <label>Sitio Web</label>
+      <input type="text" formControlName="sitioWeb" placeholder="https://www.empresa.com">
+      <small class="error" *ngIf="empresaForm.get('sitioWeb')?.invalid && empresaForm.get('sitioWeb')?.touched">
+        {{ getErrorMessage('sitioWeb') }}
       </small>
+    </div>
+
+    <div class="form-field">
+      <label>Logo de la Empresa</label>
+      <div class="logo-upload-container">
+        <div class="logo-preview" *ngIf="logoPreview">
+          <img [src]="logoPreview" alt="Logo preview">
+          <button type="button" class="remove-logo-btn" (click)="removeLogo()" title="Eliminar logo">
+            <mat-icon>close</mat-icon>
+          </button>
+        </div>
+        <div class="upload-area" *ngIf="!logoPreview">
+          <input type="file"
+                 #fileInput
+                 accept="image/*"
+                 (change)="onFileSelected($event)"
+                 style="display: none">
+          <button type="button" mat-stroked-button (click)="fileInput.click()">
+            <mat-icon>cloud_upload</mat-icon>
+            Seleccionar Logo
+          </button>
+          <small class="hint">Formatos: JPG, PNG. Máximo 5MB</small>
+        </div>
+      </div>
     </div>
   </form>
 </mat-dialog-content>

@@ -31,7 +31,7 @@ public interface ContratoRepository extends JpaRepository<Contrato, UUID> {
 
     @Query("SELECT c FROM Contrato c WHERE c.tenantId = :tenantId AND " +
            "(LOWER(c.numeroContrato) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-           "LOWER(c.descripcion) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+           "LOWER(c.descripcionServicio) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
            "LOWER(c.numeroOc) LIKE LOWER(CONCAT('%', :searchTerm, '%')))")
     List<Contrato> searchContratos(@Param("tenantId") String tenantId,
                                     @Param("searchTerm") String searchTerm);

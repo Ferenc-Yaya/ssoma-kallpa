@@ -16,12 +16,12 @@ ON CONFLICT (tenant_id) DO NOTHING;
 -- ==================================================================================
 -- TIPOS DE CONTRATISTA
 -- ==================================================================================
-INSERT INTO cat_tipos_contratista (tenant_id, codigo, nombre, descripcion)
+INSERT INTO cat_tipos_contratista (tipo_id, tenant_id, codigo, nombre, descripcion)
 VALUES
-    ('SYSTEM', 'HOST', 'Empresa Principal', 'Empresa principal dueña del sistema'),
-    ('SYSTEM', 'PERMANENTE', 'Contratista Permanente', 'Contratistas permanentes con contrato vigente de largo plazo'),
-    ('SYSTEM', 'EVENTUAL', 'Contratista Eventual', 'Contratistas eventuales o temporales para proyectos específicos'),
-    ('SYSTEM', 'VISITA', 'Visitante', 'Visitantes o personal externo temporal sin contrato formal')
+    (gen_random_uuid(), 'SYSTEM', 'HOST', 'Empresa Principal', 'Empresa principal dueña del sistema'),
+    (gen_random_uuid(), 'SYSTEM', 'PERMANENTE', 'Contratista Permanente', 'Contratistas permanentes con contrato vigente de largo plazo'),
+    (gen_random_uuid(), 'SYSTEM', 'EVENTUAL', 'Contratista Eventual', 'Contratistas eventuales o temporales para proyectos específicos'),
+    (gen_random_uuid(), 'SYSTEM', 'VISITA', 'Visitante', 'Visitantes o personal externo temporal sin contrato formal')
 ON CONFLICT (codigo) DO NOTHING;
 
 -- ==================================================================================
@@ -29,8 +29,9 @@ ON CONFLICT (codigo) DO NOTHING;
 -- ==================================================================================
 
 -- Empresa principal KALLPA
-INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, logo_url, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+INSERT INTO tbl_empresas (empresa_id, tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, logo_url, sitio_web, rubro_comercial, score_seguridad, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     '20123456789',
     'Kallpa Generación S.A.',
@@ -42,15 +43,15 @@ SELECT
     'https://www.kallpa.com.pe',
     'Generación de Energía Eléctrica',
     95,
-    'APROBADO',
     TRUE
 FROM cat_tipos_contratista
 WHERE codigo = 'HOST'
 ON CONFLICT (tenant_id, ruc) DO NOTHING;
 
 -- Empresa principal LUZ DEL SUR
-INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, logo_url, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+INSERT INTO tbl_empresas (empresa_id, tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, logo_url, sitio_web, rubro_comercial, score_seguridad, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     '20331898008',
     'Luz del Sur S.A.A.',
@@ -62,7 +63,6 @@ SELECT
     'https://www.luzdelsur.com.pe',
     'Distribución de Energía Eléctrica',
     92,
-    'APROBADO',
     TRUE
 FROM cat_tipos_contratista
 WHERE codigo = 'HOST'
@@ -73,8 +73,9 @@ ON CONFLICT (tenant_id, ruc) DO NOTHING;
 -- ==================================================================================
 
 -- Sedes para KALLPA
-INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+INSERT INTO tbl_sedes (sede_id, tenant_id, empresa_id, nombre, direccion, es_principal, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     e.empresa_id,
     'Cañón del Pato',
@@ -82,11 +83,11 @@ SELECT
     TRUE,
     TRUE
 FROM tbl_empresas e
-WHERE e.ruc = '20123456789'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20123456789';
 
-INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+INSERT INTO tbl_sedes (sede_id, tenant_id, empresa_id, nombre, direccion, es_principal, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     e.empresa_id,
     'Cerro del Águila',
@@ -94,12 +95,12 @@ SELECT
     FALSE,
     TRUE
 FROM tbl_empresas e
-WHERE e.ruc = '20123456789'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20123456789';
 
 -- Sedes para LUZ DEL SUR
-INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+INSERT INTO tbl_sedes (sede_id, tenant_id, empresa_id, nombre, direccion, es_principal, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     e.empresa_id,
     'Lima',
@@ -107,11 +108,11 @@ SELECT
     TRUE,
     TRUE
 FROM tbl_empresas e
-WHERE e.ruc = '20331898008'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20331898008';
 
-INSERT INTO tbl_sedes (tenant_id, empresa_id, nombre, direccion, es_principal, activo)
+INSERT INTO tbl_sedes (sede_id, tenant_id, empresa_id, nombre, direccion, es_principal, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     e.empresa_id,
     'Cañete',
@@ -119,16 +120,16 @@ SELECT
     FALSE,
     TRUE
 FROM tbl_empresas e
-WHERE e.ruc = '20331898008'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20331898008';
 
 -- ==================================================================================
 -- EMPRESAS CONTRATISTAS
 -- ==================================================================================
 
 -- Contratistas para KALLPA (2 empresas)
-INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+INSERT INTO tbl_empresas (empresa_id, tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     '20456789123',
     'Constructora Andina S.A.C.',
@@ -139,14 +140,14 @@ SELECT
     'https://www.constructoraandina.com',
     'Construcción y Mantenimiento Industrial',
     88,
-    'APROBADO',
     TRUE
 FROM cat_tipos_contratista
 WHERE codigo = 'PERMANENTE'
 ON CONFLICT (tenant_id, ruc) DO NOTHING;
 
-INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+INSERT INTO tbl_empresas (empresa_id, tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     '20567891234',
     'Servicios Técnicos Huascarán E.I.R.L.',
@@ -157,15 +158,15 @@ SELECT
     'https://www.huascaran.pe',
     'Servicios de Mantenimiento Eléctrico',
     75,
-    'APROBADO',
     TRUE
 FROM cat_tipos_contratista
 WHERE codigo = 'EVENTUAL'
 ON CONFLICT (tenant_id, ruc) DO NOTHING;
 
 -- Contratistas para LUZ DEL SUR (2 empresas)
-INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+INSERT INTO tbl_empresas (empresa_id, tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     '20678912345',
     'Instalaciones Eléctricas del Sur S.A.',
@@ -176,14 +177,14 @@ SELECT
     'https://www.ielectricas.com.pe',
     'Instalaciones Eléctricas Residenciales',
     90,
-    'APROBADO',
     TRUE
 FROM cat_tipos_contratista
 WHERE codigo = 'PERMANENTE'
 ON CONFLICT (tenant_id, ruc) DO NOTHING;
 
-INSERT INTO tbl_empresas (tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, estado_habilitacion, activo)
+INSERT INTO tbl_empresas (empresa_id, tenant_id, ruc, razon_social, tipo_id, direccion, telefono, email, sitio_web, rubro_comercial, score_seguridad, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     '20789123456',
     'Grupo Mantto Perú S.R.L.',
@@ -194,7 +195,6 @@ SELECT
     'https://www.manttoperu.com',
     'Mantenimiento de Redes Eléctricas',
     82,
-    'PENDIENTE',
     TRUE
 FROM cat_tipos_contratista
 WHERE codigo = 'EVENTUAL'
@@ -205,8 +205,9 @@ ON CONFLICT (tenant_id, ruc) DO NOTHING;
 -- ==================================================================================
 
 -- Contactos para Kallpa Generación
-INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+INSERT INTO tbl_empresa_contactos (contacto_id, tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     e.empresa_id,
     'Carlos Mendoza Rojas',
@@ -216,11 +217,11 @@ SELECT
     'cmendoza@kallpa.com.pe',
     TRUE
 FROM tbl_empresas e
-WHERE e.ruc = '20123456789'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20123456789';
 
-INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+INSERT INTO tbl_empresa_contactos (contacto_id, tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     e.empresa_id,
     'Ana López García',
@@ -230,12 +231,12 @@ SELECT
     'alopez@kallpa.com.pe',
     FALSE
 FROM tbl_empresas e
-WHERE e.ruc = '20123456789'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20123456789';
 
 -- Contactos para Luz del Sur
-INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+INSERT INTO tbl_empresa_contactos (contacto_id, tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     e.empresa_id,
     'Roberto Castillo Pérez',
@@ -245,11 +246,11 @@ SELECT
     'rcastillo@luzdelsur.com.pe',
     TRUE
 FROM tbl_empresas e
-WHERE e.ruc = '20331898008'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20331898008';
 
-INSERT INTO tbl_empresa_contactos (tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
+INSERT INTO tbl_empresa_contactos (contacto_id, tenant_id, empresa_id, nombre_completo, cargo, tipo_contacto, telefono, email, es_principal)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     e.empresa_id,
     'María Torres Sánchez',
@@ -259,17 +260,16 @@ SELECT
     'mtorres@luzdelsur.com.pe',
     FALSE
 FROM tbl_empresas e
-WHERE e.ruc = '20331898008'
-ON CONFLICT DO NOTHING;
+WHERE e.ruc = '20331898008';
 
 -- ==================================================================================
 -- ROLES DEL SISTEMA
 -- ==================================================================================
-INSERT INTO tbl_roles (tenant_id, codigo, nombre_rol, descripcion, nivel_jerarquia, requiere_tenant, activo)
+INSERT INTO tbl_roles (rol_id, tenant_id, codigo, nombre_rol, descripcion, nivel_jerarquia, requiere_tenant, activo)
 VALUES
-    ('SYSTEM', 'SUPER_ADMIN', 'Super Administrador', 'Acceso completo al sistema, gestiona todas las empresas principales', 1, FALSE, TRUE),
-    ('SYSTEM', 'ADMIN_EMPRESA_PRINCIPAL', 'Admin Empresa Principal', 'Administra una empresa principal y sus contratistas', 2, TRUE, TRUE),
-    ('SYSTEM', 'ADMIN_CONTRATISTA', 'Admin Contratista', 'Administra una empresa contratista y su personal', 3, TRUE, TRUE)
+    (gen_random_uuid(), 'SYSTEM', 'SUPER_ADMIN', 'Super Administrador', 'Acceso completo al sistema, gestiona todas las empresas principales', 1, FALSE, TRUE),
+    (gen_random_uuid(), 'SYSTEM', 'ADMIN_EMPRESA_PRINCIPAL', 'Admin Empresa Principal', 'Administra una empresa principal y sus contratistas', 2, TRUE, TRUE),
+    (gen_random_uuid(), 'SYSTEM', 'ADMIN_CONTRATISTA', 'Admin Contratista', 'Administra una empresa contratista y su personal', 3, TRUE, TRUE)
 ON CONFLICT (codigo) DO NOTHING;
 
 -- ==================================================================================
@@ -277,8 +277,9 @@ ON CONFLICT (codigo) DO NOTHING;
 -- ==================================================================================
 
 -- Usuario Admin KALLPA (para testing) - password: admin123
-INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
+INSERT INTO tbl_usuarios (usuario_id, tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     'admin.kallpa',
     '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
@@ -288,11 +289,12 @@ SELECT
     TRUE
 FROM tbl_roles
 WHERE codigo = 'ADMIN_EMPRESA_PRINCIPAL'
-ON CONFLICT (username, tenant_id) DO NOTHING;
+ON CONFLICT (tenant_id, username) DO NOTHING;
 
 -- Usuario Admin LUZ DEL SUR (para testing) - password: admin123
-INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
+INSERT INTO tbl_usuarios (usuario_id, tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     'admin.luzdelsur',
     '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
@@ -302,11 +304,12 @@ SELECT
     TRUE
 FROM tbl_roles
 WHERE codigo = 'ADMIN_EMPRESA_PRINCIPAL'
-ON CONFLICT (username, tenant_id) DO NOTHING;
+ON CONFLICT (tenant_id, username) DO NOTHING;
 
 -- Usuario Contratista en KALLPA (para testing) - password: admin123
-INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
+INSERT INTO tbl_usuarios (usuario_id, tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
 SELECT
+    gen_random_uuid(),
     'KALLPA',
     'jperez',
     '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
@@ -316,11 +319,12 @@ SELECT
     TRUE
 FROM tbl_roles
 WHERE codigo = 'ADMIN_CONTRATISTA'
-ON CONFLICT (username, tenant_id) DO NOTHING;
+ON CONFLICT (tenant_id, username) DO NOTHING;
 
 -- Usuario Contratista en LUZ DEL SUR (para testing) - password: admin123
-INSERT INTO tbl_usuarios (tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
+INSERT INTO tbl_usuarios (usuario_id, tenant_id, username, password_hash, nombre_completo, email, rol_id, activo)
 SELECT
+    gen_random_uuid(),
     'LUZDELSUR',
     'mgarcia',
     '$2a$10$5m1NfoRE.dNZ8VfOqIOeSOROp7pgUMNyuv/GYdK8FOhqLsj.fSQbW',
@@ -330,7 +334,7 @@ SELECT
     TRUE
 FROM tbl_roles
 WHERE codigo = 'ADMIN_CONTRATISTA'
-ON CONFLICT (username, tenant_id) DO NOTHING;
+ON CONFLICT (tenant_id, username) DO NOTHING;
 
 -- ==================================================================================
 -- FIN MIGRACIÓN V2

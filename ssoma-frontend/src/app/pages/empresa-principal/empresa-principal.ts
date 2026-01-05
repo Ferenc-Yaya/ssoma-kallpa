@@ -18,9 +18,12 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angula
 import { AuthService } from '../../core/services/auth';
 import { EmpresaService, EmpresaDTO } from '../../core/services/empresa.service';
 import { SedeService, SedeDTO } from '../../core/services/sede.service';
+import { FileUploadService } from '../../core/services/file-upload.service';
 import { EmpresaDialogComponent } from './empresa-dialog/empresa-dialog';
 import { SedeDialogComponent } from './sede-dialog/sede-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
+import { forkJoin, of } from 'rxjs';
+import { switchMap } from 'rxjs/operators';
 
 interface EmpresaPrincipal {
   empresaId: string;
@@ -91,6 +94,7 @@ export class EmpresaPrincipalComponent implements OnInit {
     private authService: AuthService,
     private empresaService: EmpresaService,
     private sedeService: SedeService,
+    private fileUploadService: FileUploadService,
     private dialog: MatDialog,
     private fb: FormBuilder,
     private router: Router,
@@ -113,9 +117,9 @@ export class EmpresaPrincipalComponent implements OnInit {
         try {
           console.log('📦 Empresas recibidas del backend:', empresas);
 
-          // Filtrar solo empresas principales (codigo='HOST')
+          // Filtrar solo empresas principales (tipoNombre='Empresa Principal')
           const empresasPrincipales = empresas.filter(e =>
-            e.tipo === 'HOST'
+            e.tipoNombre === 'Empresa Principal'
           );
 
           console.log('✅ Empresas principales filtradas:', empresasPrincipales);
@@ -131,7 +135,7 @@ export class EmpresaPrincipalComponent implements OnInit {
             tenantId: e.tenantId,
             ruc: e.ruc,
             razonSocial: e.razonSocial,
-            tipo: e.tipo,
+            tipo: e.tipoNombre,
             direccion: e.direccion || '',
             telefono: e.telefono || '',
             email: e.email || '',
@@ -139,7 +143,7 @@ export class EmpresaPrincipalComponent implements OnInit {
             sitioWeb: e.sitioWeb || '',
             rubroComercial: e.rubroComercial || '',
             scoreSeguridad: e.scoreSeguridad || 100,
-            estadoHabilitacion: e.estadoHabilitacion,
+            estadoHabilitacion: 'ACTIVO',
             activo: e.activo,
             cantidadSedes: 0,
             createdAt: e.createdAt || '',
@@ -209,23 +213,63 @@ export class EmpresaPrincipalComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (empresa) {
-          // Editar empresa existente
-          this.updateEmpresa(empresa, result);
+        // Si hay un archivo seleccionado, subirlo primero
+        if (result.logoFile) {
+          this.uploadLogoAndSave(empresa, result);
         } else {
-          // Crear nueva empresa
-          this.createEmpresa(result);
+          if (empresa) {
+            this.updateEmpresa(empresa, result);
+          } else {
+            this.createEmpresa(result);
+          }
         }
       }
     });
   }
 
+  uploadLogoAndSave(empresa: EmpresaPrincipal | undefined, data: any): void {
+    this.fileUploadService.uploadLogo(data.logoFile).subscribe({
+      next: (uploadResponse) => {
+        console.log('Logo subido:', uploadResponse.url);
+        // Actualizar datos con la URL del logo
+        data.logoUrl = uploadResponse.url;
+        delete data.logoFile;
+
+        if (empresa) {
+          this.updateEmpresa(empresa, data);
+        } else {
+          this.createEmpresa(data);
+        }
+      },
+      error: (error) => {
+        console.error('Error al subir logo:', error);
+        this.showNotification('Error al subir el logo', 'error');
+      }
+    });
+  }
+
   createEmpresa(data: any): void {
+    // Validar que tengamos el tipoId de HOST
+    if (!this.tipoHostId) {
+      this.showNotification('Error: No se pudo determinar el tipo de empresa principal', 'error');
+      return;
+    }
+
     // Agregar tipoId de HOST al request
     const request = {
-      ...data,
-      tipoId: this.tipoHostId
+      ruc: data.ruc,
+      razonSocial: data.razonSocial,
+      tipoId: this.tipoHostId,
+      direccion: data.direccion || null,
+      telefono: data.telefono || null,
+      email: data.email || null,
+      logoUrl: data.logoUrl || null,
+      sitioWeb: data.sitioWeb || null,
+      rubroComercial: data.rubroComercial || null,
+      activo: data.activo !== undefined ? data.activo : true
     };
+
+    console.log('Creando empresa con datos:', request);
 
     this.empresaService.createEmpresa(request).subscribe({
       next: (empresa: EmpresaDTO) => {
@@ -312,39 +356,46 @@ export class EmpresaPrincipalComponent implements OnInit {
   }
 
   createSede(empresa: EmpresaPrincipal, data: any): void {
-    // TODO: Reemplazar con llamada al API
-    if (!empresa.sedes) {
-      empresa.sedes = [];
-    }
-
-    const newSede: Sede = {
-      sedeId: crypto.randomUUID(), // Generar UUID temporal
+    const request = {
+      empresaId: empresa.empresaId,
       nombre: data.nombre,
       direccion: data.direccion,
       esPrincipal: data.esPrincipal,
       activo: data.activo
     };
 
-    empresa.sedes.push(newSede);
-    empresa.cantidadSedes = empresa.sedes.length;
-    this.showNotification('Sede creada exitosamente', 'success');
+    this.sedeService.createSede(request).subscribe({
+      next: (sede) => {
+        this.showNotification('Sede creada exitosamente', 'success');
+        // Recargar sedes de esta empresa
+        this.loadSedesForEmpresa(empresa);
+      },
+      error: (error) => {
+        console.error('Error al crear sede:', error);
+        this.showNotification('Error al crear sede', 'error');
+      }
+    });
   }
 
   updateSede(empresa: EmpresaPrincipal, sede: Sede, data: any): void {
-    // TODO: Reemplazar con llamada al API
-    if (empresa.sedes) {
-      const index = empresa.sedes.findIndex(s => s.sedeId === sede.sedeId);
-      if (index !== -1) {
-        empresa.sedes[index] = {
-          ...empresa.sedes[index],
-          nombre: data.nombre,
-          direccion: data.direccion,
-          esPrincipal: data.esPrincipal,
-          activo: data.activo
-        };
+    const request = {
+      nombre: data.nombre,
+      direccion: data.direccion,
+      esPrincipal: data.esPrincipal,
+      activo: data.activo
+    };
+
+    this.sedeService.updateSede(sede.sedeId, request).subscribe({
+      next: (sedeActualizada) => {
         this.showNotification('Sede actualizada exitosamente', 'success');
+        // Recargar sedes de esta empresa
+        this.loadSedesForEmpresa(empresa);
+      },
+      error: (error) => {
+        console.error('Error al actualizar sede:', error);
+        this.showNotification('Error al actualizar sede', 'error');
       }
-    }
+    });
   }
 
   deleteSede(empresa: EmpresaPrincipal, sede: Sede): void {
@@ -361,15 +412,17 @@ export class EmpresaPrincipalComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
-        // TODO: Reemplazar con llamada al API
-        if (empresa.sedes) {
-          const index = empresa.sedes.findIndex(s => s.sedeId === sede.sedeId);
-          if (index !== -1) {
-            empresa.sedes.splice(index, 1);
-            empresa.cantidadSedes = empresa.sedes.length;
+        this.sedeService.deleteSede(sede.sedeId).subscribe({
+          next: () => {
             this.showNotification('Sede eliminada exitosamente', 'success');
+            // Recargar sedes de esta empresa
+            this.loadSedesForEmpresa(empresa);
+          },
+          error: (error) => {
+            console.error('Error al eliminar sede:', error);
+            this.showNotification('Error al eliminar sede', 'error');
           }
-        }
+        });
       }
     });
   }
