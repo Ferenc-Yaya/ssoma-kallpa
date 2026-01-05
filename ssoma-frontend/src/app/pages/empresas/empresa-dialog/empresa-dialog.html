@@ -32,9 +32,9 @@
 
         <div class="form-group">
           <label>Tipo de Contratista *</label>
-          <select [(ngModel)]="empresa.tipo_contratista_id" class="form-input">
-            <option [value]="undefined">Seleccionar...</option>
-            <option *ngFor="let tipo of tiposContratista" [value]="tipo.id">
+          <select [(ngModel)]="empresa.tipoId" class="form-input">
+            <option [ngValue]="undefined">Seleccionar...</option>
+            <option *ngFor="let tipo of tiposContratista" [ngValue]="tipo.tipoId">
               {{ tipo.nombre }}
             </option>
           </select>

@@ -2,8 +2,8 @@
   <div class="page-header">
     <div class="header-content">
       <div>
-        <h1>Empresas Principales (Multi-Tenant)</h1>
-        <p class="subtitle">Gestión de empresas principales y sus configuraciones de tenant</p>
+        <h1>Empresas Principales</h1>
+        <p class="subtitle">Gestión de empresas principales</p>
       </div>
       <button mat-raised-button color="primary" (click)="openEmpresaDialog()">
         <mat-icon>add_business</mat-icon>
@@ -43,6 +43,12 @@
             <button mat-icon-button color="accent" (click)="viewEmpresaDetail(empresa)"
                     matTooltip="Ver detalle">
               <mat-icon>visibility</mat-icon>
+            </button>
+            <button mat-icon-button
+                    [color]="empresa.activo ? 'warn' : 'primary'"
+                    (click)="toggleEstadoEmpresa(empresa)"
+                    [matTooltip]="empresa.activo ? 'Desactivar empresa' : 'Activar empresa'">
+              <mat-icon>{{ empresa.activo ? 'block' : 'check_circle' }}</mat-icon>
             </button>
             <button mat-icon-button color="warn" (click)="deleteEmpresa(empresa)"
                     matTooltip="Eliminar empresa">
@@ -122,9 +128,9 @@
             <mat-icon>verified</mat-icon>
             <div>
               <label>Estado</label>
-              <mat-chip [class.chip-activo]="empresa.estadoHabilitacion === 'APROBADO'"
-                        [class.chip-inactivo]="empresa.estadoHabilitacion !== 'APROBADO'">
-                {{ empresa.estadoHabilitacion }}
+              <mat-chip [class.chip-activo]="empresa.activo"
+                        [class.chip-inactivo]="!empresa.activo">
+                {{ empresa.activo ? 'ACTIVO' : 'INACTIVO' }}
               </mat-chip>
             </div>
           </div>

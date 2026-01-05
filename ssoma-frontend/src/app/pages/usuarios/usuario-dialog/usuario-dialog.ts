@@ -7,11 +7,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { RolesService, Rol } from '../../../core/services/roles.service';
 
 interface Usuario {
-  usuarioId?: number;
+  usuarioId?: string;
   username: string;
   nombreCompleto: string;
   email: string;
-  rolId?: number;
+  rolId?: string;
   rolCodigo?: string;
   rol?: string;
   tenantId: string | null;
@@ -102,7 +102,7 @@ export class UsuarioDialogComponent implements OnInit {
     });
   }
 
-  onRolChange(rolId: number): void {
+  onRolChange(rolId: string): void {
     const rolData = this.roles.find(r => r.rolId === rolId);
     const tenantControl = this.usuarioForm.get('tenantId');
 
@@ -117,7 +117,7 @@ export class UsuarioDialogComponent implements OnInit {
     tenantControl?.updateValueAndValidity();
   }
 
-  getRolDescription(rolId: number): string {
+  getRolDescription(rolId: string): string {
     const rolData = this.roles.find(r => r.rolId === rolId);
     return rolData?.descripcion || '';
   }

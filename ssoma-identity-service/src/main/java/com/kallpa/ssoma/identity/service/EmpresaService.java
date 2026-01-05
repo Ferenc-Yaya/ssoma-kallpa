@@ -51,7 +51,17 @@ public class EmpresaService {
 
     @Transactional
     public EmpresaDTO create(CreateEmpresaRequest request) {
-        String tenantId = TenantContext.getTenantId();
+        String contextTenantId = TenantContext.getTenantId();
+
+        // SUPER_ADMIN (tenant SYSTEM) puede especificar el tenant destino
+        String tenantId;
+        if ("SYSTEM".equals(contextTenantId) && request.getTenantId() != null && !request.getTenantId().isBlank()) {
+            tenantId = request.getTenantId();
+            log.info("SUPER_ADMIN: Creando empresa para tenant específico: {}", tenantId);
+        } else {
+            tenantId = contextTenantId;
+        }
+
         log.info("Creando nueva empresa con RUC: {} para tenant: {}", request.getRuc(), tenantId);
 
         // Validar RUC único

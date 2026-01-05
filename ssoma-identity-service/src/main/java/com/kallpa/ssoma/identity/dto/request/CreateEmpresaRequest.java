@@ -12,6 +12,9 @@ import java.util.UUID;
 @Data
 public class CreateEmpresaRequest {
 
+    // Solo SUPER_ADMIN puede especificar este campo para asignar a otra empresa principal
+    private String tenantId;
+
     @NotBlank(message = "El RUC es obligatorio")
     @Size(min = 11, max = 11, message = "El RUC debe tener 11 dígitos")
     private String ruc;

@@ -6,7 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 interface Rol {
-  rolId?: number;
+  rolId?: string;
   codigo: string;
   nombre: string;
   descripcion: string;

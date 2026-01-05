@@ -95,6 +95,13 @@ export class EmpresaService {
   }
 
   /**
+   * Cambia el estado activo/inactivo de una empresa
+   */
+  toggleEstado(id: string, activo: boolean): Observable<EmpresaDTO> {
+    return this.http.put<EmpresaDTO>(`${this.apiUrl}/${id}`, { activo });
+  }
+
+  /**
    * Busca empresas por texto
    */
   searchEmpresas(query: string): Observable<EmpresaDTO[]> {

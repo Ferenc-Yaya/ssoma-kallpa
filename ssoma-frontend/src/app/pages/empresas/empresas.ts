@@ -33,7 +33,7 @@ export class EmpresasComponent implements OnInit {
   empresas: Empresa[] = [];
   empresasFiltradas: Empresa[] = [];
   searchTerm: string = '';
-  displayedColumns: string[] = ['id', 'razonSocial', 'ruc', 'tipo', 'estado', 'acciones'];
+  displayedColumns: string[] = ['razonSocial', 'ruc', 'tipo', 'estado', 'acciones'];
 
   // Filtro por tenant (para vista de contratistas de una empresa principal)
   tenantFilter: string | null = null;
@@ -96,7 +96,7 @@ export class EmpresasComponent implements OnInit {
   openCreateDialog(): void {
     const dialogRef = this.dialog.open(EmpresaDialogComponent, {
       width: '500px',
-      data: {}
+      data: { tenantId: this.tenantFilter }
     });
 
     dialogRef.afterClosed().subscribe(result => {

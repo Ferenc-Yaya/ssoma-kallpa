@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -9,7 +9,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { Empresa, EmpresaContacto } from '../../../mocks/empresas.mock';
-import { TIPOS_CONTRATISTAS_MOCK } from '../../../mocks/reglas-negocio.mock';
+import { TiposContratistaService, TipoContratista } from '../../../core/services/tipos-contratista.service';
 
 @Component({
   selector: 'app-empresa-dialog',
@@ -28,31 +28,47 @@ import { TIPOS_CONTRATISTAS_MOCK } from '../../../mocks/reglas-negocio.mock';
   templateUrl: './empresa-dialog.html',
   styleUrl: './empresa-dialog.scss'
 })
-export class EmpresaDialogComponent {
-  empresa: Partial<Empresa>;
+export class EmpresaDialogComponent implements OnInit {
+  empresa: Partial<Empresa> & { tipoId?: string; tenantId?: string | null; activo?: boolean };
   isEdit: boolean;
-  tiposContratista = TIPOS_CONTRATISTAS_MOCK;
+  tiposContratista: TipoContratista[] = [];
   contactos: EmpresaContacto[] = [];
 
   constructor(
     public dialogRef: MatDialogRef<EmpresaDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { empresa?: Empresa }
+    @Inject(MAT_DIALOG_DATA) public data: { empresa?: Empresa; tenantId?: string },
+    private tiposContratistaService: TiposContratistaService
   ) {
     this.isEdit = !!data.empresa;
     this.empresa = data.empresa ? { ...data.empresa } : {
       razonSocial: '',
       ruc: '',
-      tipo_contratista_id: undefined,
+      tipoId: undefined,
       direccion: '',
       telefono: '',
       email: '',
-      estado: 'ACTIVO',
-      tenant_id: 'KALLPA',
+      activo: true,
+      tenantId: data.tenantId || null,
       created_at: new Date().toISOString()
     };
 
     // Cargar contactos si existen
     this.contactos = this.empresa.contactos ? [...this.empresa.contactos] : [];
+  }
+
+  ngOnInit(): void {
+    this.loadTiposContratista();
+  }
+
+  loadTiposContratista(): void {
+    this.tiposContratistaService.getAll().subscribe({
+      next: (tipos) => {
+        this.tiposContratista = tipos;
+      },
+      error: (error) => {
+        console.error('Error cargando tipos de contratista:', error);
+      }
+    });
   }
 
   agregarContacto(): void {
@@ -89,7 +105,7 @@ export class EmpresaDialogComponent {
       this.empresa.razonSocial?.trim() &&
       this.empresa.ruc?.trim() &&
       this.empresa.ruc.length === 11 &&
-      this.empresa.tipo_contratista_id &&
+      this.empresa.tipoId &&
       this.empresa.direccion?.trim() &&
       this.empresa.telefono?.trim() &&
       this.empresa.email?.trim() &&

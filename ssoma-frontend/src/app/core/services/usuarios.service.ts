@@ -1,14 +1,14 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 
 export interface Usuario {
-  usuarioId: number;
+  usuarioId: string;
   username: string;
   nombreCompleto: string;
   email: string;
-  rolId?: number;
+  rolId?: string;
   rolNombre?: string;
   rolCodigo?: string;
   rol?: 'SUPER_ADMIN' | 'ADMIN_EMPRESA_PRINCIPAL' | 'ADMIN_CONTRATISTA';
@@ -24,7 +24,7 @@ export interface CreateUsuarioRequest {
   password: string;
   nombreCompleto: string;
   email: string;
-  rolId: number;
+  rolId: string;
   tenantId?: string;
   empresaNombre?: string;
   activo?: boolean;
@@ -33,7 +33,7 @@ export interface CreateUsuarioRequest {
 export interface UpdateUsuarioRequest {
   nombreCompleto: string;
   email: string;
-  rolId: number;
+  rolId: string;
   tenantId?: string;
   empresaNombre?: string;
   activo: boolean;
@@ -51,39 +51,31 @@ export class UsuariosService {
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('auth_token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
-    });
-  }
-
   getAllUsuarios(): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(this.apiUrl, { headers: this.getHeaders() });
+    return this.http.get<Usuario[]>(this.apiUrl);
   }
 
-  getUsuarioById(id: number): Observable<Usuario> {
-    return this.http.get<Usuario>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  getUsuarioById(id: string): Observable<Usuario> {
+    return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
   }
 
   createUsuario(request: CreateUsuarioRequest): Observable<Usuario> {
-    return this.http.post<Usuario>(this.apiUrl, request, { headers: this.getHeaders() });
+    return this.http.post<Usuario>(this.apiUrl, request);
   }
 
-  updateUsuario(id: number, request: UpdateUsuarioRequest): Observable<Usuario> {
-    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, request, { headers: this.getHeaders() });
+  updateUsuario(id: string, request: UpdateUsuarioRequest): Observable<Usuario> {
+    return this.http.put<Usuario>(`${this.apiUrl}/${id}`, request);
   }
 
-  deleteUsuario(id: number): Observable<void> {
-    return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
+  deleteUsuario(id: string): Observable<void> {
+    return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  changePassword(id: number, request: ChangePasswordRequest): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/change-password`, request, { headers: this.getHeaders() });
+  changePassword(id: string, request: ChangePasswordRequest): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}/change-password`, request);
   }
 
-  toggleActivo(id: number): Observable<any> {
-    return this.http.put<any>(`${this.apiUrl}/${id}/toggle-activo`, {}, { headers: this.getHeaders() });
+  toggleActivo(id: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/${id}/toggle-activo`, {});
   }
 }

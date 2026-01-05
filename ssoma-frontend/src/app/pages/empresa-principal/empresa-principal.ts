@@ -325,6 +325,40 @@ export class EmpresaPrincipalComponent implements OnInit {
     });
   }
 
+  toggleEstadoEmpresa(empresa: EmpresaPrincipal): void {
+    const nuevoEstado = !empresa.activo;
+    const accion = nuevoEstado ? 'activar' : 'desactivar';
+
+    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
+      width: '450px',
+      data: {
+        title: `${nuevoEstado ? 'Activar' : 'Desactivar'} Empresa`,
+        message: `¿Está seguro de ${accion} la empresa "${empresa.razonSocial}"?`,
+        confirmText: nuevoEstado ? 'Activar' : 'Desactivar',
+        cancelText: 'Cancelar',
+        confirmColor: nuevoEstado ? 'primary' : 'warn'
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(confirmed => {
+      if (confirmed) {
+        this.empresaService.toggleEstado(empresa.empresaId, nuevoEstado).subscribe({
+          next: () => {
+            this.showNotification(
+              `Empresa ${nuevoEstado ? 'activada' : 'desactivada'} exitosamente`,
+              'success'
+            );
+            this.loadEmpresasPrincipales();
+          },
+          error: (error) => {
+            console.error('Error al cambiar estado:', error);
+            this.showNotification('Error al cambiar el estado de la empresa', 'error');
+          }
+        });
+      }
+    });
+  }
+
   viewEmpresaDetail(empresa: EmpresaPrincipal): void {
     // Navegar a la vista de empresas con el ID del tenant
     this.router.navigate(['/empresas'], {

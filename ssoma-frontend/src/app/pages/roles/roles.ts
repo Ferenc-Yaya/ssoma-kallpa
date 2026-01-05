@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -36,7 +36,8 @@ export class RolesComponent implements OnInit {
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
-    private rolesService: RolesService
+    private rolesService: RolesService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -47,6 +48,7 @@ export class RolesComponent implements OnInit {
     this.rolesService.getAllRoles().subscribe({
       next: (roles) => {
         this.roles = roles.sort((a, b) => a.nivelJerarquia - b.nivelJerarquia);
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error cargando roles:', error);
