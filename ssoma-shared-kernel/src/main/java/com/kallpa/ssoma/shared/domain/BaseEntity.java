@@ -22,6 +22,9 @@ public abstract class BaseEntity {
     public static class TenantListener {
         @PrePersist
         public void setTenant(BaseEntity entity) {
+            if (entity.getTenantId() != null && !entity.getTenantId().isBlank()) {
+                return;
+            }
             String tenant = TenantContext.getTenantId();
             if (tenant == null) {
                 throw new IllegalStateException(

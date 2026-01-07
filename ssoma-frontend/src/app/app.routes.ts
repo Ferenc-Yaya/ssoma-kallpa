@@ -39,6 +39,10 @@ export const routes: Routes = [
         path: 'roles',
         loadComponent: () => import('./pages/roles/roles').then(m => m.RolesComponent)
       },
+      {
+        path: 'empresa-usuarios',
+        loadComponent: () => import('./pages/empresa-usuarios/empresa-usuarios').then(m => m.EmpresaUsuariosComponent)
+      },
       { path: 'empresas', component: EmpresasComponent },
       { path: 'empresas/:id', component: EmpresaDetalleComponent },
       { path: 'empresas/:id/personal', component: EmpresaPersonalComponent },

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Empresa } from '../../mocks/empresas.mock';
 import { environment } from '../../../environments/environment';
@@ -20,8 +20,17 @@ export class EmpresasService {
     });
   }
 
-  getEmpresas(): Observable<Empresa[]> {
-    return this.http.get<Empresa[]>(this.apiUrl, { headers: this.getHeaders() });
+  getEmpresas(tenantId?: string): Observable<Empresa[]> {
+    let params = new HttpParams();
+
+    if (tenantId) {
+      params = params.set('tenant', tenantId);
+    }
+
+    return this.http.get<Empresa[]>(this.apiUrl, { 
+      headers: this.getHeaders(),
+      params: params 
+    });
   }
 
   getEmpresaById(id: number): Observable<Empresa> {

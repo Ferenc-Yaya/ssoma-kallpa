@@ -55,6 +55,20 @@ export class UsuariosService {
     return this.http.get<Usuario[]>(this.apiUrl);
   }
 
+  getUsuariosByTenant(tenantId: string): Observable<Usuario[]> {
+    return this.http.get<Usuario[]>(`${this.apiUrl}/by-tenant/${tenantId}`);
+  }
+
+  generateTemporaryPassword(): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
+    const year = new Date().getFullYear();
+    let password = `Ssoma${year}!`;
+    for (let i = 0; i < 6; i++) {
+      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return password;
+  }
+
   getUsuarioById(id: string): Observable<Usuario> {
     return this.http.get<Usuario>(`${this.apiUrl}/${id}`);
   }

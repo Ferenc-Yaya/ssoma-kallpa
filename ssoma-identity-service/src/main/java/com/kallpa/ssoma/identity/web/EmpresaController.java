@@ -24,9 +24,12 @@ public class EmpresaController {
     private final EmpresaService empresaService;
 
     @GetMapping
-    public ResponseEntity<List<EmpresaDTO>> getAllEmpresas() {
-        log.info("GET /api/empresas - Obteniendo todas las empresas");
-        List<EmpresaDTO> empresas = empresaService.findAll();
+    public ResponseEntity<List<EmpresaDTO>> getAllEmpresas(
+            @RequestParam(required = false) String tenant
+    ) {
+        log.info("GET /api/empresas - Solicitud recibida. Filtro tenant: {}", tenant);
+        List<EmpresaDTO> empresas = empresaService.findAll(tenant);
+
         return ResponseEntity.ok(empresas);
     }
 

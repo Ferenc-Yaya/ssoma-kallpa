@@ -2,11 +2,15 @@ package com.kallpa.ssoma.identity.service;
 
 import com.kallpa.ssoma.identity.domain.Empresa;
 import com.kallpa.ssoma.identity.domain.EmpresaContacto;
+import com.kallpa.ssoma.identity.domain.Tenant;
+import com.kallpa.ssoma.identity.domain.TipoContratista;
 import com.kallpa.ssoma.identity.dto.request.CreateEmpresaRequest;
 import com.kallpa.ssoma.identity.dto.EmpresaDTO;
 import com.kallpa.ssoma.identity.dto.request.UpdateEmpresaRequest;
 import com.kallpa.ssoma.identity.mapper.EmpresaMapper;
 import com.kallpa.ssoma.identity.repository.EmpresaRepository;
+import com.kallpa.ssoma.identity.repository.TenantRepository;
+import com.kallpa.ssoma.identity.repository.TipoContratistaRepository;
 import com.kallpa.ssoma.shared.context.TenantContext;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,20 +27,30 @@ public class EmpresaService {
 
     private final EmpresaRepository empresaRepository;
     private final EmpresaMapper empresaMapper;
+    private final TenantRepository tenantRepository;
+    private final TipoContratistaRepository tipoContratistaRepository;
 
     @Transactional(readOnly = true)
-    public List<EmpresaDTO> findAll() {
-        String tenantId = TenantContext.getTenantId();
-        log.debug("Buscando todas las empresas para tenant: {}", tenantId);
+    public List<EmpresaDTO> findAll(String targetTenantId) {
+        String contextTenantId = TenantContext.getTenantId();
+        log.debug("Buscando empresas. Contexto: {}, Objetivo: {}", contextTenantId, targetTenantId);
 
-        // SUPER_ADMIN (tenant SYSTEM) puede ver empresas de todos los tenants
-        if ("SYSTEM".equals(tenantId)) {
+        // CASO 1: Eres SUPER_ADMIN y quieres ver los datos de un tenant específico (TU CASO ACTUAL)
+        if ("SYSTEM".equals(contextTenantId) && targetTenantId != null && !targetTenantId.isBlank()) {
+            log.info("SUPER_ADMIN: Filtrando empresas específicamente del tenant: {}", targetTenantId);
+            List<Empresa> empresas = empresaRepository.findByTenantIdWithTipo(targetTenantId);
+            return empresaMapper.toDTOList(empresas);
+        }
+
+        // CASO 2: Eres SUPER_ADMIN y quieres ver TODO (Pantalla general)
+        if ("SYSTEM".equals(contextTenantId)) {
             log.info("SUPER_ADMIN: Buscando empresas de TODOS los tenants");
             List<Empresa> empresas = empresaRepository.findAllWithTipo();
             return empresaMapper.toDTOList(empresas);
         }
 
-        List<Empresa> empresas = empresaRepository.findByTenantIdWithTipo(tenantId);
+        // CASO 3: Usuario normal (solo ve su propia data)
+        List<Empresa> empresas = empresaRepository.findByTenantIdWithTipo(contextTenantId);
         return empresaMapper.toDTOList(empresas);
     }
 
@@ -51,29 +65,63 @@ public class EmpresaService {
 
     @Transactional
     public EmpresaDTO create(CreateEmpresaRequest request) {
-        String contextTenantId = TenantContext.getTenantId();
-
-        // SUPER_ADMIN (tenant SYSTEM) puede especificar el tenant destino
+        // -------------------------------------------------------------------------
+        // 1. DETERMINAR TENANT DESTINO
+        // -------------------------------------------------------------------------
+        // La regla de oro: Si el request trae un tenantId (ej. generado por el frontend
+        // al escribir la Razón Social), ese tiene prioridad absoluta sobre el token (SYSTEM).
         String tenantId;
-        if ("SYSTEM".equals(contextTenantId) && request.getTenantId() != null && !request.getTenantId().isBlank()) {
+        if (request.getTenantId() != null && !request.getTenantId().isBlank()) {
             tenantId = request.getTenantId();
-            log.info("SUPER_ADMIN: Creando empresa para tenant específico: {}", tenantId);
+            log.info("Creando empresa con Tenant ID explícito: {}", tenantId);
         } else {
-            tenantId = contextTenantId;
+            tenantId = TenantContext.getTenantId();
+            log.info("Creando empresa asignada al Tenant del contexto actual: {}", tenantId);
         }
 
-        log.info("Creando nueva empresa con RUC: {} para tenant: {}", request.getRuc(), tenantId);
+        log.info("Iniciando creación de empresa. RUC: {}, Target Tenant: {}", request.getRuc(), tenantId);
 
-        // Validar RUC único
+        // -------------------------------------------------------------------------
+        // 2. VALIDACIONES PREVIAS
+        // -------------------------------------------------------------------------
+        // Validar RUC único (Asegúrate que tu repositorio soporte buscar por RUC globalmente o filtrado según tu lógica)
         if (empresaRepository.existsByRuc(request.getRuc())) {
             throw new RuntimeException("Ya existe una empresa con el RUC: " + request.getRuc());
         }
 
-        // Usar mapper para conversión básica
+        // -------------------------------------------------------------------------
+        // 3. LOGICA DE EMPRESA PRINCIPAL (HOST)
+        // -------------------------------------------------------------------------
+        // Si es una empresa principal, verificamos si necesitamos crear su espacio (Tenant) en la tabla tbl_tenants
+        if (request.getTipoId() != null) {
+            TipoContratista tipo = tipoContratistaRepository.findById(request.getTipoId()).orElse(null);
+
+            // Verificamos por código o nombre si es tipo HOST
+            if (tipo != null && ("HOST".equals(tipo.getCodigo()) || "Empresa Principal".equals(tipo.getNombre()))) {
+                // Es Principal: Verificar y crear el registro en tbl_tenants si no existe
+                if (!tenantRepository.existsByTenantId(tenantId)) {
+                    log.info("El tenant '{}' no existe. Creando nuevo registro de Tenant...", tenantId);
+                    Tenant newTenant = new Tenant();
+                    newTenant.setTenantId(tenantId);
+                    newTenant.setActivo(true);
+                    // La fecha se pone sola por el @PrePersist de Tenant
+                    tenantRepository.save(newTenant);
+                    log.info("Tenant '{}' creado exitosamente.", tenantId);
+                }
+            }
+        }
+
+        // -------------------------------------------------------------------------
+        // 4. MAPEO Y ASIGNACIÓN
+        // -------------------------------------------------------------------------
         Empresa empresa = empresaMapper.toEntity(request);
+
+        // ¡PUNTO CRÍTICO!
+        // Asignamos manualmente el tenantId calculado arriba.
+        // Esto asegura que la empresa pertenezca a "minera-x" y no a "SYSTEM".
         empresa.setTenantId(tenantId);
 
-        // Valores por defecto
+        // Valores por defecto si vienen nulos
         if (empresa.getScoreSeguridad() == null) {
             empresa.setScoreSeguridad(100);
         }
@@ -81,11 +129,15 @@ public class EmpresaService {
             empresa.setActivo(true);
         }
 
-        // Agregar contactos si existen
+        // -------------------------------------------------------------------------
+        // 5. PROCESAR CONTACTOS
+        // -------------------------------------------------------------------------
         if (request.getContactos() != null) {
             request.getContactos().forEach(contactoDTO -> {
                 EmpresaContacto contacto = empresaMapper.toContactoEntity(contactoDTO);
+                // Los contactos deben heredar el mismo tenant de la empresa padre
                 contacto.setTenantId(tenantId);
+
                 if (contacto.getTipoContacto() == null) {
                     contacto.setTipoContacto("GENERAL");
                 }
@@ -93,8 +145,15 @@ public class EmpresaService {
             });
         }
 
+        // -------------------------------------------------------------------------
+        // 6. GUARDAR Y RETORNAR
+        // -------------------------------------------------------------------------
+        // Al guardar, el Listener de BaseEntity verá que 'tenantId' ya tiene valor
+        // y NO lo sobrescribirá con 'SYSTEM'.
         Empresa savedEmpresa = empresaRepository.save(empresa);
-        log.info("Empresa creada exitosamente con ID: {}", savedEmpresa.getEmpresaId());
+
+        log.info("Empresa creada exitosamente con ID: {} en Tenant: {}", savedEmpresa.getEmpresaId(), savedEmpresa.getTenantId());
+
         return empresaMapper.toDTO(savedEmpresa);
     }
 

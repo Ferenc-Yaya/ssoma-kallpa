@@ -40,6 +40,10 @@
                     matTooltip="Editar empresa">
               <mat-icon>edit</mat-icon>
             </button>
+            <button mat-icon-button color="primary" (click)="openUsuariosDialog(empresa)"
+                    matTooltip="Gestionar usuarios">
+              <mat-icon>people</mat-icon>
+            </button>
             <button mat-icon-button color="accent" (click)="viewEmpresaDetail(empresa)"
                     matTooltip="Ver detalle">
               <mat-icon>visibility</mat-icon>

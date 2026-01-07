@@ -43,6 +43,16 @@ public class UsuarioController {
         }
     }
 
+    @GetMapping("/by-tenant/{tenantId}")
+    public ResponseEntity<List<UsuarioDTO>> getUsuariosByTenant(@PathVariable String tenantId) {
+        try {
+            List<UsuarioDTO> usuarios = usuarioService.findByTenantId(tenantId);
+            return ResponseEntity.ok(usuarios);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
     @PostMapping
     public ResponseEntity<?> createUsuario(@Valid @RequestBody CreateUsuarioRequest request) {
         try {

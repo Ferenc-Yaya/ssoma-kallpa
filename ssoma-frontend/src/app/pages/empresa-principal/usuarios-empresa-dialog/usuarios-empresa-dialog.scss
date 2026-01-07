@@ -1,0 +1,162 @@
+.title-icon {
+  vertical-align: middle;
+  margin-right: 8px;
+}
+
+mat-dialog-content {
+  min-width: 800px;
+  max-height: 70vh;
+}
+
+.loading-container {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.usuarios-container {
+  padding: 8px 0;
+}
+
+.table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  .usuarios-count {
+    color: #666;
+    font-size: 14px;
+  }
+}
+
+.create-panel {
+  margin-bottom: 20px;
+  background: #f8f9fa;
+
+  mat-panel-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+}
+
+.usuario-form {
+  padding: 16px 0;
+
+  .form-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+
+    mat-form-field {
+      flex: 1;
+    }
+  }
+
+  .password-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    background: #e3f2fd;
+    border-radius: 8px;
+    margin: 16px 0;
+    color: #1565c0;
+
+    mat-icon {
+      color: #1976d2;
+    }
+
+    span {
+      font-size: 13px;
+    }
+  }
+
+  .form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-top: 16px;
+  }
+}
+
+.usuarios-table {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+  th {
+    background: #f5f5f5;
+    font-weight: 600;
+    color: #333;
+  }
+
+  td, th {
+    padding: 12px 16px;
+  }
+
+  .user-cell {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .user-icon {
+      color: #666;
+      font-size: 20px;
+      width: 20px;
+      height: 20px;
+    }
+  }
+}
+
+.chip-rol {
+  background: #e8eaf6 !important;
+  color: #3f51b5 !important;
+  font-weight: 500 !important;
+}
+
+.chip-activo {
+  background: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  font-weight: 600 !important;
+}
+
+.chip-inactivo {
+  background: #ffebee !important;
+  color: #c62828 !important;
+  font-weight: 600 !important;
+}
+
+.no-usuarios {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+
+  mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+  }
+
+  p {
+    margin: 8px 0;
+  }
+
+  .hint {
+    font-size: 13px;
+    color: #999;
+  }
+}
+
+mat-dialog-actions {
+  padding: 16px 24px;
+  border-top: 1px solid #e0e0e0;
+}

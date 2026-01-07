@@ -13,7 +13,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.security.SecureRandom;
 import java.time.LocalDateTime;
+import java.time.Year;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -31,6 +33,24 @@ public class UsuarioService {
         return usuarioRepository.findAll().stream()
                 .map(this::toDTO)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<UsuarioDTO> findByTenantId(String tenantId) {
+        return usuarioRepository.findByTenantId(tenantId).stream()
+                .map(this::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    public String generateTemporaryPassword() {
+        String chars = "ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder("Ssoma");
+        sb.append(Year.now().getValue()).append("!");
+        for (int i = 0; i < 6; i++) {
+            sb.append(chars.charAt(random.nextInt(chars.length())));
+        }
+        return sb.toString();
     }
 
     @Transactional(readOnly = true)

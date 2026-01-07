@@ -1,0 +1,116 @@
+<h2 mat-dialog-title>
+  <mat-icon>person_add</mat-icon>
+  Nuevo Usuario
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="usuarioForm" class="usuario-form">
+
+    <!-- Username -->
+    <div class="form-field">
+      <label>
+        Nombre de Usuario *
+        <span class="hint-inline">(no se puede cambiar después)</span>
+      </label>
+      <input type="text"
+             formControlName="username"
+             placeholder="ejemplo: juan.perez"
+             maxlength="50">
+      <small class="hint">Solo letras minúsculas, números, puntos, guiones</small>
+      <small class="error" *ngIf="usuarioForm.get('username')?.invalid && usuarioForm.get('username')?.touched">
+        {{ getErrorMessage('username') }}
+      </small>
+    </div>
+
+    <!-- Nombre Completo -->
+    <div class="form-field">
+      <label>Nombre Completo *</label>
+      <input type="text"
+             formControlName="nombreCompleto"
+             placeholder="Nombre y apellidos completos"
+             maxlength="100">
+      <small class="error" *ngIf="usuarioForm.get('nombreCompleto')?.invalid && usuarioForm.get('nombreCompleto')?.touched">
+        {{ getErrorMessage('nombreCompleto') }}
+      </small>
+    </div>
+
+    <!-- Email -->
+    <div class="form-field">
+      <label>Email *</label>
+      <input type="email"
+             formControlName="email"
+             placeholder="correo@ejemplo.com">
+      <small class="error" *ngIf="usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched">
+        {{ getErrorMessage('email') }}
+      </small>
+    </div>
+
+    <!-- Password -->
+    <div class="form-row">
+      <div class="form-field">
+        <label>Contraseña *</label>
+        <input type="password"
+               formControlName="password"
+               placeholder="Mínimo 8 caracteres"
+               autocomplete="new-password">
+        <small class="error" *ngIf="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched">
+          {{ getErrorMessage('password') }}
+        </small>
+      </div>
+
+      <div class="form-field">
+        <label>Confirmar Contraseña *</label>
+        <input type="password"
+               formControlName="confirmPassword"
+               placeholder="Repetir contraseña"
+               autocomplete="new-password">
+        <small class="error" *ngIf="!passwordsMatch() && usuarioForm.get('confirmPassword')?.touched">
+          Las contraseñas no coinciden
+        </small>
+      </div>
+    </div>
+
+    <!-- Rol -->
+    <div class="form-field">
+      <label>Rol / Grupo de Usuario *</label>
+      <select formControlName="rolId">
+        <option value="" disabled>Seleccionar rol...</option>
+        <option *ngFor="let rol of roles" [value]="rol.rolId">
+          {{ rol.nombre }}
+        </option>
+      </select>
+      <small class="hint" *ngIf="usuarioForm.get('rolId')?.value">
+        <mat-icon>info</mat-icon>
+        {{ getRolDescription(usuarioForm.get('rolId')?.value) }}
+      </small>
+      <small class="error" *ngIf="usuarioForm.get('rolId')?.invalid && usuarioForm.get('rolId')?.touched">
+        {{ getErrorMessage('rolId') }}
+      </small>
+    </div>
+
+    <!-- Empresa (solo lectura) -->
+    <div class="form-field">
+      <label>Empresa Principal</label>
+      <input type="text" [value]="data.tenantName + ' (' + data.tenantId + ')'" disabled>
+      <small class="hint">
+        <mat-icon>domain</mat-icon>
+        El usuario tendrá acceso solo a esta empresa
+      </small>
+    </div>
+
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">
+    <mat-icon>close</mat-icon>
+    Cancelar
+  </button>
+  <button mat-raised-button
+          color="primary"
+          (click)="onSubmit()"
+          [disabled]="usuarioForm.invalid || !passwordsMatch()">
+    <mat-icon>person_add</mat-icon>
+    Crear Usuario
+  </button>
+</mat-dialog-actions>

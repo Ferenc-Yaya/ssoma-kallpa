@@ -61,23 +61,40 @@ export class EmpresasComponent implements OnInit {
   }
 
   loadEmpresas(): void {
-    this.empresasService.getEmpresas().subscribe({
-      next: (data: Empresa[]) => {
-        // Si hay filtro por tenant, mostrar solo contratistas de ese tenant
-        if (this.tenantFilter) {
-          this.empresas = data.filter(e => e.tenant_id === this.tenantFilter);
-        } else {
-          this.empresas = data;
+
+      const filtro = this.tenantFilter || undefined;
+
+      console.log('Cargando empresas con filtro:', filtro);
+
+      this.empresasService.getEmpresas(filtro).subscribe({
+        next: (data: Empresa[]) => {
+
+          if (data.length > 0) {
+            console.log('Estructura de datos recibida:', data[0]);
+          }
+
+          if (this.tenantFilter) {
+
+            this.empresas = data.filter(e => {
+              const empresa = e as any; 
+
+              const tipo = empresa.tipo || empresa.tipoNombre || empresa.nombreTipo || ''; 
+              
+              return tipo !== 'Empresa Principal' && tipo !== 'HOST';
+            });
+          } else {
+            this.empresas = data;
+          }
+
+          this.empresasFiltradas = this.empresas;
+          this.cdr.detectChanges();
+        },
+        error: (error: any) => {
+          console.error('Error al cargar empresas:', error);
+          this.showMessage('Error al cargar empresas', 'error');
         }
-        this.empresasFiltradas = this.empresas;
-        this.cdr.detectChanges();
-      },
-      error: (error: any) => {
-        console.error('Error al cargar empresas:', error);
-        this.showMessage('Error al cargar empresas', 'error');
-      }
-    });
-  }
+      });
+    }
 
   filterEmpresas(): void {
     const term = this.searchTerm.toLowerCase().trim();

@@ -8,8 +8,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { Empresa, EmpresaContacto } from '../../../mocks/empresas.mock';
-import { TiposContratistaService, TipoContratista } from '../../../core/services/tipos-contratista.service';
+
+// VERIFICA QUE ESTA RUTA SEA LA CORRECTA EN TU PROYECTO
+import { Empresa, EmpresaContacto, TipoContratista } from '../../../core/models/empresa.model';
+import { TiposContratistaService } from '../../../core/services/tipos-contratista.service';
 
 @Component({
   selector: 'app-empresa-dialog',
@@ -26,10 +28,16 @@ import { TiposContratistaService, TipoContratista } from '../../../core/services
     MatCheckboxModule
   ],
   templateUrl: './empresa-dialog.html',
-  styleUrl: './empresa-dialog.scss'
+  styleUrls: ['./empresa-dialog.scss']
 })
 export class EmpresaDialogComponent implements OnInit {
-  empresa: Partial<Empresa> & { tipoId?: string; tenantId?: string | null; activo?: boolean };
+
+  // === AQUÍ ESTABA EL ERROR ===
+  // Antes tenías: empresa: Partial<Empresa> & { ... }
+  // AHORA TIENE QUE SER ASÍ:
+  empresa: Empresa; 
+  // ============================
+
   isEdit: boolean;
   tiposContratista: TipoContratista[] = [];
   contactos: EmpresaContacto[] = [];
@@ -37,22 +45,39 @@ export class EmpresaDialogComponent implements OnInit {
   constructor(
     public dialogRef: MatDialogRef<EmpresaDialogComponent>,
     @Inject(MAT_DIALOG_DATA) public data: { empresa?: Empresa; tenantId?: string },
-    private tiposContratistaService: TiposContratistaService
+    private tiposContratistaService: TiposContratistaService,
+    private cdr: ChangeDetectorRef
   ) {
     this.isEdit = !!data.empresa;
-    this.empresa = data.empresa ? { ...data.empresa } : {
-      razonSocial: '',
-      ruc: '',
-      tipoId: undefined,
-      direccion: '',
-      telefono: '',
-      email: '',
-      activo: true,
-      tenantId: data.tenantId || null,
-      created_at: new Date().toISOString()
-    };
 
-    // Cargar contactos si existen
+    if (this.isEdit && data.empresa) {
+      // Clonamos para editar
+      this.empresa = { ...data.empresa };
+    } else {
+      // INICIALIZAMOS TODO PARA QUE NO FALLE EL HTML
+      // Usamos 'as Empresa' para forzar el tipo y evitar errores de TypeScript iniciales
+      this.empresa = {
+        empresaId: '',
+        tenantId: data.tenantId || '',
+        ruc: '',
+        razonSocial: '',
+        tipoId: undefined, // El usuario lo seleccionará
+        direccion: '',
+        telefono: '',
+        email: '',
+        
+        // CAMPOS NUEVOS (Los que daban error)
+        logoUrl: '',
+        sitioWeb: '',
+        rubroComercial: '',
+        
+        activo: true,
+        contactos: [],
+        sedes: []
+      } as Empresa; 
+    }
+
+    // Inicializamos contactos
     this.contactos = this.empresa.contactos ? [...this.empresa.contactos] : [];
   }
 
@@ -61,67 +86,63 @@ export class EmpresaDialogComponent implements OnInit {
   }
 
   loadTiposContratista(): void {
-    this.tiposContratistaService.getAll().subscribe({
-      next: (tipos) => {
-        this.tiposContratista = tipos;
-      },
-      error: (error) => {
-        console.error('Error cargando tipos de contratista:', error);
-      }
-    });
-  }
+      this.tiposContratistaService.getAll().subscribe({
+        next: (tipos: any[]) => { 
+          
+          const listaTipos = tipos as any[]; 
+
+          if (this.data.tenantId) {
+            this.tiposContratista = listaTipos.filter(t => 
+              t.codigo !== 'HOST' && t.nombre !== 'Empresa Principal'
+            );
+          } else {
+            this.tiposContratista = listaTipos;
+          }
+          this.cdr.detectChanges();
+        },
+        error: (error) => {
+          console.error('Error cargando tipos:', error);
+        }
+      });
+    }
 
   agregarContacto(): void {
-    this.contactos.push({
-      nombre_completo: '',
+    const nuevoContacto: EmpresaContacto = {
+      nombreCompleto: '', 
       cargo: '',
       telefono: '',
       email: '',
-      es_principal: this.contactos.length === 0 // Primer contacto es principal por defecto
-    });
+      tipoContacto: 'COMERCIAL',
+      esPrincipal: this.contactos.length === 0,
+      tenantId: this.empresa.tenantId
+    };
+    this.contactos.push(nuevoContacto);
   }
 
   eliminarContacto(index: number): void {
     this.contactos.splice(index, 1);
-    // Si se eliminó el principal y hay otros contactos, marcar el primero como principal
-    if (this.contactos.length > 0 && !this.contactos.some(c => c.es_principal)) {
-      this.contactos[0].es_principal = true;
+    if (this.contactos.length > 0 && !this.contactos.some(c => c.esPrincipal)) {
+      this.contactos[0].esPrincipal = true;
     }
   }
 
   onPrincipalChange(index: number): void {
-    // Solo un contacto puede ser principal
-    if (this.contactos[index].es_principal) {
+    if (this.contactos[index].esPrincipal) {
       this.contactos.forEach((c, i) => {
-        if (i !== index) {
-          c.es_principal = false;
-        }
+        if (i !== index) c.esPrincipal = false;
       });
     }
   }
 
   isValid(): boolean {
+    // Validamos campos obligatorios
     const empresaValida = !!(
       this.empresa.razonSocial?.trim() &&
       this.empresa.ruc?.trim() &&
       this.empresa.ruc.length === 11 &&
-      this.empresa.tipoId &&
-      this.empresa.direccion?.trim() &&
-      this.empresa.telefono?.trim() &&
-      this.empresa.email?.trim() &&
-      this.empresa.email.includes('@')
+      this.empresa.tipoId
     );
-
-    // Validar que los contactos tengan todos los campos obligatorios
-    const contactosValidos = this.contactos.every(c =>
-      c.nombre_completo?.trim() &&
-      c.cargo?.trim() &&
-      c.telefono?.trim() &&
-      c.email?.trim() &&
-      c.email.includes('@')
-    );
-
-    return empresaValida && (this.contactos.length === 0 || contactosValidos);
+    return empresaValida;
   }
 
   onSave(): void {

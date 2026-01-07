@@ -19,6 +19,7 @@ import { AuthService } from '../../core/services/auth';
 import { EmpresaService, EmpresaDTO } from '../../core/services/empresa.service';
 import { SedeService, SedeDTO } from '../../core/services/sede.service';
 import { FileUploadService } from '../../core/services/file-upload.service';
+import { TiposContratistaService } from '../../core/services/tipos-contratista.service';
 import { EmpresaDialogComponent } from './empresa-dialog/empresa-dialog';
 import { SedeDialogComponent } from './sede-dialog/sede-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
@@ -95,6 +96,7 @@ export class EmpresaPrincipalComponent implements OnInit {
     private empresaService: EmpresaService,
     private sedeService: SedeService,
     private fileUploadService: FileUploadService,
+    private tiposContratistaService: TiposContratistaService,
     private dialog: MatDialog,
     private fb: FormBuilder,
     private router: Router,
@@ -103,7 +105,26 @@ export class EmpresaPrincipalComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadTipoContratista();
     this.loadEmpresasPrincipales();
+  }
+
+  loadTipoContratista(): void {
+    // Cargar tipos de contratista para obtener el ID del tipo "Empresa Principal"
+    this.tiposContratistaService.getAll().subscribe({
+      next: (tipos) => {
+        const tipoHost = tipos.find(t =>
+          t.nombre === 'Empresa Principal' || t.codigo === 'HOST'
+        );
+        if (tipoHost) {
+          this.tipoHostId = tipoHost.tipoId;
+          console.log('✅ Tipo HOST encontrado:', this.tipoHostId);
+        }
+      },
+      error: (error) => {
+        console.error('Error al cargar tipos de contratista:', error);
+      }
+    });
   }
 
   loadEmpresasPrincipales(): void {
@@ -112,6 +133,7 @@ export class EmpresaPrincipalComponent implements OnInit {
     console.log('🏢 Tenant:', localStorage.getItem('current_tenant'));
 
     this.loading = true;
+    this.cdr.detectChanges(); // Forzar detección de cambios después de cambiar loading
     this.empresaService.getAllEmpresas().subscribe({
       next: (empresas: EmpresaDTO[]) => {
         try {
@@ -123,11 +145,6 @@ export class EmpresaPrincipalComponent implements OnInit {
           );
 
           console.log('✅ Empresas principales filtradas:', empresasPrincipales);
-
-          // Guardar tipoId de HOST para crear nuevas empresas
-          if (empresasPrincipales.length > 0 && empresasPrincipales[0].tipoId) {
-            this.tipoHostId = empresasPrincipales[0].tipoId;
-          }
 
           // Mapear a la interfaz local
           this.empresasPrincipales = empresasPrincipales.map(e => ({
@@ -255,8 +272,9 @@ export class EmpresaPrincipalComponent implements OnInit {
       return;
     }
 
-    // Agregar tipoId de HOST al request
+    // Agregar tipoId de HOST y tenantId al request
     const request = {
+      tenantId: data.tenantId, // Incluir tenantId generado en el diálogo
       ruc: data.ruc,
       razonSocial: data.razonSocial,
       tipoId: this.tipoHostId,
@@ -363,6 +381,15 @@ export class EmpresaPrincipalComponent implements OnInit {
     // Navegar a la vista de empresas con el ID del tenant
     this.router.navigate(['/empresas'], {
       queryParams: { tenant: empresa.tenantId }
+    });
+  }
+
+  openUsuariosDialog(empresa: EmpresaPrincipal): void {
+    this.router.navigate(['/empresa-usuarios'], {
+      queryParams: {
+        tenant: empresa.tenantId,
+        nombre: empresa.razonSocial
+      }
     });
   }
 
