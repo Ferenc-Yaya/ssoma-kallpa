@@ -23,8 +23,8 @@
     <mat-expansion-panel [expanded]="showCreateForm" class="create-panel" *ngIf="showCreateForm">
       <mat-expansion-panel-header>
         <mat-panel-title>
-          <mat-icon>person_add</mat-icon>
-          Crear Nuevo Usuario
+          <mat-icon>{{ editingUserId ? 'edit' : 'person_add' }}</mat-icon>
+          {{ editingUserId ? 'Editar Usuario' : 'Crear Nuevo Usuario' }}
         </mat-panel-title>
       </mat-expansion-panel-header>
 
@@ -73,7 +73,7 @@
           </mat-form-field>
         </div>
 
-        <div class="password-notice">
+        <div class="password-notice" *ngIf="!editingUserId">
           <mat-icon>info</mat-icon>
           <span>La contraseña se generará automáticamente y se mostrará después de crear el usuario.</span>
         </div>
@@ -82,7 +82,7 @@
           <button mat-button type="button" (click)="toggleCreateForm()">Cancelar</button>
           <button mat-raised-button color="primary" type="submit" [disabled]="usuarioForm.invalid">
             <mat-icon>save</mat-icon>
-            Crear Usuario
+            {{ editingUserId ? 'Guardar Cambios' : 'Crear Usuario' }}
           </button>
         </div>
       </form>
@@ -140,10 +140,10 @@
                   [matTooltip]="usuario.activo ? 'Desactivar' : 'Activar'">
             <mat-icon>{{ usuario.activo ? 'block' : 'check_circle' }}</mat-icon>
           </button>
-          <button mat-icon-button color="accent"
-                  (click)="resetPassword(usuario)"
-                  matTooltip="Resetear contraseña">
-            <mat-icon>lock_reset</mat-icon>
+          <button mat-icon-button color="primary"
+                  (click)="openEditDialog(usuario)"
+                  matTooltip="Editar usuario">
+            <mat-icon>edit</mat-icon>
           </button>
           <button mat-icon-button color="warn"
                   (click)="deleteUsuario(usuario)"

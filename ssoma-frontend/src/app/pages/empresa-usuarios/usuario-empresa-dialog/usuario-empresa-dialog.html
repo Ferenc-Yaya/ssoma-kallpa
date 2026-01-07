@@ -1,26 +1,10 @@
 <h2 mat-dialog-title>
-  <mat-icon>person_add</mat-icon>
-  Nuevo Usuario
+  <mat-icon>{{ isEditMode ? 'edit' : 'person_add' }}</mat-icon>
+  {{ isEditMode ? 'Editar Usuario' : 'Nuevo Usuario' }}
 </h2>
 
 <mat-dialog-content>
   <form [formGroup]="usuarioForm" class="usuario-form">
-
-    <!-- Username -->
-    <div class="form-field">
-      <label>
-        Nombre de Usuario *
-        <span class="hint-inline">(no se puede cambiar después)</span>
-      </label>
-      <input type="text"
-             formControlName="username"
-             placeholder="ejemplo: juan.perez"
-             maxlength="50">
-      <small class="hint">Solo letras minúsculas, números, puntos, guiones</small>
-      <small class="error" *ngIf="usuarioForm.get('username')?.invalid && usuarioForm.get('username')?.touched">
-        {{ getErrorMessage('username') }}
-      </small>
-    </div>
 
     <!-- Nombre Completo -->
     <div class="form-field">
@@ -45,31 +29,6 @@
       </small>
     </div>
 
-    <!-- Password -->
-    <div class="form-row">
-      <div class="form-field">
-        <label>Contraseña *</label>
-        <input type="password"
-               formControlName="password"
-               placeholder="Mínimo 8 caracteres"
-               autocomplete="new-password">
-        <small class="error" *ngIf="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched">
-          {{ getErrorMessage('password') }}
-        </small>
-      </div>
-
-      <div class="form-field">
-        <label>Confirmar Contraseña *</label>
-        <input type="password"
-               formControlName="confirmPassword"
-               placeholder="Repetir contraseña"
-               autocomplete="new-password">
-        <small class="error" *ngIf="!passwordsMatch() && usuarioForm.get('confirmPassword')?.touched">
-          Las contraseñas no coinciden
-        </small>
-      </div>
-    </div>
-
     <!-- Rol -->
     <div class="form-field">
       <label>Rol / Grupo de Usuario *</label>
@@ -86,6 +45,63 @@
       <small class="error" *ngIf="usuarioForm.get('rolId')?.invalid && usuarioForm.get('rolId')?.touched">
         {{ getErrorMessage('rolId') }}
       </small>
+    </div>
+
+    <hr class="form-divider" *ngIf="!isEditMode">
+    <h4 class="form-subtitle" *ngIf="!isEditMode">Datos de Acceso</h4>
+
+    <!-- Username -->
+    <div class="form-field">
+      <label>
+        Nombre de Usuario *
+        <span class="hint-inline">(no se puede cambiar después)</span>
+      </label>
+      <input type="text"
+             formControlName="username"
+             placeholder="ejemplo: juan.perez"
+             maxlength="50">
+      <small class="hint">Solo letras minúsculas, números, puntos, guiones</small>
+      <small class="error" *ngIf="usuarioForm.get('username')?.invalid && usuarioForm.get('username')?.touched">
+        {{ getErrorMessage('username') }}
+      </small>
+    </div>
+
+    <!-- Password -->
+    <div class="form-row" *ngIf="!isEditMode">
+      <div class="form-field password-field">
+        <label>Contraseña *</label>
+        <input [type]="passwordVisible ? 'text' : 'password'"
+               formControlName="password"
+               placeholder="Mínimo 8 caracteres"
+               autocomplete="new-password">
+        <div class="password-toggles">
+          <mat-icon (click)="regeneratePassword()" matTooltip="Generar nueva contraseña">
+            autorenew
+          </mat-icon>
+          <mat-icon (click)="togglePasswordVisibility('password')">
+            {{ passwordVisible ? 'visibility_off' : 'visibility' }}
+          </mat-icon>
+        </div>
+        <small class="error" *ngIf="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched">
+          {{ getErrorMessage('password') }}
+        </small>
+      </div>
+
+      <div class="form-field password-field">
+        <label>Confirmar Contraseña *</label>
+        <input [type]="confirmPasswordVisible ? 'text' : 'password'"
+               formControlName="confirmPassword"
+               placeholder="Repetir contraseña"
+               autocomplete="new-password">
+        <div class="password-toggles">
+            <mat-icon (click)="togglePasswordVisibility('confirm')">
+                {{ confirmPasswordVisible ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+        </div>
+        <small class="error" *ngIf="!passwordsMatch() && usuarioForm.get('confirmPassword')?.touched">
+          Las contraseñas no coinciden
+        </small>
+      </div>
     </div>
 
     <!-- Empresa (solo lectura) -->
@@ -110,7 +126,7 @@
           color="primary"
           (click)="onSubmit()"
           [disabled]="usuarioForm.invalid || !passwordsMatch()">
-    <mat-icon>person_add</mat-icon>
-    Crear Usuario
+    <mat-icon>{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+    {{ isEditMode ? 'Guardar Cambios' : 'Crear Usuario' }}
   </button>
 </mat-dialog-actions>

@@ -134,3 +134,28 @@ mat-dialog-actions {
     flex-direction: column;
   }
 }
+
+.password-field {
+  position: relative;
+}
+
+.password-toggles {
+  position: absolute;
+  top: 38px; /* Ajustado para alinearse con el input */
+  right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  mat-icon {
+    cursor: pointer;
+    color: #94a3b8;
+    transition: color 0.2s;
+    font-size: 20px;
+
+    &:hover {
+      color: #3b82f6;
+    }
+  }
+}
+

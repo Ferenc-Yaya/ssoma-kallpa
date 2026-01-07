@@ -9,9 +9,9 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { UsuariosService, Usuario, CreateUsuarioRequest } from '../../core/services/usuarios.service';
+import { UsuariosService, Usuario } from '../../core/services/usuarios.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
-import { UsuarioEmpresaDialogComponent } from './usuario-empresa-dialog/usuario-empresa-dialog';
+import { UsuarioEmpresaDialogComponent, UsuarioEmpresaDialogData } from './usuario-empresa-dialog/usuario-empresa-dialog'; // Importar la interfaz
 
 @Component({
   selector: 'app-empresa-usuarios',
@@ -79,45 +79,59 @@ export class EmpresaUsuariosComponent implements OnInit {
   }
 
   openCreateDialog(): void {
+    const dialogData: UsuarioEmpresaDialogData = {
+      tenantId: this.tenantId,
+      tenantName: this.tenantName
+    };
+
     const dialogRef = this.dialog.open(UsuarioEmpresaDialogComponent, {
       width: '650px',
       disableClose: false,
-      data: {
-        tenantId: this.tenantId,
-        tenantName: this.tenantName
-      }
+      data: dialogData
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.createUsuario(result);
+      if (result && result.success) {
+        if (result.operation === 'create') {
+          this.showNotification('Usuario creado exitosamente', 'success');
+          // Mostrar contraseña generada
+          if (result.password) {
+            this.showPasswordResetDialog(result.username, result.password);
+          }
+        }
+        this.loadUsuarios();
+      } else if (result && !result.success) {
+        this.showNotification(result.error || 'Error en la operación', 'error');
       }
     });
   }
 
-  createUsuario(formData: any): void {
-    const request: CreateUsuarioRequest = {
-      username: formData.username,
-      password: formData.password,
-      nombreCompleto: formData.nombreCompleto,
-      email: formData.email,
-      rolId: formData.rolId,
+  openEditDialog(usuario: Usuario): void {
+    const dialogData: UsuarioEmpresaDialogData = {
       tenantId: this.tenantId,
-      activo: true
+      tenantName: this.tenantName,
+      usuario: usuario // Pasar el usuario para edición
     };
 
-    this.usuariosService.createUsuario(request).subscribe({
-      next: (usuario) => {
-        this.showNotification('Usuario creado exitosamente', 'success');
+    const dialogRef = this.dialog.open(UsuarioEmpresaDialogComponent, {
+      width: '650px',
+      disableClose: false,
+      data: dialogData
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result && result.success) {
+        this.showNotification('Usuario actualizado exitosamente', 'success');
         this.loadUsuarios();
-      },
-      error: (error) => {
-        console.error('Error al crear usuario:', error);
-        const errorMsg = error?.error?.message || 'Error al crear usuario';
-        this.showNotification(errorMsg, 'error');
+      } else if (result && !result.success) {
+        this.showNotification(result.error || 'Error al actualizar usuario', 'error');
       }
     });
   }
+
+  // createUsuario(formData: any): void { // Eliminado, lógica ahora en el diálogo
+  //   // ...
+  // }
 
   copyToClipboard(text: string): void {
     navigator.clipboard.writeText(text).then(() => {
@@ -156,41 +170,17 @@ export class EmpresaUsuariosComponent implements OnInit {
     });
   }
 
-  resetPassword(usuario: Usuario): void {
-    const dialogRef = this.dialog.open(ConfirmDialogComponent, {
-      width: '400px',
-      data: {
-        title: 'Resetear Contraseña',
-        message: `¿Está seguro de resetear la contraseña del usuario "${usuario.username}"?`,
-        confirmText: 'Resetear',
-        cancelText: 'Cancelar',
-        confirmColor: 'warn'
-      }
-    });
-
-    dialogRef.afterClosed().subscribe(confirmed => {
-      if (confirmed) {
-        const newPassword = this.usuariosService.generateTemporaryPassword();
-        this.usuariosService.changePassword(usuario.usuarioId, { newPassword }).subscribe({
-          next: () => {
-            this.showPasswordResetDialog(usuario.username, newPassword);
-          },
-          error: (error) => {
-            console.error('Error al resetear contraseña:', error);
-            this.showNotification('Error al resetear contraseña', 'error');
-          }
-        });
-      }
-    });
-  }
+  // resetPassword(usuario: Usuario): void { // Eliminado, botón ya no existe
+  //   // ...
+  // }
 
   showPasswordResetDialog(username: string, password: string): void {
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
       width: '500px',
       disableClose: true,
       data: {
-        title: 'Contraseña Reseteada',
-        message: `La contraseña del usuario "${username}" ha sido reseteada.\n\nNueva contraseña:\n\n${password}\n\nPor favor copie esta contraseña y compártala con el usuario de forma segura.`,
+        title: 'Contraseña Generada', // Cambiado el título
+        message: `El usuario "${username}" ha sido creado con la siguiente contraseña:\n\n${password}\n\nPor favor copie esta contraseña y compártala con el usuario de forma segura.`,
         confirmText: 'Copiar y Cerrar',
         cancelText: 'Solo Cerrar',
         confirmColor: 'primary'

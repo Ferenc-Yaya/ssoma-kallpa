@@ -111,40 +111,71 @@ export class UsuariosEmpresaDialogComponent implements OnInit {
 
   toggleCreateForm(): void {
     this.showCreateForm = !this.showCreateForm;
-    if (this.showCreateForm) {
+    // Si se abre el formulario para crear, o se cierra, se resetea el modo edición
+    if (this.showCreateForm || !this.showCreateForm) {
       this.usuarioForm.reset();
       this.editingUserId = null;
     }
   }
 
+  openEditDialog(usuario: Usuario): void {
+    this.editingUserId = usuario.usuarioId;
+    this.usuarioForm.patchValue({
+      username: usuario.username,
+      nombreCompleto: usuario.nombreCompleto,
+      email: usuario.email,
+      rolId: usuario.rolId,
+    });
+    // Deshabilitar username en modo edición
+    this.usuarioForm.get('username')?.disable();
+    this.showCreateForm = true;
+  }
+
   onSubmit(): void {
     if (this.usuarioForm.valid) {
-      const formValue = this.usuarioForm.value;
-      const password = this.usuariosService.generateTemporaryPassword();
+      const formValue = this.usuarioForm.getRawValue(); // Usar getRawValue para incluir campos deshabilitados
 
-      const request: CreateUsuarioRequest = {
-        username: formValue.username,
-        password: password,
-        nombreCompleto: formValue.nombreCompleto,
-        email: formValue.email,
-        rolId: formValue.rolId,
-        tenantId: this.data.empresa.tenantId,
-        activo: true
-      };
+      if (this.editingUserId) {
+        // MODO EDICIÓN
+        this.usuariosService.updateUsuario(this.editingUserId, formValue).subscribe({
+          next: () => {
+            this.showNotification('Usuario actualizado exitosamente', 'success');
+            this.loadUsuarios();
+            this.showCreateForm = false;
+            this.editingUserId = null;
+          },
+          error: (error) => {
+            console.error('Error al actualizar usuario:', error);
+            this.showNotification('Error al actualizar usuario', 'error');
+          }
+        });
+      } else {
+        // MODO CREACIÓN
+        const password = this.usuariosService.generateTemporaryPassword();
+        const request: CreateUsuarioRequest = {
+          username: formValue.username,
+          password: password,
+          nombreCompleto: formValue.nombreCompleto,
+          email: formValue.email,
+          rolId: formValue.rolId,
+          tenantId: this.data.empresa.tenantId,
+          activo: true
+        };
 
-      this.usuariosService.createUsuario(request).subscribe({
-        next: (usuario) => {
-          this.showPasswordDialog(usuario, password);
-          this.loadUsuarios();
-          this.showCreateForm = false;
-          this.usuarioForm.reset();
-        },
-        error: (error) => {
-          console.error('Error al crear usuario:', error);
-          const errorMsg = error?.error?.message || 'Error al crear usuario';
-          this.showNotification(errorMsg, 'error');
-        }
-      });
+        this.usuariosService.createUsuario(request).subscribe({
+          next: (usuario) => {
+            this.showPasswordDialog(usuario, password);
+            this.loadUsuarios();
+            this.showCreateForm = false;
+            this.usuarioForm.reset();
+          },
+          error: (error) => {
+            console.error('Error al crear usuario:', error);
+            const errorMsg = error?.error?.message || 'Error al crear usuario';
+            this.showNotification(errorMsg, 'error');
+          }
+        });
+      }
     } else {
       Object.keys(this.usuarioForm.controls).forEach(key => {
         this.usuarioForm.get(key)?.markAsTouched();

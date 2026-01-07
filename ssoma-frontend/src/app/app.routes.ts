@@ -15,6 +15,7 @@ import { EmpresaDetalleComponent } from './pages/empresa-detalle/empresa-detalle
 // import { PersonalDocumentosComponent } from './pages/personal-documentos/personal-documentos';
 // import { ActivoDocumentosComponent } from './pages/activo-documentos/activo-documentos';
 import { EmpresaMaterialesPeligrososComponent } from './pages/empresa-materiales-peligrosos/empresa-materiales-peligrosos';
+import { EmpresaContratistaComponent } from './pages/empresa-principal/empresa-contratista/empresa-contratista.component';
 // import { MaterialPeligrosoDocumentosComponent } from './pages/material-peligroso-documentos/material-peligroso-documentos';
 
 export const routes: Routes = [
@@ -30,6 +31,10 @@ export const routes: Routes = [
       {
         path: 'empresa-principal',
         loadComponent: () => import('./pages/empresa-principal/empresa-principal').then(m => m.EmpresaPrincipalComponent)
+      },
+      {
+        path: 'empresa-principal/contratista/:tenantId',
+        component: EmpresaContratistaComponent
       },
       {
         path: 'usuarios',

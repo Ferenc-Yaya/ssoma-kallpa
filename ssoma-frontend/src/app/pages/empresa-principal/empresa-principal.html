@@ -1,214 +1,220 @@
 <div class="empresa-principal">
-  <div class="page-header">
-    <div class="header-content">
-      <div>
-        <h1>Empresas Principales</h1>
-        <p class="subtitle">Gestión de empresas principales</p>
+  <mat-card class="main-content-card">
+    <div class="page-header">
+      <div class="header-left">
+        <button mat-icon-button (click)="goBack()" class="back-button" matTooltip="Volver">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <div class="header-info">
+          <h1>Empresas Principales</h1>
+          <p class="subtitle">Gestión de empresas principales</p>
+        </div>
       </div>
       <button mat-raised-button color="primary" (click)="openEmpresaDialog()">
         <mat-icon>add_business</mat-icon>
         Nueva Empresa Principal
       </button>
     </div>
-  </div>
 
-  <!-- Indicador de carga -->
-  <div *ngIf="loading" style="text-align: center; padding: 50px;">
-    <p>Cargando empresas principales...</p>
-  </div>
+    <!-- Indicador de carga -->
+    <div *ngIf="loading" style="text-align: center; padding: 50px;">
+      <p>Cargando empresas principales...</p>
+    </div>
 
-  <!-- Lista de Empresas Principales -->
-  <div class="empresas-list" *ngIf="!loading && empresasPrincipales.length > 0">
-    <mat-card *ngFor="let empresa of empresasPrincipales" class="empresa-card">
-      <!-- Header de la Empresa -->
-      <mat-card-header>
-        <div class="empresa-header-content">
-          <div class="empresa-title-section">
-            <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" alt="Logo {{ empresa.razonSocial }}"
-                 class="empresa-logo" />
-            <div class="tenant-badge">
-              <mat-icon>domain</mat-icon>
-              <strong>{{ empresa.tenantId }}</strong>
+    <!-- Lista de Empresas Principales -->
+    <div class="empresas-list" *ngIf="!loading && empresasPrincipales.length > 0">
+      <mat-card *ngFor="let empresa of empresasPrincipales" class="empresa-card">
+        <!-- Header de la Empresa -->
+        <mat-card-header>
+          <div class="empresa-header-content">
+            <div class="empresa-title-section">
+              <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" alt="Logo {{ empresa.razonSocial }}"
+                   class="empresa-logo" />
+              <div class="tenant-badge">
+                <mat-icon>domain</mat-icon>
+                <strong>{{ empresa.tenantId }}</strong>
+              </div>
+              <div class="empresa-title">
+                <h2>{{ empresa.razonSocial }}</h2>
+                <p class="ruc">RUC: {{ empresa.ruc }}</p>
+              </div>
             </div>
-            <div class="empresa-title">
-              <h2>{{ empresa.razonSocial }}</h2>
-              <p class="ruc">RUC: {{ empresa.ruc }}</p>
+            <div class="empresa-actions">
+              <button mat-icon-button color="primary" (click)="openEmpresaDialog(empresa)"
+                      matTooltip="Editar empresa">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="primary" (click)="openUsuariosDialog(empresa)"
+                      matTooltip="Gestionar usuarios">
+                <mat-icon>people</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="viewEmpresaDetail(empresa)"
+                      matTooltip="Ver detalle">
+                <mat-icon>visibility</mat-icon>
+              </button>
+              <button mat-icon-button
+                      [color]="empresa.activo ? 'warn' : 'primary'"
+                      (click)="toggleEstadoEmpresa(empresa)"
+                      [matTooltip]="empresa.activo ? 'Desactivar empresa' : 'Activar empresa'">
+                <mat-icon>{{ empresa.activo ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteEmpresa(empresa)"
+                      matTooltip="Eliminar empresa">
+                <mat-icon>delete</mat-icon>
+              </button>
             </div>
           </div>
-          <div class="empresa-actions">
-            <button mat-icon-button color="primary" (click)="openEmpresaDialog(empresa)"
-                    matTooltip="Editar empresa">
-              <mat-icon>edit</mat-icon>
-            </button>
-            <button mat-icon-button color="primary" (click)="openUsuariosDialog(empresa)"
-                    matTooltip="Gestionar usuarios">
-              <mat-icon>people</mat-icon>
-            </button>
-            <button mat-icon-button color="accent" (click)="viewEmpresaDetail(empresa)"
-                    matTooltip="Ver detalle">
-              <mat-icon>visibility</mat-icon>
-            </button>
-            <button mat-icon-button
-                    [color]="empresa.activo ? 'warn' : 'primary'"
-                    (click)="toggleEstadoEmpresa(empresa)"
-                    [matTooltip]="empresa.activo ? 'Desactivar empresa' : 'Activar empresa'">
-              <mat-icon>{{ empresa.activo ? 'block' : 'check_circle' }}</mat-icon>
-            </button>
-            <button mat-icon-button color="warn" (click)="deleteEmpresa(empresa)"
-                    matTooltip="Eliminar empresa">
-              <mat-icon>delete</mat-icon>
-            </button>
-          </div>
-        </div>
-      </mat-card-header>
+        </mat-card-header>
 
-      <!-- Información de la Empresa -->
-      <mat-card-content>
-        <div class="empresa-info-grid">
-          <div class="info-item">
-            <mat-icon>location_on</mat-icon>
-            <div>
-              <label>Dirección</label>
-              <span>{{ empresa.direccion }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>phone</mat-icon>
-            <div>
-              <label>Teléfono</label>
-              <span>{{ empresa.telefono }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>email</mat-icon>
-            <div>
-              <label>Email</label>
-              <span>{{ empresa.email }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>location_city</mat-icon>
-            <div>
-              <label>Sedes</label>
-              <span>{{ empresa.cantidadSedes }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>language</mat-icon>
-            <div>
-              <label>Sitio Web</label>
-              <span *ngIf="empresa.sitioWeb">
-                <a [href]="empresa.sitioWeb" target="_blank" rel="noopener">{{ empresa.sitioWeb }}</a>
-              </span>
-              <span *ngIf="!empresa.sitioWeb" class="text-muted">No especificado</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>business_center</mat-icon>
-            <div>
-              <label>Rubro Comercial</label>
-              <span>{{ empresa.rubroComercial || 'No especificado' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>shield</mat-icon>
-            <div>
-              <label>Score de Seguridad</label>
-              <mat-chip [class.chip-score-alto]="empresa.scoreSeguridad >= 80"
-                        [class.chip-score-medio]="empresa.scoreSeguridad >= 50 && empresa.scoreSeguridad < 80"
-                        [class.chip-score-bajo]="empresa.scoreSeguridad < 50">
-                {{ empresa.scoreSeguridad }}/100
-              </mat-chip>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>calendar_today</mat-icon>
-            <div>
-              <label>Fecha de Creación</label>
-              <span>{{ empresa.createdAt | date:'dd/MM/yyyy' }}</span>
-            </div>
-          </div>
-          <div class="info-item">
-            <mat-icon>verified</mat-icon>
-            <div>
-              <label>Estado</label>
-              <mat-chip [class.chip-activo]="empresa.activo"
-                        [class.chip-inactivo]="!empresa.activo">
-                {{ empresa.activo ? 'ACTIVO' : 'INACTIVO' }}
-              </mat-chip>
-            </div>
-          </div>
-        </div>
-
-        <!-- Sedes -->
-        <div class="sedes-section">
-          <div class="sedes-header">
-            <h3>
+        <!-- Información de la Empresa -->
+        <mat-card-content>
+          <div class="empresa-info-grid">
+            <div class="info-item">
               <mat-icon>location_on</mat-icon>
-              Sedes
-            </h3>
-            <button mat-raised-button color="primary" (click)="openSedeDialog(empresa)">
-              <mat-icon>add</mat-icon>
-              Nueva Sede
-            </button>
+              <div>
+                <label>Dirección</label>
+                <span>{{ empresa.direccion }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>phone</mat-icon>
+              <div>
+                <label>Teléfono</label>
+                <span>{{ empresa.telefono }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>email</mat-icon>
+              <div>
+                <label>Email</label>
+                <span>{{ empresa.email }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>location_city</mat-icon>
+              <div>
+                <label>Sedes</label>
+                <span>{{ empresa.cantidadSedes }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>language</mat-icon>
+              <div>
+                <label>Sitio Web</label>
+                <span *ngIf="empresa.sitioWeb">
+                  <a [href]="empresa.sitioWeb" target="_blank" rel="noopener">{{ empresa.sitioWeb }}</a>
+                </span>
+                <span *ngIf="!empresa.sitioWeb" class="text-muted">No especificado</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>business_center</mat-icon>
+              <div>
+                <label>Rubro Comercial</label>
+                <span>{{ empresa.rubroComercial || 'No especificado' }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>shield</mat-icon>
+              <div>
+                <label>Score de Seguridad</label>
+                <mat-chip [class.chip-score-alto]="empresa.scoreSeguridad >= 80"
+                          [class.chip-score-medio]="empresa.scoreSeguridad >= 50 && empresa.scoreSeguridad < 80"
+                          [class.chip-score-bajo]="empresa.scoreSeguridad < 50">
+                  {{ empresa.scoreSeguridad }}/100
+                </mat-chip>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>calendar_today</mat-icon>
+              <div>
+                <label>Fecha de Creación</label>
+                <span>{{ empresa.createdAt | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+            <div class="info-item">
+              <mat-icon>verified</mat-icon>
+              <div>
+                <label>Estado</label>
+                <mat-chip [class.chip-activo]="empresa.activo"
+                          [class.chip-inactivo]="!empresa.activo">
+                  {{ empresa.activo ? 'ACTIVO' : 'INACTIVO' }}
+                </mat-chip>
+              </div>
+            </div>
           </div>
 
-          <div class="sedes-grid" *ngIf="empresa.sedes && empresa.sedes.length > 0">
-            <div *ngFor="let sede of empresa.sedes" class="sede-item">
-              <div class="sede-content">
-                <div class="sede-info">
-                  <mat-icon *ngIf="sede.esPrincipal" class="star-icon">star</mat-icon>
-                  <div class="sede-details">
-                    <strong>{{ sede.nombre }}</strong>
-                    <small>{{ sede.direccion }}</small>
+          <!-- Sedes -->
+          <div class="sedes-section">
+            <div class="sedes-header">
+              <h3>
+                <mat-icon>location_on</mat-icon>
+                Sedes
+              </h3>
+              <button mat-raised-button color="primary" (click)="openSedeDialog(empresa)">
+                <mat-icon>add</mat-icon>
+                Nueva Sede
+              </button>
+            </div>
+
+            <div class="sedes-grid" *ngIf="empresa.sedes && empresa.sedes.length > 0">
+              <div *ngFor="let sede of empresa.sedes" class="sede-item">
+                <div class="sede-content">
+                  <div class="sede-info">
+                    <mat-icon *ngIf="sede.esPrincipal" class="star-icon">star</mat-icon>
+                    <div class="sede-details">
+                      <strong>{{ sede.nombre }}</strong>
+                      <small>{{ sede.direccion }}</small>
+                    </div>
+                  </div>
+                  <div class="sede-badges">
+                    <mat-chip [class.chip-principal]="sede.esPrincipal"
+                              [class.chip-sucursal]="!sede.esPrincipal">
+                      {{ sede.esPrincipal ? 'Principal' : 'Sucursal' }}
+                    </mat-chip>
+                    <mat-chip [class.chip-activo]="sede.activo"
+                              [class.chip-inactivo]="!sede.activo">
+                      {{ sede.activo ? 'Activo' : 'Inactivo' }}
+                    </mat-chip>
                   </div>
                 </div>
-                <div class="sede-badges">
-                  <mat-chip [class.chip-principal]="sede.esPrincipal"
-                            [class.chip-sucursal]="!sede.esPrincipal">
-                    {{ sede.esPrincipal ? 'Principal' : 'Sucursal' }}
-                  </mat-chip>
-                  <mat-chip [class.chip-activo]="sede.activo"
-                            [class.chip-inactivo]="!sede.activo">
-                    {{ sede.activo ? 'Activo' : 'Inactivo' }}
-                  </mat-chip>
+                <div class="sede-actions">
+                  <button mat-icon-button color="primary" (click)="openSedeDialog(empresa, sede)"
+                          matTooltip="Editar sede">
+                    <mat-icon>edit</mat-icon>
+                  </button>
+                  <button mat-icon-button color="warn" (click)="deleteSede(empresa, sede)"
+                          matTooltip="Eliminar sede"
+                          [disabled]="sede.esPrincipal">
+                    <mat-icon>delete</mat-icon>
+                  </button>
                 </div>
               </div>
-              <div class="sede-actions">
-                <button mat-icon-button color="primary" (click)="openSedeDialog(empresa, sede)"
-                        matTooltip="Editar sede">
-                  <mat-icon>edit</mat-icon>
-                </button>
-                <button mat-icon-button color="warn" (click)="deleteSede(empresa, sede)"
-                        matTooltip="Eliminar sede"
-                        [disabled]="sede.esPrincipal">
-                  <mat-icon>delete</mat-icon>
-                </button>
-              </div>
+            </div>
+
+            <div *ngIf="!empresa.sedes || empresa.sedes.length === 0" class="no-sedes">
+              <mat-icon>domain_disabled</mat-icon>
+              <p>No hay sedes registradas para esta empresa</p>
+              <button mat-raised-button color="primary" (click)="openSedeDialog(empresa)">
+                <mat-icon>add</mat-icon>
+                Agregar Primera Sede
+              </button>
             </div>
           </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
 
-          <div *ngIf="!empresa.sedes || empresa.sedes.length === 0" class="no-sedes">
-            <mat-icon>domain_disabled</mat-icon>
-            <p>No hay sedes registradas para esta empresa</p>
-            <button mat-raised-button color="primary" (click)="openSedeDialog(empresa)">
-              <mat-icon>add</mat-icon>
-              Agregar Primera Sede
-            </button>
-          </div>
-        </div>
-      </mat-card-content>
+    <!-- Estado vacío -->
+    <mat-card *ngIf="!loading && empresasPrincipales.length === 0" class="empty-state">
+      <mat-icon>domain_disabled</mat-icon>
+      <h3>No hay empresas principales registradas</h3>
+      <p>Comienza creando tu primera empresa principal para gestionar sus sedes y configuración.</p>
+      <button mat-raised-button color="primary" (click)="openEmpresaDialog()">
+        <mat-icon>add_business</mat-icon>
+        Crear Primera Empresa Principal
+      </button>
     </mat-card>
-  </div>
-
-  <!-- Estado vacío -->
-  <mat-card *ngIf="!loading && empresasPrincipales.length === 0" class="empty-state">
-    <mat-icon>domain_disabled</mat-icon>
-    <h3>No hay empresas principales registradas</h3>
-    <p>Comienza creando tu primera empresa principal para gestionar sus sedes y configuración.</p>
-    <button mat-raised-button color="primary" (click)="openEmpresaDialog()">
-      <mat-icon>add_business</mat-icon>
-      Crear Primera Empresa Principal
-    </button>
   </mat-card>
 </div>
+

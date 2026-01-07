@@ -1,0 +1,107 @@
+.contratista-page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .back-button {
+      color: #1F438C;
+    }
+
+    .header-info {
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      .subtitle {
+        margin: 0.25rem 0 0 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.contratistas-card {
+  mat-card-header {
+    mat-icon[mat-card-avatar] {
+      background: #1F438C;
+      color: white;
+      padding: 8px;
+      border-radius: 50%;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+}
+
+.contratistas-table {
+  width: 100%;
+  margin-top: 1rem;
+
+  th.mat-header-cell {
+    font-weight: 600;
+    color: #333;
+    background: #f5f5f5;
+  }
+
+  td.mat-cell {
+    padding: 12px 16px;
+  }
+
+  tr.mat-row:hover {
+    background: #f9f9f9;
+  }
+}
+
+.chip-activo {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.chip-inactivo {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+.no-contratistas {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+
+  mat-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    color: #ccc;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+}

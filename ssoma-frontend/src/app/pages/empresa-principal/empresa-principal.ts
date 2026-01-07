@@ -377,10 +377,13 @@ export class EmpresaPrincipalComponent implements OnInit {
     });
   }
 
+  goBack(): void {
+    this.router.navigate(['/dashboard-superadmin']); // O a la ruta principal que corresponda
+  }
+
   viewEmpresaDetail(empresa: EmpresaPrincipal): void {
-    // Navegar a la vista de empresas con el ID del tenant
-    this.router.navigate(['/empresas'], {
-      queryParams: { tenant: empresa.tenantId }
+    this.router.navigate(['/empresa-principal/contratista', empresa.tenantId], {
+      queryParams: { nombre: empresa.razonSocial }
     });
   }
 

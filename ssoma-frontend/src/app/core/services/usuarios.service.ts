@@ -60,13 +60,30 @@ export class UsuariosService {
   }
 
   generateTemporaryPassword(): string {
-    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
-    const year = new Date().getFullYear();
-    let password = `Ssoma${year}!`;
-    for (let i = 0; i < 6; i++) {
-      password += chars.charAt(Math.floor(Math.random() * chars.length));
+    const lower = 'abcdefghijklmnopqrstuvwxyz';
+    const upper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+    const numbers = '0123456789';
+    const symbols = '!@#$%^&*()_+-=[]{}|;:,.<>?';
+
+    const all = lower + upper + numbers + symbols;
+
+    let passwordArray = [];
+    passwordArray.push(lower[Math.floor(Math.random() * lower.length)]);
+    passwordArray.push(upper[Math.floor(Math.random() * upper.length)]);
+    passwordArray.push(numbers[Math.floor(Math.random() * numbers.length)]);
+    passwordArray.push(symbols[Math.floor(Math.random() * symbols.length)]);
+
+    for (let i = 0; i < 4; i++) {
+      passwordArray.push(all[Math.floor(Math.random() * all.length)]);
     }
-    return password;
+
+    // Shuffle the array to ensure random order
+    for (let i = passwordArray.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [passwordArray[i], passwordArray[j]] = [passwordArray[j], passwordArray[i]];
+    }
+
+    return passwordArray.join('');
   }
 
   getUsuarioById(id: string): Observable<Usuario> {

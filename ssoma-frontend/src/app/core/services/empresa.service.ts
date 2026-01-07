@@ -30,14 +30,24 @@ export interface CreateEmpresaRequest {
   direccion?: string;
   telefono?: string;
   email?: string;
+  logoUrl?: string;
+  sitioWeb?: string; // Añadido
+  rubroComercial?: string; // Añadido
+  tenantId: string;
+  activo: boolean;
 }
 
 export interface UpdateEmpresaRequest {
+  ruc?: string;
   razonSocial?: string;
+  tipoId?: string; // Añadido
   direccion?: string;
   telefono?: string;
   email?: string;
   activo?: boolean;
+  logoUrl?: string;
+  sitioWeb?: string;
+  rubroComercial?: string;
 }
 
 @Injectable({

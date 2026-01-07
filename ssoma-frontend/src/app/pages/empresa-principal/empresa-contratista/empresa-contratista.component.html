@@ -1,0 +1,87 @@
+<div class="contratista-page">
+  <div class="page-header">
+    <div class="header-left">
+      <button mat-icon-button (click)="goBack()" class="back-button" matTooltip="Volver a Empresas Principales">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1>Contratistas de {{ empresaPrincipalNombre }}</h1>
+        <p class="subtitle">Gestión de empresas contratistas asociadas</p>
+      </div>
+    </div>
+    <button mat-raised-button color="primary" (click)="openCreateContratistaDialog()">
+      <mat-icon>add_business</mat-icon>
+      Nuevo Contratista
+    </button>
+  </div>
+
+  <div *ngIf="loading" class="loading-container">
+    <p>Cargando contratistas...</p>
+  </div>
+
+  <mat-card *ngIf="!loading" class="contratistas-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>business</mat-icon>
+      <mat-card-title>Lista de Contratistas</mat-card-title>
+      <mat-card-subtitle>{{ contratistas.length }} contratista(s) encontrado(s)</mat-card-subtitle>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="contratistas" class="contratistas-table" *ngIf="contratistas.length > 0">
+        <!-- Razón Social Column -->
+        <ng-container matColumnDef="razonSocial">
+          <th mat-header-cell *matHeaderCellDef>Razón Social</th>
+          <td mat-cell *matCellDef="let element">{{ element.razonSocial }}</td>
+        </ng-container>
+
+        <!-- RUC Column -->
+        <ng-container matColumnDef="ruc">
+          <th mat-header-cell *matHeaderCellDef>RUC</th>
+          <td mat-cell *matCellDef="let element">{{ element.ruc }}</td>
+        </ng-container>
+
+        <!-- Tipo Column -->
+        <ng-container matColumnDef="tipoNombre">
+            <th mat-header-cell *matHeaderCellDef>Tipo</th>
+            <td mat-cell *matCellDef="let element">{{ element.tipoNombre }}</td>
+        </ng-container>
+
+        <!-- Estado Column -->
+        <ng-container matColumnDef="activo">
+          <th mat-header-cell *matHeaderCellDef>Estado</th>
+          <td mat-cell *matCellDef="let element">
+            <mat-chip [class.chip-activo]="element.activo" [class.chip-inactivo]="!element.activo">
+              {{ element.activo ? 'ACTIVO' : 'INACTIVO' }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <!-- Acciones Column -->
+        <ng-container matColumnDef="acciones">
+          <th mat-header-cell *matHeaderCellDef>Acciones</th>
+          <td mat-cell *matCellDef="let element">
+            <div class="user-actions">
+              <button mat-icon-button color="primary" (click)="openEditContratistaDialog(element)" matTooltip="Editar contratista">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteContratista(element)" matTooltip="Eliminar contratista">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+
+      <div *ngIf="contratistas.length === 0 && !loading" class="no-contratistas">
+        <mat-icon>domain_disabled</mat-icon>
+        <p>No se encontraron contratistas para esta empresa principal.</p>
+        <button mat-raised-button color="primary" (click)="openCreateContratistaDialog()">
+          <mat-icon>add_business</mat-icon>
+          Agregar Primer Contratista
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
