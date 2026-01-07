@@ -10,7 +10,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EmpresasService } from '../../core/services/empresas';
-import { Empresa } from '../../mocks/empresas.mock';
+import { Empresa } from '../../core/models/empresa.model';
 import { EmpresaDialogComponent } from '../empresas/empresa-dialog/empresa-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
 
@@ -55,12 +55,12 @@ export class EmpresaDetalleComponent implements OnInit {
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadEmpresa(Number(id));
-      this.loadTrabajadores(Number(id));
+      this.loadEmpresa(id);
+      this.loadTrabajadores(id);
     }
   }
 
-  loadEmpresa(id: number): void {
+  loadEmpresa(id: string): void {
     console.log('Cargando empresa con ID:', id);
     this.empresasService.getEmpresaById(id).subscribe({
       next: (empresa) => {
@@ -81,7 +81,7 @@ export class EmpresaDetalleComponent implements OnInit {
     });
   }
 
-  loadTrabajadores(empresaId: number): void {
+  loadTrabajadores(empresaId: string): void {
     this.trabajadores = [
       { id: 1, nombre: 'Juan Pérez García', dni: '43218765', cargo: 'Operador', estado: 'APTO' },
       { id: 2, nombre: 'María López Silva', dni: '45678912', cargo: 'Supervisor', estado: 'APTO' },
@@ -92,10 +92,10 @@ export class EmpresaDetalleComponent implements OnInit {
   toggleEstado(): void {
     if (!this.empresa) return;
 
-    const nuevoEstado = this.empresa.estado === 'ACTIVO' ? 'INACTIVO' : 'ACTIVO';
-    const titulo = nuevoEstado === 'ACTIVO' ? 'Activar Empresa' : 'Desactivar Empresa';
-    const mensaje = nuevoEstado === 'ACTIVO' ? 
-      '¿Está seguro de ACTIVAR esta empresa? Volverá a tener acceso al sistema.' : 
+    const nuevoActivo = !this.empresa.activo;
+    const titulo = nuevoActivo ? 'Activar Empresa' : 'Desactivar Empresa';
+    const mensaje = nuevoActivo ?
+      '¿Está seguro de ACTIVAR esta empresa? Volverá a tener acceso al sistema.' :
       '¿Está seguro de DESACTIVAR esta empresa? No podrá acceder al sistema hasta que sea reactivada.';
 
     const dialogRef = this.dialog.open(ConfirmDialogComponent, {
@@ -103,21 +103,21 @@ export class EmpresaDetalleComponent implements OnInit {
       data: {
         title: titulo,
         message: mensaje,
-        confirmText: nuevoEstado === 'ACTIVO' ? 'Activar' : 'Desactivar',
+        confirmText: nuevoActivo ? 'Activar' : 'Desactivar',
         cancelText: 'Cancelar',
-        confirmColor: nuevoEstado === 'ACTIVO' ? 'primary' : 'warn'
+        confirmColor: nuevoActivo ? 'primary' : 'warn'
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result && this.empresa) {
-        this.empresasService.updateEmpresa(this.empresa.id, { estado: nuevoEstado }).subscribe({
+        this.empresasService.updateEmpresa(this.empresa.empresaId, { activo: nuevoActivo }).subscribe({
           next: () => {
             this.showMessage(
-              `Empresa ${nuevoEstado === 'ACTIVO' ? 'activada' : 'desactivada'} exitosamente`,
+              `Empresa ${nuevoActivo ? 'activada' : 'desactivada'} exitosamente`,
               'success'
             );
-            this.loadEmpresa(this.empresa!.id);
+            this.loadEmpresa(this.empresa!.empresaId);
           },
           error: () => {
             this.showMessage('Error al cambiar estado de empresa', 'error');
@@ -137,10 +137,10 @@ export class EmpresaDetalleComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.empresasService.updateEmpresa(this.empresa!.id, result).subscribe({
+        this.empresasService.updateEmpresa(this.empresa!.empresaId, result).subscribe({
           next: () => {
             this.showMessage('Empresa actualizada exitosamente', 'success');
-            this.loadEmpresa(this.empresa!.id);
+            this.loadEmpresa(this.empresa!.empresaId);
           },
           error: () => {
             this.showMessage('Error al actualizar empresa', 'error');
@@ -160,11 +160,11 @@ export class EmpresaDetalleComponent implements OnInit {
   }
   verPersonal(): void {
   if (!this.empresa) return;
-  this.router.navigate(['/empresas', this.empresa.id, 'personal']);
+  this.router.navigate(['/empresas', this.empresa.empresaId, 'personal']);
   }
-  
+
   verActivos(): void {
     if (!this.empresa) return;
-    this.router.navigate(['/empresas', this.empresa.id, 'activos']);
+    this.router.navigate(['/empresas', this.empresa.empresaId, 'activos']);
   }
 }

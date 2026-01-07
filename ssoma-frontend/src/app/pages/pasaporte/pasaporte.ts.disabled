@@ -11,8 +11,8 @@ import { MatInputModule } from '@angular/material/input';
 import { QRCodeComponent } from 'angularx-qrcode';
 import { ContratosService } from '../../core/services/contratos.service';
 import { PersonasService } from '../../core/services/personas.service';
-import { Contrato } from '../../mocks/contratos.mock';
-import { Persona } from '../../mocks/personas.mock';
+import { Contrato } from '../../core/models/contrato.model';
+import { Persona } from '../../core/models/usuario.model';
 
 @Component({
   selector: 'app-pasaporte',

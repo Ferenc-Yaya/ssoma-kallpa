@@ -9,9 +9,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { EmpresasService } from '../../core/services/empresas';
-import { Empresa } from '../../mocks/empresas.mock';
+import { Empresa } from '../../core/models/empresa.model';
 import { EmpresaDialogComponent } from './empresa-dialog/empresa-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
+import { FileUploadService } from '../../core/services/file-upload.service';
 
 @Component({
   selector: 'app-empresas',
@@ -45,7 +46,8 @@ export class EmpresasComponent implements OnInit {
     private snackBar: MatSnackBar,
     private router: Router,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private fileUploadService: FileUploadService
   ) {}
 
   ngOnInit(): void {
@@ -74,13 +76,17 @@ export class EmpresasComponent implements OnInit {
           }
 
           if (this.tenantFilter) {
-
+            // Filtrar solo contratistas (excluir empresas principales)
             this.empresas = data.filter(e => {
-              const empresa = e as any; 
-
-              const tipo = empresa.tipo || empresa.tipoNombre || empresa.nombreTipo || ''; 
-              
-              return tipo !== 'Empresa Principal' && tipo !== 'HOST';
+              // Si tipo es un objeto, verificar su nombre o código
+              if (e.tipo && typeof e.tipo === 'object') {
+                const tipoNombre = e.tipo.nombre?.toLowerCase() || '';
+                const tipoCodigo = e.tipo.codigo?.toString() || '';
+                return tipoNombre !== 'empresa principal' &&
+                       tipoNombre !== 'host' &&
+                       tipoCodigo !== 'HOST';
+              }
+              return true; // Si no tiene tipo definido, incluirlo
             });
           } else {
             this.empresas = data;
@@ -118,16 +124,21 @@ export class EmpresasComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.empresasService.createEmpresa(result).subscribe({
-          next: () => {
-            this.showMessage('Empresa creada exitosamente');
-            this.searchTerm = '';
-            this.loadEmpresas();
-          },
-          error: () => {
-            this.showMessage('Error al crear empresa', 'error');
-          }
-        });
+        // Si hay un archivo seleccionado, subirlo primero
+        if (result.logoFile) {
+          this.uploadLogoAndCreate(result);
+        } else {
+          this.empresasService.createEmpresa(result).subscribe({
+            next: () => {
+              this.showMessage('Empresa creada exitosamente');
+              this.searchTerm = '';
+              this.loadEmpresas();
+            },
+            error: () => {
+              this.showMessage('Error al crear empresa', 'error');
+            }
+          });
+        }
       }
     });
   }
@@ -140,16 +151,21 @@ export class EmpresasComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        this.empresasService.updateEmpresa(empresa.id, result).subscribe({
-          next: () => {
-            this.showMessage('Empresa actualizada exitosamente');
-            this.searchTerm = '';
-            this.loadEmpresas();
-          },
-          error: () => {
-            this.showMessage('Error al actualizar empresa', 'error');
-          }
-        });
+        // Si hay un archivo seleccionado, subirlo primero
+        if (result.logoFile) {
+          this.uploadLogoAndUpdate(empresa, result);
+        } else {
+          this.empresasService.updateEmpresa(empresa.empresaId, result).subscribe({
+            next: () => {
+              this.showMessage('Empresa actualizada exitosamente');
+              this.searchTerm = '';
+              this.loadEmpresas();
+            },
+            error: () => {
+              this.showMessage('Error al actualizar empresa', 'error');
+            }
+          });
+        }
       }
     });
   }
@@ -165,7 +181,7 @@ export class EmpresasComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(confirmed => {
       if (confirmed) {
-        this.empresasService.deleteEmpresa(empresa.id).subscribe({
+        this.empresasService.deleteEmpresa(empresa.empresaId).subscribe({
           next: () => {
             this.showMessage('Empresa eliminada exitosamente');
             this.searchTerm = '';
@@ -180,11 +196,11 @@ export class EmpresasComponent implements OnInit {
   }
 
   verDetalle(empresa: Empresa): void {
-    this.router.navigate(['/empresas', empresa.id]);
+    this.router.navigate(['/empresas', empresa.empresaId]);
   }
 
   verPersonal(empresa: Empresa): void {
-    this.router.navigate(['/empresas', empresa.id, 'personal']);
+    this.router.navigate(['/empresas', empresa.empresaId, 'personal']);
   }
 
   // Método para obtener el título de la página
@@ -234,10 +250,62 @@ export class EmpresasComponent implements OnInit {
   }
 
   verActivos(empresa: Empresa): void {
-    this.router.navigate(['/empresas', empresa.id, 'activos']);
+    this.router.navigate(['/empresas', empresa.empresaId, 'activos']);
   }
 
   verMaterialesPeligrosos(empresa: Empresa): void {
-    this.router.navigate(['/empresas', empresa.id, 'materiales-peligrosos']);
+    this.router.navigate(['/empresas', empresa.empresaId, 'materiales-peligrosos']);
+  }
+
+  uploadLogoAndCreate(data: any): void {
+    this.fileUploadService.uploadLogo(data.logoFile).subscribe({
+      next: (uploadResponse) => {
+        console.log('Logo subido:', uploadResponse.url);
+        // Actualizar datos con la URL del logo
+        data.logoUrl = uploadResponse.url;
+        delete data.logoFile;
+
+        this.empresasService.createEmpresa(data).subscribe({
+          next: () => {
+            this.showMessage('Empresa creada exitosamente');
+            this.searchTerm = '';
+            this.loadEmpresas();
+          },
+          error: () => {
+            this.showMessage('Error al crear empresa', 'error');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al subir logo:', error);
+        this.showMessage('Error al subir el logo', 'error');
+      }
+    });
+  }
+
+  uploadLogoAndUpdate(empresa: Empresa, data: any): void {
+    this.fileUploadService.uploadLogo(data.logoFile).subscribe({
+      next: (uploadResponse) => {
+        console.log('Logo subido:', uploadResponse.url);
+        // Actualizar datos con la URL del logo
+        data.logoUrl = uploadResponse.url;
+        delete data.logoFile;
+
+        this.empresasService.updateEmpresa(empresa.empresaId, data).subscribe({
+          next: () => {
+            this.showMessage('Empresa actualizada exitosamente');
+            this.searchTerm = '';
+            this.loadEmpresas();
+          },
+          error: () => {
+            this.showMessage('Error al actualizar empresa', 'error');
+          }
+        });
+      },
+      error: (error) => {
+        console.error('Error al subir logo:', error);
+        this.showMessage('Error al subir el logo', 'error');
+      }
+    });
   }
 }

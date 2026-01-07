@@ -14,8 +14,8 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { PersonasService } from '../../core/services/personas.service';
 import { EmpresasService } from '../../core/services/empresas';
-import { Persona } from '../../mocks/personas.mock';
-import { Empresa } from '../../mocks/empresas.mock';
+import { Persona } from '../../core/models/usuario.model';
+import { Empresa } from '../../core/models/empresa.model';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
 import { PersonaDialogComponent } from './persona-dialog/persona-dialog';
 

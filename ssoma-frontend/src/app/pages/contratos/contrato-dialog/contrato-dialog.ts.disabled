@@ -10,8 +10,8 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatIconModule } from '@angular/material/icon';
 import { MatChipsModule } from '@angular/material/chips';
 import { FormsModule } from '@angular/forms';
-import { Contrato } from '../../../mocks/contratos.mock';
-import { EMPRESAS_MOCK } from '../../../mocks/empresas.mock';
+import { Contrato } from '../../../core/models/contrato.model';
+import { EMPRESAS_MOCK } from '../../../core/models/empresa.model';
 import { USUARIOS_KALLPA_MOCK, UsuarioKallpa } from '../../../mocks/personal-kallpa.mock';
 
 @Component({

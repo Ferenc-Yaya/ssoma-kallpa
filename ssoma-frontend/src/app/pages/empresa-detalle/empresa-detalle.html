@@ -18,11 +18,11 @@
         <h1>{{ empresa.razonSocial }}</h1>
         <p class="ruc">RUC: {{ empresa.ruc }}</p>
         <div class="badges">
-          <mat-chip 
-            [class.chip-activo]="empresa.estado === 'ACTIVO'"
-            [class.chip-inactivo]="empresa.estado === 'INACTIVO'">
-            <mat-icon>{{ empresa.estado === 'ACTIVO' ? 'check_circle' : 'cancel' }}</mat-icon>
-            {{ empresa.estado }}
+          <mat-chip
+            [class.chip-activo]="empresa.activo"
+            [class.chip-inactivo]="!empresa.activo">
+            <mat-icon>{{ empresa.activo ? 'check_circle' : 'cancel' }}</mat-icon>
+            {{ empresa.activo ? 'ACTIVO' : 'INACTIVO' }}
           </mat-chip>
         </div>
       </div>
@@ -39,11 +39,11 @@
           <mat-icon>inventory_2</mat-icon>
           Ver Activos
         </button>
-        <button mat-raised-button 
-                [color]="empresa.estado === 'ACTIVO' ? 'warn' : 'primary'"
+        <button mat-raised-button
+                [color]="empresa.activo ? 'warn' : 'primary'"
                 (click)="toggleEstado()">
-          <mat-icon>{{ empresa.estado === 'ACTIVO' ? 'block' : 'check_circle' }}</mat-icon>
-          {{ empresa.estado === 'ACTIVO' ? 'Desactivar' : 'Activar' }}
+          <mat-icon>{{ empresa.activo ? 'block' : 'check_circle' }}</mat-icon>
+          {{ empresa.activo ? 'Desactivar' : 'Activar' }}
         </button>
         <button mat-raised-button color="primary" (click)="editarEmpresa()">
           <mat-icon>edit</mat-icon>
@@ -72,11 +72,11 @@
           </div>
           <div class="info-item">
             <label>Tipo de Contratista</label>
-            <p>{{ empresa.tipo }}</p>
+            <p>{{ empresa.tipo?.nombre || 'N/A' }}</p>
           </div>
           <div class="info-item">
             <label>Estado</label>
-            <p>{{ empresa.estado }}</p>
+            <p>{{ empresa.activo ? 'ACTIVO' : 'INACTIVO' }}</p>
           </div>
           <div class="info-item">
             <label>Dirección</label>
@@ -92,7 +92,7 @@
           </div>
           <div class="info-item">
             <label>Fecha de Registro</label>
-            <p>{{ empresa.created_at | date:'dd/MM/yyyy HH:mm' }}</p>
+            <p>{{ empresa.createdAt | date:'dd/MM/yyyy HH:mm' }}</p>
           </div>
         </div>
       </mat-card-content>

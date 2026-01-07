@@ -9,8 +9,14 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatIconModule } from '@angular/material/icon';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 
-// VERIFICA QUE ESTA RUTA SEA LA CORRECTA EN TU PROYECTO
-import { Empresa, EmpresaContacto, TipoContratista } from '../../../core/models/empresa.model';
+import {
+  Empresa,
+  EmpresaContacto,
+  TipoContratista,
+  CreateEmpresaDto,
+  UpdateEmpresaDto
+} from '../../../core/models/empresa.model';
+import { TipoContacto } from '../../../core/enums';
 import { TiposContratistaService } from '../../../core/services/tipos-contratista.service';
 
 @Component({
@@ -32,53 +38,77 @@ import { TiposContratistaService } from '../../../core/services/tipos-contratist
 })
 export class EmpresaDialogComponent implements OnInit {
 
-  // === AQUÍ ESTABA EL ERROR ===
-  // Antes tenías: empresa: Partial<Empresa> & { ... }
-  // AHORA TIENE QUE SER ASÍ:
-  empresa: Empresa; 
-  // ============================
+  // Form data - Usamos Partial para el formulario en edición
+  empresaForm: Partial<Empresa> & {
+    empresaId?: string;
+    tenantId: string;
+    ruc: string;
+    razonSocial: string;
+    tipoId?: string;
+    direccion: string;
+    telefono: string;
+    email: string;
+    logoUrl?: string | null;
+    sitioWeb?: string | null;
+    rubroComercial?: string | null;
+    activo: boolean;
+  };
 
   isEdit: boolean;
   tiposContratista: TipoContratista[] = [];
   contactos: EmpresaContacto[] = [];
 
+  // Variables para manejo de logo
+  logoPreview: string | null = null;
+  selectedFile: File | null = null;
+
   constructor(
     public dialogRef: MatDialogRef<EmpresaDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { empresa?: Empresa; tenantId?: string },
+    @Inject(MAT_DIALOG_DATA) public data: { empresa?: any; tenantId?: string },
     private tiposContratistaService: TiposContratistaService,
     private cdr: ChangeDetectorRef
   ) {
     this.isEdit = !!data.empresa;
 
     if (this.isEdit && data.empresa) {
-      // Clonamos para editar
-      this.empresa = { ...data.empresa };
+      // Modo edición - clonamos los datos
+      this.empresaForm = {
+        empresaId: data.empresa.empresaId || data.empresa.id,
+        tenantId: data.empresa.tenantId,
+        ruc: data.empresa.ruc,
+        razonSocial: data.empresa.razonSocial,
+        tipoId: data.empresa.tipoId || data.empresa.tipo_contratista_id,
+        direccion: data.empresa.direccion || '',
+        telefono: data.empresa.telefono || '',
+        email: data.empresa.email || '',
+        logoUrl: data.empresa.logoUrl || null,
+        sitioWeb: data.empresa.sitioWeb || null,
+        rubroComercial: data.empresa.rubroComercial || null,
+        activo: data.empresa.activo !== undefined ? data.empresa.activo : true
+      };
+      this.contactos = data.empresa.contactos ? [...data.empresa.contactos] : [];
+
+      // Preview del logo si existe
+      if (this.empresaForm.logoUrl) {
+        this.logoPreview = this.empresaForm.logoUrl;
+      }
     } else {
-      // INICIALIZAMOS TODO PARA QUE NO FALLE EL HTML
-      // Usamos 'as Empresa' para forzar el tipo y evitar errores de TypeScript iniciales
-      this.empresa = {
-        empresaId: '',
+      // Modo creación - inicializar con valores por defecto
+      this.empresaForm = {
         tenantId: data.tenantId || '',
         ruc: '',
         razonSocial: '',
-        tipoId: undefined, // El usuario lo seleccionará
+        tipoId: undefined,
         direccion: '',
         telefono: '',
         email: '',
-        
-        // CAMPOS NUEVOS (Los que daban error)
-        logoUrl: '',
-        sitioWeb: '',
-        rubroComercial: '',
-        
-        activo: true,
-        contactos: [],
-        sedes: []
-      } as Empresa; 
+        logoUrl: null,
+        sitioWeb: null,
+        rubroComercial: null,
+        activo: true
+      };
+      this.contactos = [];
     }
-
-    // Inicializamos contactos
-    this.contactos = this.empresa.contactos ? [...this.empresa.contactos] : [];
   }
 
   ngOnInit(): void {
@@ -107,16 +137,15 @@ export class EmpresaDialogComponent implements OnInit {
     }
 
   agregarContacto(): void {
-    const nuevoContacto: EmpresaContacto = {
-      nombreCompleto: '', 
+    const nuevoContacto: Partial<EmpresaContacto> = {
+      nombreCompleto: '',
       cargo: '',
-      telefono: '',
-      email: '',
-      tipoContacto: 'COMERCIAL',
-      esPrincipal: this.contactos.length === 0,
-      tenantId: this.empresa.tenantId
+      telefono: null,
+      email: null,
+      tipoContacto: TipoContacto.COMERCIAL,
+      esPrincipal: this.contactos.length === 0
     };
-    this.contactos.push(nuevoContacto);
+    this.contactos.push(nuevoContacto as EmpresaContacto);
   }
 
   eliminarContacto(index: number): void {
@@ -137,18 +166,67 @@ export class EmpresaDialogComponent implements OnInit {
   isValid(): boolean {
     // Validamos campos obligatorios
     const empresaValida = !!(
-      this.empresa.razonSocial?.trim() &&
-      this.empresa.ruc?.trim() &&
-      this.empresa.ruc.length === 11 &&
-      this.empresa.tipoId
+      this.empresaForm.razonSocial?.trim() &&
+      this.empresaForm.ruc?.trim() &&
+      this.empresaForm.ruc.length === 11 &&
+      this.empresaForm.tipoId
     );
     return empresaValida;
   }
 
   onSave(): void {
     if (this.isValid()) {
-      this.empresa.contactos = this.contactos;
-      this.dialogRef.close(this.empresa);
+      const result: any = {
+        ...this.empresaForm,
+        contactos: this.contactos
+      };
+
+      // Agregar el archivo seleccionado si existe
+      if (this.selectedFile) {
+        result.logoFile = this.selectedFile;
+      }
+
+      this.dialogRef.close(result);
     }
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files[0]) {
+      const file = input.files[0];
+
+      // Validar que sea imagen
+      if (!file.type.startsWith('image/')) {
+        alert('Por favor seleccione un archivo de imagen');
+        input.value = ''; // Limpiar input
+        return;
+      }
+
+      // Validar tamaño (máximo 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('El archivo no debe superar 5MB');
+        input.value = ''; // Limpiar input
+        return;
+      }
+
+      this.selectedFile = file;
+
+      // Crear preview inmediatamente
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.logoPreview = reader.result as string;
+        this.cdr.detectChanges(); // Forzar detección de cambios
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Limpiar el input para que se pueda seleccionar el mismo archivo de nuevo
+    input.value = '';
+  }
+
+  removeLogo(): void {
+    this.selectedFile = null;
+    this.logoPreview = null;
+    this.empresaForm.logoUrl = null;
   }
 }

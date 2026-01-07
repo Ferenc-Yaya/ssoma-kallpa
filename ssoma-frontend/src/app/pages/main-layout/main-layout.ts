@@ -8,21 +8,21 @@ import { AuthService } from '../../core/services/auth';
 import { MenuService } from '../../core/services/menu.service';
 import { MenuItem } from '../../core/config/menu-config';
 import { BreadcrumbsComponent } from '../../shared/breadcrumbs/breadcrumbs';
-import { NotificacionesComponent } from '../../shared/notificaciones/notificaciones';
+// import { NotificacionesComponent } from '../../shared/notificaciones/notificaciones';
 
 @Component({
   selector: 'app-main-layout',
   standalone: true,
   imports: [
-    CommonModule, 
-    RouterOutlet, 
-    RouterLink, 
+    CommonModule,
+    RouterOutlet,
+    RouterLink,
     RouterLinkActive,
     MatIconModule,
     MatButtonModule,
     MatTooltipModule,
     BreadcrumbsComponent,
-    NotificacionesComponent
+    // NotificacionesComponent
   ],
   templateUrl: './main-layout.html',
   styleUrl: './main-layout.scss'

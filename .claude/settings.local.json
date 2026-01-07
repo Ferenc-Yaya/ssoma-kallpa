@@ -6,7 +6,10 @@
       "Bash(ls:*)",
       "Bash(docker-compose logs:*)",
       "Bash(python3:*)",
-      "Bash(mvn clean compile:*)"
+      "Bash(mvn clean compile:*)",
+      "Bash(npm run build:*)",
+      "Bash(find:*)",
+      "Bash(xargs rm -rf)"
     ]
   }
 }

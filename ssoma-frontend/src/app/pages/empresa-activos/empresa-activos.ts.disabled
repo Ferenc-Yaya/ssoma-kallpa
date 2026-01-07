@@ -11,8 +11,8 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ActivosService } from '../../core/services/activos.service';
 import { EmpresasService } from '../../core/services/empresas';
-import { Empresa } from '../../mocks/empresas.mock';
-import { Activo } from '../../mocks/activos.mock';
+import { Empresa } from '../../core/models/empresa.model';
+import { Activo } from '../../core/models/activo.model';
 
 @Component({
   selector: 'app-empresa-activos',

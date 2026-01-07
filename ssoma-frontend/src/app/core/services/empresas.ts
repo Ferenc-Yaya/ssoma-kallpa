@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Empresa } from '../../mocks/empresas.mock';
+import { Empresa, CreateEmpresaDto, UpdateEmpresaDto } from '../models/empresa.model';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -33,19 +33,19 @@ export class EmpresasService {
     });
   }
 
-  getEmpresaById(id: number): Observable<Empresa> {
+  getEmpresaById(id: string): Observable<Empresa> {
     return this.http.get<Empresa>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  createEmpresa(empresa: Omit<Empresa, 'id' | 'created_at'>): Observable<Empresa> {
+  createEmpresa(empresa: CreateEmpresaDto): Observable<Empresa> {
     return this.http.post<Empresa>(this.apiUrl, empresa, { headers: this.getHeaders() });
   }
 
-  updateEmpresa(id: number, empresa: Partial<Empresa>): Observable<Empresa> {
+  updateEmpresa(id: string, empresa: UpdateEmpresaDto): Observable<Empresa> {
     return this.http.put<Empresa>(`${this.apiUrl}/${id}`, empresa, { headers: this.getHeaders() });
   }
 
-  deleteEmpresa(id: number): Observable<void> {
+  deleteEmpresa(id: string): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 

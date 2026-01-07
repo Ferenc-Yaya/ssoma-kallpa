@@ -10,8 +10,8 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { FormsModule } from '@angular/forms';
 import { ContratoDialogComponent } from './contrato-dialog/contrato-dialog';
-import { CONTRATOS_MOCK, Contrato } from '../../mocks/contratos.mock';
-import { EMPRESAS_MOCK } from '../../mocks/empresas.mock';
+import { CONTRATOS_MOCK, Contrato } from '../../core/models/contrato.model';
+import { EMPRESAS_MOCK } from '../../core/models/empresa.model';
 
 @Component({
   selector: 'app-contratos',

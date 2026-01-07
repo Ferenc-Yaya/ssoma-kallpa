@@ -10,7 +10,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { EmpresasService } from '../../core/services/empresas';
 import { MaterialesPeligrososService, InventarioMatpel } from '../../core/services/materiales-peligrosos.service';
-import { Empresa } from '../../mocks/empresas.mock';
+import { Empresa } from '../../core/models/empresa.model';
 
 @Component({
   selector: 'app-empresa-materiales-peligrosos',
@@ -48,12 +48,12 @@ export class EmpresaMaterialesPeligrososComponent implements OnInit {
   ngOnInit(): void {
     const empresaId = this.route.snapshot.paramMap.get('id');
     if (empresaId) {
-      this.loadEmpresa(Number(empresaId));
-      this.loadMateriales(Number(empresaId));
+      this.loadEmpresa(empresaId);
+      this.loadMateriales(empresaId);
     }
   }
 
-  loadEmpresa(empresaId: number): void {
+  loadEmpresa(empresaId: string): void {
     this.empresasService.getEmpresaById(empresaId).subscribe({
       next: (empresa) => {
         this.empresa = empresa || null;
@@ -62,7 +62,7 @@ export class EmpresaMaterialesPeligrososComponent implements OnInit {
     });
   }
 
-  loadMateriales(empresaId: number): void {
+  loadMateriales(empresaId: string): void {
     this.loading = true;
     this.materialesService.getInventariosByEmpresa(empresaId).subscribe({
       next: (materiales) => {
@@ -93,7 +93,7 @@ export class EmpresaMaterialesPeligrososComponent implements OnInit {
       return;
     }
 
-    const ruta = ['/empresas', this.empresa.id, 'materiales-peligrosos', material.inventarioId, 'documentos'];
+    const ruta = ['/empresas', this.empresa.empresaId, 'materiales-peligrosos', material.inventarioId, 'documentos'];
     this.router.navigate(ruta);
   }
 
@@ -105,7 +105,7 @@ export class EmpresaMaterialesPeligrososComponent implements OnInit {
         next: () => {
           this.showMessage('Material eliminado exitosamente', 'success');
           if (this.empresa) {
-            this.loadMateriales(this.empresa.id);
+            this.loadMateriales(this.empresa.empresaId);
           }
         },
         error: (error) => {
@@ -138,7 +138,7 @@ export class EmpresaMaterialesPeligrososComponent implements OnInit {
   }
 
   volver(): void {
-    this.router.navigate(['/empresas', this.empresa?.id]);
+    this.router.navigate(['/empresas', this.empresa?.empresaId]);
   }
 
   private showMessage(message: string, type: 'success' | 'error' = 'success'): void {

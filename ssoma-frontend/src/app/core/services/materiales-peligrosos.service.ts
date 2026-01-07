@@ -88,7 +88,7 @@ export class MaterialesPeligrososService {
     return this.http.get<InventarioMatpel>(`${this.inventarioUrl}/${id}`, { headers: this.getHeaders() });
   }
 
-  getInventariosByEmpresa(empresaId: number): Observable<InventarioMatpel[]> {
+  getInventariosByEmpresa(empresaId: string): Observable<InventarioMatpel[]> {
     return this.http.get<InventarioMatpel[]>(`${this.inventarioUrl}/empresa/${empresaId}`, { headers: this.getHeaders() });
   }
 
