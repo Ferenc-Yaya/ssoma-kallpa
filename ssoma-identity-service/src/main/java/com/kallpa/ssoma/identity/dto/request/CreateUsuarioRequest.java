@@ -13,6 +13,8 @@ public class CreateUsuarioRequest {
 
     private UUID personaId;
 
+    private String tenantId;
+
     @NotBlank(message = "El username es requerido")
     @Size(min = 4, max = 100, message = "El username debe tener entre 4 y 100 caracteres")
     private String username;

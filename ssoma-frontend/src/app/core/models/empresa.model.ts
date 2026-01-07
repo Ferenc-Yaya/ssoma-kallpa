@@ -136,6 +136,7 @@ export interface Empresa {
   // Relación con Tipo - REQUERIDO
   tipoId: string;                    // FK - REQUERIDO (toda empresa tiene tipo)
   tipo: TipoContratista | null;      // Objeto completo si se hace JOIN, null si no
+  tipoNombre: string | null;         // Nombre del tipo (viene del backend como campo plano)
 
   // Datos de Contacto - REQUERIDOS
   direccion: string;

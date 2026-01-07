@@ -78,15 +78,10 @@ export class EmpresasComponent implements OnInit {
           if (this.tenantFilter) {
             // Filtrar solo contratistas (excluir empresas principales)
             this.empresas = data.filter(e => {
-              // Si tipo es un objeto, verificar su nombre o código
-              if (e.tipo && typeof e.tipo === 'object') {
-                const tipoNombre = e.tipo.nombre?.toLowerCase() || '';
-                const tipoCodigo = e.tipo.codigo?.toString() || '';
-                return tipoNombre !== 'empresa principal' &&
-                       tipoNombre !== 'host' &&
-                       tipoCodigo !== 'HOST';
-              }
-              return true; // Si no tiene tipo definido, incluirlo
+              // Usar tipoNombre que viene como string del backend
+              const tipoNombre = (e.tipoNombre || '').toLowerCase();
+              return tipoNombre !== 'empresa principal' &&
+                     tipoNombre !== 'host';
             });
           } else {
             this.empresas = data;

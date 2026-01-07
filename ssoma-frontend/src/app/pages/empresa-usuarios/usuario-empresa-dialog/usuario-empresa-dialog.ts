@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -32,6 +32,7 @@ export class UsuarioEmpresaDialogComponent implements OnInit {
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<UsuarioEmpresaDialogComponent>,
     private rolesService: RolesService,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: UsuarioEmpresaDialogData
   ) {}
 
@@ -45,6 +46,7 @@ export class UsuarioEmpresaDialogComponent implements OnInit {
       next: (roles) => {
         // Filtrar roles que requieren tenant y no son SUPER_ADMIN
         this.roles = roles.filter(r => r.requiereTenant !== false && r.codigo !== 'SUPER_ADMIN');
+        this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error cargando roles:', error);

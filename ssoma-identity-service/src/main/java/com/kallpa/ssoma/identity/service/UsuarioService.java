@@ -79,6 +79,7 @@ public class UsuarioService {
         // Crear usuario
         Usuario usuario = new Usuario();
         usuario.setPersonaId(request.getPersonaId());
+        usuario.setTenantId(request.getTenantId()); // Asignar el tenant del request
         usuario.setUsername(request.getUsername());
         usuario.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         usuario.setNombreCompleto(request.getNombreCompleto());

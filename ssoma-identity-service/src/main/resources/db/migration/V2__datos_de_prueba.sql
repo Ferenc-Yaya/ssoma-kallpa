@@ -19,8 +19,8 @@ ON CONFLICT (tenant_id) DO NOTHING;
 INSERT INTO cat_tipos_contratista (tipo_id, tenant_id, codigo, nombre, descripcion)
 VALUES
     (gen_random_uuid(), 'SYSTEM', 'HOST', 'Empresa Principal', 'Empresa principal dueña del sistema'),
-    (gen_random_uuid(), 'SYSTEM', 'PERMANENTE', 'Contratista Permanente', 'Contratistas permanentes con contrato vigente de largo plazo'),
-    (gen_random_uuid(), 'SYSTEM', 'EVENTUAL', 'Contratista Eventual', 'Contratistas eventuales o temporales para proyectos específicos'),
+    (gen_random_uuid(), 'SYSTEM', 'PERMANENTE', 'Permanente', 'Contratistas permanentes con contrato vigente de largo plazo'),
+    (gen_random_uuid(), 'SYSTEM', 'EVENTUAL', 'Eventual', 'Contratistas eventuales o temporales para proyectos específicos'),
     (gen_random_uuid(), 'SYSTEM', 'VISITA', 'Visitante', 'Visitantes o personal externo temporal sin contrato formal')
 ON CONFLICT (codigo) DO NOTHING;
 
