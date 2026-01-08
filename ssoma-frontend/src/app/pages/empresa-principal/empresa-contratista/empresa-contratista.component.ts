@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -46,10 +46,12 @@ export class EmpresaContratistaComponent implements OnInit {
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
     private tiposContratistaService: TiposContratistaService,
-    private fileUploadService: FileUploadService
+    private fileUploadService: FileUploadService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
+    console.log('🚀 [CONTRATISTAS] Componente inicializado');
     combineLatest([
       this.route.paramMap,
       this.route.queryParamMap
@@ -57,46 +59,61 @@ export class EmpresaContratistaComponent implements OnInit {
       this.tenantId = params.get('tenantId') || '';
       const nombreFromParams = queryParams.get('nombre') || this.tenantId;
       this.empresaPrincipalNombre = decodeURIComponent(nombreFromParams);
+      console.log('📋 [CONTRATISTAS] TenantId obtenido de la ruta:', this.tenantId);
+      console.log('📋 [CONTRATISTAS] Nombre empresa:', this.empresaPrincipalNombre);
       if (this.tenantId) {
-        this.loading = true; // Iniciar carga aquí
-        this.loadTipoContratista();
+        this.loading = true;
+        this.loadTipoContratista(); // Solo para obtener tipos disponibles
+        this.loadContratistas(); // Cargar contratistas directamente
+      } else {
+        console.error('❌ [CONTRATISTAS] No se obtuvo tenantId de la ruta');
       }
     });
   }
 
   loadTipoContratista(): void {
+    console.log('🔍 [CONTRATISTAS] Cargando tipos de contratista...');
     this.tiposContratistaService.getAll().subscribe({
       next: (tipos) => {
-        const tipoContratista = tipos.find(t =>
-          t.nombre === 'Contratista' || t.codigo === 'CONTRATISTA'
-        );
+        console.log('📦 [CONTRATISTAS] Tipos recibidos:', tipos);
+        // Buscar el primer tipo que NO sea "Empresa Principal"
+        // Puede ser EVENTUAL, PERMANENTE o VISITA
+        const tipoContratista = tipos.find(t => t.codigo !== 'HOST');
         if (tipoContratista) {
           this.tipoContratistaId = tipoContratista.tipoId;
-          this.loadContratistas();
+          console.log('✅ [CONTRATISTAS] Tipo por defecto para nuevos contratistas:', tipoContratista.nombre, tipoContratista.tipoId);
         } else {
-          this.showNotification('Error: No se encontró el tipo "Contratista"', 'error');
-          setTimeout(() => this.loading = false, 0);
+          console.warn('⚠️ [CONTRATISTAS] No se encontró ningún tipo disponible para contratistas');
         }
       },
       error: (error) => {
-        console.error('Error al cargar tipos de contratista:', error);
-        this.showNotification('Error al cargar tipos de contratista', 'error');
-        setTimeout(() => this.loading = false, 0);
+        console.error('❌ [CONTRATISTAS] Error al cargar tipos:', error);
       }
     });
   }
 
   loadContratistas(): void {
-    this.empresaService.getAllEmpresas().subscribe({
+    console.log('🔎 [CONTRATISTAS] Iniciando carga de contratistas...');
+    console.log('🏢 [CONTRATISTAS] TenantId a buscar:', this.tenantId);
+    this.empresaService.getAllEmpresas(this.tenantId).subscribe({
       next: (empresas) => {
+        console.log('📦 [CONTRATISTAS] Todas las empresas recibidas del backend:', empresas);
+        console.log('🏷️ [CONTRATISTAS] Cantidad de empresas:', empresas.length);
+
+        // Ya no necesitamos filtrar por tenantId porque el backend lo hace
         this.contratistas = empresas.filter(
-          e => e.tenantId === this.tenantId && e.tipoNombre !== 'Empresa Principal'
+          e => e.tipoNombre !== 'Empresa Principal'
         );
-        setTimeout(() => this.loading = false, 0);
+
+        console.log('✅ [CONTRATISTAS] Contratistas después de filtrar:', this.contratistas);
+        console.log('📊 [CONTRATISTAS] Cantidad de contratistas:', this.contratistas.length);
+        this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error al cargar contratistas:', error);
-        setTimeout(() => this.loading = false, 0);
+        console.error('❌ [CONTRATISTAS] Error al cargar contratistas:', error);
+        this.loading = false;
+        this.cdr.detectChanges();
         this.showNotification('Error al cargar contratistas', 'error');
       }
     });

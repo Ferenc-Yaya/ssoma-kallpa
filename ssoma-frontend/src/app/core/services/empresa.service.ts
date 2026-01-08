@@ -61,9 +61,15 @@ export class EmpresaService {
   /**
    * Obtiene todas las empresas del tenant actual
    */
-  getAllEmpresas(): Observable<EmpresaDTO[]> {
+  getAllEmpresas(tenantId?: string): Observable<EmpresaDTO[]> {
     console.log('🌐 Llamando a API:', this.apiUrl);
-    return this.http.get<EmpresaDTO[]>(this.apiUrl).pipe(
+    console.log('🆔 TenantId recibido:', tenantId);
+    const params: any = {};
+    if (tenantId) {
+      params.tenant = tenantId;
+      console.log('📤 Parámetros a enviar:', params);
+    }
+    return this.http.get<EmpresaDTO[]>(this.apiUrl, { params }).pipe(
       tap(response => console.log('✅ Respuesta del servidor:', response))
     );
   }
