@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -11,6 +12,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { UsuariosService, Usuario } from '../../core/services/usuarios.service';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
+import { ChangePasswordDialogComponent } from '../../shared/change-password-dialog/change-password-dialog';
 import { UsuarioEmpresaDialogComponent, UsuarioEmpresaDialogData } from './usuario-empresa-dialog/usuario-empresa-dialog'; // Importar la interfaz
 
 @Component({
@@ -18,6 +20,7 @@ import { UsuarioEmpresaDialogComponent, UsuarioEmpresaDialogData } from './usuar
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
     MatTableModule,
     MatIconModule,
@@ -34,6 +37,8 @@ export class EmpresaUsuariosComponent implements OnInit {
   tenantId: string = '';
   tenantName: string = '';
   usuarios: Usuario[] = [];
+  usuariosFiltrados: Usuario[] = [];
+  searchTerm: string = '';
   displayedColumns: string[] = ['username', 'nombreCompleto', 'email', 'rol', 'activo', 'acciones'];
   loading = true;
 
@@ -62,6 +67,7 @@ export class EmpresaUsuariosComponent implements OnInit {
     this.usuariosService.getUsuariosByTenant(this.tenantId).subscribe({
       next: (usuarios) => {
         this.usuarios = usuarios;
+        this.aplicarFiltros();
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -72,6 +78,21 @@ export class EmpresaUsuariosComponent implements OnInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  aplicarFiltros(): void {
+    if (!this.searchTerm.trim()) {
+      this.usuariosFiltrados = [...this.usuarios];
+      return;
+    }
+
+    const term = this.searchTerm.toLowerCase().trim();
+    this.usuariosFiltrados = this.usuarios.filter(u =>
+      u.username.toLowerCase().includes(term) ||
+      u.nombreCompleto.toLowerCase().includes(term) ||
+      u.email.toLowerCase().includes(term) ||
+      (u.rolNombre && u.rolNombre.toLowerCase().includes(term))
+    );
   }
 
   goBack(): void {
@@ -216,6 +237,30 @@ export class EmpresaUsuariosComponent implements OnInit {
           error: (error) => {
             console.error('Error al eliminar usuario:', error);
             this.showNotification('Error al eliminar usuario', 'error');
+          }
+        });
+      }
+    });
+  }
+
+  changePassword(usuario: Usuario): void {
+    const dialogRef = this.dialog.open(ChangePasswordDialogComponent, {
+      width: '500px',
+      data: {
+        username: usuario.username,
+        nombreCompleto: usuario.nombreCompleto
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(newPassword => {
+      if (newPassword) {
+        this.usuariosService.changePassword(usuario.usuarioId, { newPassword }).subscribe({
+          next: () => {
+            this.showNotification(`Contraseña cambiada exitosamente para ${usuario.username}`, 'success');
+          },
+          error: (error) => {
+            console.error('Error al cambiar contraseña:', error);
+            this.showNotification('Error al cambiar la contraseña', 'error');
           }
         });
       }

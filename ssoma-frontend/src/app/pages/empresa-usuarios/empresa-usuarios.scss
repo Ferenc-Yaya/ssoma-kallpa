@@ -112,6 +112,44 @@
   color: #666;
 }
 
+// Buscador
+.search-container {
+  margin-bottom: 1rem;
+
+  .search-box {
+    display: flex;
+    align-items: center;
+    background: white;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 0.5rem 1rem;
+    max-width: 400px;
+    transition: border-color 0.2s, box-shadow 0.2s;
+
+    &:focus-within {
+      border-color: #1F438C;
+      box-shadow: 0 0 0 3px rgba(31, 67, 140, 0.1);
+    }
+
+    .search-icon {
+      color: #999;
+      margin-right: 0.5rem;
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 0.95rem;
+      background: transparent;
+
+      &::placeholder {
+        color: #aaa;
+      }
+    }
+  }
+}
+
 // Card de usuarios
 .usuarios-card {
   mat-card-header {

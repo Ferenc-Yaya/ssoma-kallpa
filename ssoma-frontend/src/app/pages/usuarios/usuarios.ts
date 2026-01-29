@@ -36,7 +36,7 @@ export class UsuariosComponent implements OnInit {
   usuarios: Usuario[] = [];
   usuariosFiltrados: Usuario[] = [];
   searchTerm: string = '';
-  displayedColumns: string[] = ['username', 'nombreCompleto', 'email', 'rol', 'tenant', 'activo', 'acciones'];
+  displayedColumns: string[] = ['username', 'nombreCompleto', 'rol', 'tenant', 'activo', 'acciones'];
 
   // Filtros
   filtroRol: string = 'TODOS';
@@ -129,22 +129,53 @@ export class UsuariosComponent implements OnInit {
     }
   }
 
-  openUsuarioDialog(usuario?: Usuario): void {
+  esSuperAdminPrincipal(usuario: Usuario): boolean {
+    return usuario.username === 'superadmin';
+  }
+
+  openCreateDialog(): void {
     const dialogRef = this.dialog.open(UsuarioDialogComponent, {
       width: '700px',
       data: {
-        usuario: usuario,
-        isEdit: !!usuario
+        usuario: null,
+        isEdit: false,
+        isViewOnly: false,
+        isCreate: true
       }
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        if (usuario) {
-          this.updateUsuario(usuario, result);
-        } else {
-          this.createUsuario(result);
-        }
+        this.createUsuario(result);
+      }
+    });
+  }
+
+  viewUsuario(usuario: Usuario): void {
+    this.dialog.open(UsuarioDialogComponent, {
+      width: '700px',
+      data: {
+        usuario: usuario,
+        isEdit: false,
+        isViewOnly: true
+      }
+    });
+  }
+
+  openEditDialog(usuario: Usuario): void {
+    const dialogRef = this.dialog.open(UsuarioDialogComponent, {
+      width: '700px',
+      data: {
+        usuario: usuario,
+        isEdit: true,
+        isViewOnly: false,
+        disableTenant: true
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.updateUsuario(usuario, result);
       }
     });
   }
@@ -156,13 +187,12 @@ export class UsuariosComponent implements OnInit {
       nombreCompleto: data.nombreCompleto,
       email: data.email,
       rolId: data.rolId,
-      tenantId: data.tenantId,
-      empresaNombre: data.empresaNombre,
-      activo: data.activo
+      tenantId: data.tenantId || 'SYSTEM',
+      activo: true
     };
 
     this.usuariosService.createUsuario(request).subscribe({
-      next: (usuario) => {
+      next: () => {
         this.loadUsuarios();
         this.showNotification('Usuario creado exitosamente', 'success');
       },
@@ -179,8 +209,6 @@ export class UsuariosComponent implements OnInit {
       nombreCompleto: data.nombreCompleto,
       email: data.email,
       rolId: data.rolId,
-      tenantId: data.tenantId,
-      empresaNombre: data.empresaNombre,
       activo: data.activo
     };
 
@@ -192,6 +220,21 @@ export class UsuariosComponent implements OnInit {
       error: (error) => {
         console.error('Error actualizando usuario:', error);
         const errorMsg = error.error?.message || 'Error al actualizar el usuario';
+        this.showNotification(errorMsg, 'error');
+      }
+    });
+  }
+
+  toggleEstadoUsuario(usuario: Usuario): void {
+    this.usuariosService.toggleActivo(usuario.usuarioId).subscribe({
+      next: () => {
+        const accion = !usuario.activo ? 'activado' : 'desactivado';
+        this.loadUsuarios();
+        this.showNotification(`Usuario ${accion} exitosamente`, 'success');
+      },
+      error: (error) => {
+        console.error('Error cambiando estado del usuario:', error);
+        const errorMsg = error.error?.message || 'Error al cambiar el estado del usuario';
         this.showNotification(errorMsg, 'error');
       }
     });
@@ -226,24 +269,9 @@ export class UsuariosComponent implements OnInit {
     });
   }
 
-  toggleEstadoUsuario(usuario: Usuario): void {
-    this.usuariosService.toggleActivo(usuario.usuarioId).subscribe({
-      next: () => {
-        const accion = !usuario.activo ? 'activado' : 'desactivado';
-        this.loadUsuarios();
-        this.showNotification(`Usuario ${accion} exitosamente`, 'success');
-      },
-      error: (error) => {
-        console.error('Error cambiando estado del usuario:', error);
-        const errorMsg = error.error?.message || 'Error al cambiar el estado del usuario';
-        this.showNotification(errorMsg, 'error');
-      }
-    });
-  }
-
-  resetPassword(usuario: Usuario): void {
+  changePassword(usuario: Usuario): void {
     const dialogRef = this.dialog.open(ChangePasswordDialogComponent, {
-      width: '600px',
+      width: '500px',
       data: {
         username: usuario.username,
         nombreCompleto: usuario.nombreCompleto

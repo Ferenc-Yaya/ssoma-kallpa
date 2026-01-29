@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>
-  <mat-icon>{{ isEdit ? 'edit' : 'person_add' }}</mat-icon>
-  {{ isEdit ? 'Editar Usuario' : 'Nuevo Usuario' }}
+  <mat-icon>{{ isViewOnly ? 'person' : (isEdit ? 'edit' : 'security') }}</mat-icon>
+  {{ isViewOnly ? 'Datos del Usuario' : (isEdit ? 'Editar Usuario' : 'Nuevo Super Administrador') }}
 </h2>
 
 <mat-dialog-content>
@@ -10,13 +10,14 @@
     <div class="form-field">
       <label>
         Nombre de Usuario *
-        <span class="hint-inline" *ngIf="!isEdit">(no se puede cambiar después)</span>
+        <span class="hint-inline" *ngIf="!isEdit && !isViewOnly">(no se puede cambiar después)</span>
       </label>
       <input type="text"
              formControlName="username"
              placeholder="ejemplo: juan.perez"
-             maxlength="50">
-      <small class="hint" *ngIf="!isEdit">Solo letras minúsculas, números, puntos, guiones</small>
+             maxlength="50"
+             [class.disabled-field]="isViewOnly">
+      <small class="hint" *ngIf="!isEdit && !isViewOnly">Solo letras minúsculas, números, puntos, guiones</small>
       <small class="error" *ngIf="usuarioForm.get('username')?.invalid && usuarioForm.get('username')?.touched">
         {{ getErrorMessage('username') }}
       </small>
@@ -28,7 +29,9 @@
       <input type="text"
              formControlName="nombreCompleto"
              placeholder="Nombre y apellidos completos"
-             maxlength="100">
+             maxlength="100"
+             [readonly]="isViewOnly"
+             [class.disabled-field]="isViewOnly">
       <small class="error" *ngIf="usuarioForm.get('nombreCompleto')?.invalid && usuarioForm.get('nombreCompleto')?.touched">
         {{ getErrorMessage('nombreCompleto') }}
       </small>
@@ -39,7 +42,9 @@
       <label>Email *</label>
       <input type="email"
              formControlName="email"
-             placeholder="correo@ejemplo.com">
+             placeholder="correo@ejemplo.com"
+             [readonly]="isViewOnly"
+             [class.disabled-field]="isViewOnly">
       <small class="error" *ngIf="usuarioForm.get('email')?.invalid && usuarioForm.get('email')?.touched">
         {{ getErrorMessage('email') }}
       </small>
@@ -49,10 +54,17 @@
     <div class="form-row" *ngIf="showPasswordFields">
       <div class="form-field">
         <label>Contraseña *</label>
-        <input type="password"
-               formControlName="password"
-               placeholder="Mínimo 8 caracteres"
-               autocomplete="new-password">
+        <div class="password-input-wrapper">
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            formControlName="password"
+            placeholder="Mínimo 8 caracteres"
+            autocomplete="new-password">
+          <div class="password-toggles">
+            <mat-icon (click)="generatePassword()">autorenew</mat-icon>
+            <mat-icon (click)="togglePasswordVisibility()">{{ showPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </div>
+        </div>
         <small class="error" *ngIf="usuarioForm.get('password')?.invalid && usuarioForm.get('password')?.touched">
           {{ getErrorMessage('password') }}
         </small>
@@ -60,12 +72,23 @@
 
       <div class="form-field">
         <label>Confirmar Contraseña *</label>
-        <input type="password"
-               formControlName="confirmPassword"
-               placeholder="Repetir contraseña"
-               autocomplete="new-password">
-        <small class="error" *ngIf="!passwordsMatch() && usuarioForm.get('confirmPassword')?.touched">
+        <div class="password-input-wrapper">
+          <input
+            [type]="showConfirmPassword ? 'text' : 'password'"
+            formControlName="confirmPassword"
+            placeholder="Repetir contraseña"
+            autocomplete="new-password">
+          <div class="password-toggles">
+            <mat-icon (click)="toggleConfirmPasswordVisibility()">{{ showConfirmPassword ? 'visibility_off' : 'visibility' }}</mat-icon>
+          </div>
+        </div>
+        <small class="error" *ngIf="!passwordsMatch() && usuarioForm.get('confirmPassword')?.touched && usuarioForm.get('confirmPassword')?.value">
+          <mat-icon>error</mat-icon>
           Las contraseñas no coinciden
+        </small>
+        <small class="success" *ngIf="passwordsMatch() && usuarioForm.get('confirmPassword')?.value">
+          <mat-icon>check_circle</mat-icon>
+          Las contraseñas coinciden
         </small>
       </div>
     </div>
@@ -73,13 +96,20 @@
     <!-- Rol -->
     <div class="form-field">
       <label>Rol / Grupo de Usuario *</label>
-      <select formControlName="rolId">
+      <!-- En modo viewOnly o isCreate, mostrar como readonly -->
+      <input *ngIf="isViewOnly || isCreate" type="text" [value]="getRolNombre()" readonly class="disabled-field">
+      <!-- En modo edición normal, mostrar select -->
+      <select *ngIf="!isViewOnly && !isCreate" formControlName="rolId">
         <option value="" disabled>Seleccionar rol...</option>
         <option *ngFor="let rol of roles" [value]="rol.rolId">
           {{ rol.nombre }}
         </option>
       </select>
-      <small class="hint" *ngIf="usuarioForm.get('rolId')?.value">
+      <small class="hint" *ngIf="isCreate">
+        <mat-icon>security</mat-icon>
+        Este formulario es exclusivo para crear Super Administradores
+      </small>
+      <small class="hint" *ngIf="usuarioForm.get('rolId')?.value && !isViewOnly && !isCreate">
         <mat-icon>info</mat-icon>
         {{ getRolDescription(usuarioForm.get('rolId')?.value) }}
       </small>
@@ -88,16 +118,31 @@
       </small>
     </div>
 
-    <!-- Tenant (solo si el rol lo requiere) -->
-    <div class="form-field" *ngIf="requiereTenant()">
-      <label>Empresa Principal *</label>
-      <select formControlName="tenantId">
+    <!-- Tenant (solo si el rol lo requiere, es SUPER_ADMIN, o en modo viewOnly/edit con tenantId) -->
+    <div class="form-field" *ngIf="requiereTenant() || isSuperAdminSelected || ((isViewOnly || disableTenant) && data.usuario?.tenantId)">
+      <label>Empresa Principal {{ isSuperAdminSelected ? '' : '*' }}</label>
+      <!-- Mostrar input readonly para: viewOnly, disableTenant, o SUPER_ADMIN seleccionado -->
+      <input *ngIf="isViewOnly || disableTenant || isSuperAdminSelected"
+             type="text"
+             [value]="isSuperAdminSelected ? 'SYSTEM (Sistema Central)' : data.usuario?.tenantId"
+             readonly
+             class="disabled-field">
+      <!-- Mostrar select solo si: no es viewOnly, no es disableTenant, y no es SUPER_ADMIN -->
+      <select *ngIf="!isViewOnly && !disableTenant && !isSuperAdminSelected" formControlName="tenantId">
         <option value="" disabled>Seleccionar empresa...</option>
         <option *ngFor="let empresa of empresasPrincipales" [value]="empresa.tenantId">
           {{ empresa.nombre }} ({{ empresa.tenantId }})
         </option>
       </select>
-      <small class="hint">
+      <small class="hint" *ngIf="isSuperAdminSelected && !isViewOnly">
+        <mat-icon>security</mat-icon>
+        Los Super Administradores siempre pertenecen al Sistema Central
+      </small>
+      <small class="hint" *ngIf="disableTenant && !isViewOnly && !isSuperAdminSelected">
+        <mat-icon>lock</mat-icon>
+        La empresa principal no se puede modificar
+      </small>
+      <small class="hint" *ngIf="!disableTenant && !isViewOnly && !isSuperAdminSelected && requiereTenant()">
         <mat-icon>domain</mat-icon>
         El usuario tendrá acceso solo a esta empresa
       </small>
@@ -107,7 +152,11 @@
     </div>
 
     <!-- Estado -->
-    <div class="checkbox-field">
+    <div class="form-field" *ngIf="isViewOnly">
+      <label>Estado</label>
+      <input type="text" [value]="usuarioForm.get('activo')?.value ? 'ACTIVO' : 'INACTIVO'" readonly class="disabled-field">
+    </div>
+    <div class="checkbox-field" *ngIf="!isViewOnly">
       <label class="checkbox-container">
         <input type="checkbox" formControlName="activo">
         <span class="checkbox-label">
@@ -124,13 +173,14 @@
 <mat-dialog-actions align="end">
   <button mat-button (click)="onCancel()">
     <mat-icon>close</mat-icon>
-    Cancelar
+    {{ isViewOnly ? 'Cerrar' : 'Cancelar' }}
   </button>
   <button mat-raised-button
           color="primary"
           (click)="onSubmit()"
-          [disabled]="usuarioForm.invalid || (!passwordsMatch() && showPasswordFields)">
-    <mat-icon>{{ isEdit ? 'save' : 'person_add' }}</mat-icon>
-    {{ isEdit ? 'Guardar Cambios' : 'Crear Usuario' }}
+          [disabled]="usuarioForm.invalid || (!passwordsMatch() && showPasswordFields)"
+          *ngIf="!isViewOnly">
+    <mat-icon>{{ isEdit ? 'save' : 'security' }}</mat-icon>
+    {{ isEdit ? 'Guardar Cambios' : 'Crear Super Admin' }}
   </button>
 </mat-dialog-actions>

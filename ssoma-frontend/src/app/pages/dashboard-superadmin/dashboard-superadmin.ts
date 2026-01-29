@@ -4,13 +4,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
-
-interface SystemStats {
-  totalTenants: number;
-  totalUsuarios: number;
-  totalEmpresas: number;
-  usuariosActivos: number;
-}
+import { EmpresaService, EmpresaDTO } from '../../core/services/empresa.service';
+import { UsuariosService, Usuario } from '../../core/services/usuarios.service';
 
 @Component({
   selector: 'app-dashboard-superadmin',
@@ -26,48 +21,63 @@ interface SystemStats {
   styleUrl: './dashboard-superadmin.scss'
 })
 export class DashboardSuperadminComponent implements OnInit {
-  stats: SystemStats = {
-    totalTenants: 2,
-    totalUsuarios: 145,
-    totalEmpresas: 46,
-    usuariosActivos: 128
-  };
+  empresasPrincipales: EmpresaDTO[] = [];
+  empresasContratistas: EmpresaDTO[] = [];
+  usuarios: Usuario[] = [];
 
-  recentActivity = [
-    {
-      icon: 'business',
-      title: 'Nueva empresa registrada',
-      description: 'CONSTRUCTORA DEL SUR SAC',
-      time: 'Hace 2 horas',
-      type: 'success'
-    },
-    {
-      icon: 'person_add',
-      title: 'Nuevo usuario creado',
-      description: 'admin@kallpa.com',
-      time: 'Hace 4 horas',
-      type: 'info'
-    },
-    {
-      icon: 'rule',
-      title: 'Regla de negocio actualizada',
-      description: 'Validación de documentos vencidos',
-      time: 'Ayer',
-      type: 'warning'
-    }
-  ];
+  // Contadores
+  totalEmpresasPrincipales: number = 0;
+  totalContratistas: number = 0;
+  totalUsuarios: number = 0;
+
+  loading: boolean = true;
+
+  constructor(
+    private empresaService: EmpresaService,
+    private usuariosService: UsuariosService
+  ) {}
 
   ngOnInit(): void {
-    // Component initialization
-    // TODO: Replace mock data with real API calls
+    this.loadData();
   }
 
-  getActivityColor(type: string): string {
-    switch (type) {
-      case 'success': return 'success-activity';
-      case 'info': return 'info-activity';
-      case 'warning': return 'warning-activity';
-      default: return '';
-    }
+  loadData(): void {
+    this.loading = true;
+
+    // Cargar empresas
+    this.empresaService.getAllEmpresas().subscribe({
+      next: (empresas) => {
+        // Filtrar empresas principales (tipoNombre contiene 'Principal' o 'HOST')
+        this.empresasPrincipales = empresas.filter(e =>
+          e.tipoNombre?.toLowerCase().includes('principal') ||
+          e.tipoNombre?.toLowerCase().includes('host')
+        );
+
+        // El resto son contratistas
+        this.empresasContratistas = empresas.filter(e =>
+          !e.tipoNombre?.toLowerCase().includes('principal') &&
+          !e.tipoNombre?.toLowerCase().includes('host')
+        );
+
+        this.totalEmpresasPrincipales = this.empresasPrincipales.length;
+        this.totalContratistas = this.empresasContratistas.length;
+      },
+      error: (error) => {
+        console.error('Error cargando empresas:', error);
+      }
+    });
+
+    // Cargar usuarios
+    this.usuariosService.getAllUsuarios().subscribe({
+      next: (usuarios) => {
+        this.usuarios = usuarios;
+        this.totalUsuarios = usuarios.length;
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error cargando usuarios:', error);
+        this.loading = false;
+      }
+    });
   }
 }

@@ -1,8 +1,4 @@
 <div class="dashboard-superadmin">
-  <div class="dashboard-header">
-    <h1>Panel de Super Administrador</h1>
-    <p class="subtitle">Vista general del sistema SSOMA Platform</p>
-  </div>
 
   <!-- Tarjetas de estadísticas principales -->
   <div class="stats-grid">
@@ -12,20 +8,8 @@
           <mat-icon>domain</mat-icon>
         </div>
         <div class="stat-info">
-          <h3 class="stat-value">{{ stats.totalTenants }}</h3>
-          <p class="stat-label">Tenants Activos</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon user-icon">
-          <mat-icon>people</mat-icon>
-        </div>
-        <div class="stat-info">
-          <h3 class="stat-value">{{ stats.totalUsuarios }}</h3>
-          <p class="stat-label">Total Usuarios</p>
+          <h3 class="stat-value">{{ totalEmpresasPrincipales }}</h3>
+          <p class="stat-label">Empresas Principales</p>
         </div>
       </mat-card-content>
     </mat-card>
@@ -36,75 +20,142 @@
           <mat-icon>business</mat-icon>
         </div>
         <div class="stat-info">
-          <h3 class="stat-value">{{ stats.totalEmpresas }}</h3>
-          <p class="stat-label">Total Empresas</p>
+          <h3 class="stat-value">{{ totalContratistas }}</h3>
+          <p class="stat-label">Contratistas</p>
         </div>
       </mat-card-content>
     </mat-card>
 
     <mat-card class="stat-card">
       <mat-card-content>
-        <div class="stat-icon active-icon">
-          <mat-icon>check_circle</mat-icon>
+        <div class="stat-icon user-icon">
+          <mat-icon>people</mat-icon>
         </div>
         <div class="stat-info">
-          <h3 class="stat-value">{{ stats.usuariosActivos }}</h3>
-          <p class="stat-label">Usuarios Activos</p>
+          <h3 class="stat-value">{{ totalUsuarios }}</h3>
+          <p class="stat-label">Total Usuarios</p>
         </div>
       </mat-card-content>
     </mat-card>
   </div>
 
-  <!-- Sección de acciones rápidas -->
-  <div class="quick-actions-section">
+  <!-- Empresas Principales -->
+  <div class="section">
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Acciones Rápidas</mat-card-title>
+        <mat-card-title>
+          <mat-icon>domain</mat-icon>
+          Empresas Principales
+        </mat-card-title>
       </mat-card-header>
       <mat-card-content>
-        <div class="actions-grid">
-          <button mat-raised-button color="primary" routerLink="/empresa-principal">
-            <mat-icon>add_business</mat-icon>
-            Gestionar Empresa Principal
-          </button>
-          <button mat-raised-button color="primary" routerLink="/empresas">
-            <mat-icon>business</mat-icon>
-            Ver Todas las Empresas
-          </button>
-          <button mat-raised-button color="primary" routerLink="/reglas-negocio">
-            <mat-icon>rule</mat-icon>
-            Configurar Reglas
-          </button>
-          <button mat-raised-button color="primary" routerLink="/acreditacion">
-            <mat-icon>assignment_turned_in</mat-icon>
-            Acreditación Global
-          </button>
-        </div>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Actividad reciente -->
-  <div class="activity-section">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>Actividad Reciente del Sistema</mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="activity-list">
-          <div *ngFor="let activity of recentActivity"
-               class="activity-item"
-               [ngClass]="getActivityColor(activity.type)">
-            <div class="activity-icon">
-              <mat-icon>{{ activity.icon }}</mat-icon>
+        <div class="empresas-list" *ngIf="empresasPrincipales.length > 0; else noEmpresasPrincipales">
+          <div class="empresa-item" *ngFor="let empresa of empresasPrincipales">
+            <div class="empresa-logo">
+              <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" [alt]="empresa.razonSocial">
+              <mat-icon *ngIf="!empresa.logoUrl">domain</mat-icon>
             </div>
-            <div class="activity-content">
-              <h4>{{ activity.title }}</h4>
-              <p>{{ activity.description }}</p>
-              <span class="activity-time">{{ activity.time }}</span>
+            <div class="empresa-info">
+              <h4>{{ empresa.razonSocial }}</h4>
+              <p class="ruc">RUC: {{ empresa.ruc }}</p>
+              <p class="tenant">Tenant: {{ empresa.tenantId }}</p>
+            </div>
+            <div class="empresa-status">
+              <span class="status-badge" [class.active]="empresa.activo" [class.inactive]="!empresa.activo">
+                {{ empresa.activo ? 'Activo' : 'Inactivo' }}
+              </span>
             </div>
           </div>
         </div>
+        <ng-template #noEmpresasPrincipales>
+          <div class="empty-state">
+            <mat-icon>domain_disabled</mat-icon>
+            <p>No hay empresas principales registradas</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Contratistas -->
+  <div class="section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>business</mat-icon>
+          Contratistas
+        </mat-card-title>
+        <button mat-button color="primary" routerLink="/empresas">Ver todos</button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="empresas-list" *ngIf="empresasContratistas.length > 0; else noContratistas">
+          <div class="empresa-item" *ngFor="let empresa of empresasContratistas.slice(0, 5)">
+            <div class="empresa-logo">
+              <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" [alt]="empresa.razonSocial">
+              <mat-icon *ngIf="!empresa.logoUrl">business</mat-icon>
+            </div>
+            <div class="empresa-info">
+              <h4>{{ empresa.razonSocial }}</h4>
+              <p class="ruc">RUC: {{ empresa.ruc }}</p>
+              <p class="tipo">{{ empresa.tipoNombre || 'Contratista' }}</p>
+            </div>
+            <div class="empresa-status">
+              <span class="status-badge" [class.active]="empresa.activo" [class.inactive]="!empresa.activo">
+                {{ empresa.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+          </div>
+          <div class="ver-mas" *ngIf="empresasContratistas.length > 5">
+            <p>y {{ empresasContratistas.length - 5 }} contratistas más...</p>
+          </div>
+        </div>
+        <ng-template #noContratistas>
+          <div class="empty-state">
+            <mat-icon>business_center</mat-icon>
+            <p>No hay contratistas registrados</p>
+          </div>
+        </ng-template>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Usuarios -->
+  <div class="section">
+    <mat-card>
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>people</mat-icon>
+          Usuarios del Sistema
+        </mat-card-title>
+        <button mat-button color="primary" routerLink="/usuarios">Ver todos</button>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="usuarios-list" *ngIf="usuarios.length > 0; else noUsuarios">
+          <div class="usuario-item" *ngFor="let usuario of usuarios.slice(0, 5)">
+            <div class="usuario-avatar">
+              <mat-icon>account_circle</mat-icon>
+            </div>
+            <div class="usuario-info">
+              <h4>{{ usuario.nombreCompleto }}</h4>
+              <p class="username">@{{ usuario.username }}</p>
+              <p class="rol">{{ usuario.rolNombre || usuario.rolCodigo }}</p>
+            </div>
+            <div class="usuario-status">
+              <span class="status-badge" [class.active]="usuario.activo" [class.inactive]="!usuario.activo">
+                {{ usuario.activo ? 'Activo' : 'Inactivo' }}
+              </span>
+            </div>
+          </div>
+          <div class="ver-mas" *ngIf="usuarios.length > 5">
+            <p>y {{ usuarios.length - 5 }} usuarios más...</p>
+          </div>
+        </div>
+        <ng-template #noUsuarios>
+          <div class="empty-state">
+            <mat-icon>person_off</mat-icon>
+            <p>No hay usuarios registrados</p>
+          </div>
+        </ng-template>
       </mat-card-content>
     </mat-card>
   </div>

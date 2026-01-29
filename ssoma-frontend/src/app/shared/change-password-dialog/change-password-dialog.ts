@@ -53,6 +53,33 @@ export class ChangePasswordDialogComponent implements OnInit {
     this.showConfirmPassword = !this.showConfirmPassword;
   }
 
+  generatePassword(): void {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let password = '';
+
+    // Asegurar al menos uno de cada tipo
+    password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+    password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+    password += '0123456789'[Math.floor(Math.random() * 10)];
+    password += '!@#$%^&*'[Math.floor(Math.random() * 8)];
+
+    // Completar hasta 8 caracteres
+    for (let i = 4; i < 8; i++) {
+      password += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    // Mezclar
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+    this.passwordForm.patchValue({
+      newPassword: password,
+      confirmPassword: password
+    });
+
+    this.showPassword = true;
+    this.showConfirmPassword = true;
+  }
+
   passwordsMatch(): boolean {
     const newPassword = this.passwordForm.get('newPassword')?.value;
     const confirmPassword = this.passwordForm.get('confirmPassword')?.value;

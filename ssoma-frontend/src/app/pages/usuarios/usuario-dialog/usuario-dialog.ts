@@ -22,6 +22,9 @@ interface Usuario {
 export interface UsuarioDialogData {
   usuario?: Usuario;
   isEdit: boolean;
+  isViewOnly?: boolean;
+  disableTenant?: boolean;
+  isCreate?: boolean;
 }
 
 @Component({
@@ -40,13 +43,21 @@ export interface UsuarioDialogData {
 export class UsuarioDialogComponent implements OnInit {
   usuarioForm!: FormGroup;
   isEdit: boolean = false;
+  isViewOnly: boolean = false;
+  isCreate: boolean = false;
+  disableTenant: boolean = false;
   showPasswordFields: boolean = false;
   roles: Rol[] = [];
+  isSuperAdminSelected: boolean = false;
+  selectedRolNombre: string = '';
+  showPassword: boolean = false;
+  showConfirmPassword: boolean = false;
 
   // TODO: Obtener de un servicio
+  // Nota: SYSTEM no se incluye porque solo es para SUPER_ADMIN (se asigna automáticamente)
   empresasPrincipales = [
     { tenantId: 'KALLPA', nombre: 'KALLPA SAC' },
-    { tenantId: 'SYSTEM', nombre: 'Sistema Central' }
+    { tenantId: 'LUZDELSUR', nombre: 'Luz del Sur' }
   ];
 
   constructor(
@@ -56,7 +67,16 @@ export class UsuarioDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: UsuarioDialogData
   ) {
     this.isEdit = data.isEdit;
-    this.showPasswordFields = !data.isEdit; // Mostrar password solo en creación
+    this.isViewOnly = data.isViewOnly || false;
+    this.isCreate = data.isCreate || false;
+    this.disableTenant = data.disableTenant || false;
+    this.showPasswordFields = this.isCreate || (!data.isEdit && !this.isViewOnly);
+
+    // En modo creación, inicializar valores para SUPER_ADMIN
+    if (this.isCreate) {
+      this.selectedRolNombre = 'Super Administrador';
+      this.isSuperAdminSelected = true;
+    }
   }
 
   ngOnInit(): void {
@@ -67,12 +87,39 @@ export class UsuarioDialogComponent implements OnInit {
   loadRoles(): void {
     this.rolesService.getAllRoles().subscribe({
       next: (roles) => {
-        this.roles = roles;
-        if (this.isEdit && this.data.usuario) {
+        // En modo creación, solo mostrar SUPER_ADMIN (esta pantalla es solo para crear superadmins)
+        // En modo edición, filtrar SUPER_ADMIN (no debe poder cambiarse a superadmin)
+        // En modo solo lectura, mostrar todos los roles
+        if (this.isCreate) {
+          this.roles = roles.filter(r => r.codigo === 'SUPER_ADMIN');
+        } else if (this.isEdit && !this.isViewOnly) {
+          this.roles = roles.filter(r => r.codigo !== 'SUPER_ADMIN');
+        } else {
+          this.roles = roles;
+        }
+        // En modo creación, auto-seleccionar SUPER_ADMIN
+        if (this.isCreate && this.roles.length > 0) {
+          const superAdminRol = this.roles.find(r => r.codigo === 'SUPER_ADMIN');
+          if (superAdminRol) {
+            this.usuarioForm.patchValue({ rolId: superAdminRol.rolId });
+            this.onRolChange(superAdminRol.rolId);
+          }
+        }
+        // Cargar datos del usuario si existe (en modo edición o solo lectura)
+        if (this.data.usuario) {
           this.usuarioForm.patchValue({
-            ...this.data.usuario,
-            rolId: this.data.usuario.rolId
+            username: this.data.usuario.username,
+            nombreCompleto: this.data.usuario.nombreCompleto,
+            email: this.data.usuario.email,
+            rolId: this.data.usuario.rolId,
+            tenantId: this.data.usuario.tenantId,
+            empresaNombre: this.data.usuario.empresaNombre,
+            activo: this.data.usuario.activo
           });
+          // Ejecutar onRolChange inicial para establecer el estado correcto
+          if (this.data.usuario.rolId) {
+            this.onRolChange(this.data.usuario.rolId);
+          }
         }
         // Observar cambios en el rol para habilitar/deshabilitar tenant
         this.usuarioForm.get('rolId')?.valueChanges.subscribe(rolId => {
@@ -106,9 +153,22 @@ export class UsuarioDialogComponent implements OnInit {
     const rolData = this.roles.find(r => r.rolId === rolId);
     const tenantControl = this.usuarioForm.get('tenantId');
 
-    if (rolData?.requiereTenant) {
+    // Verificar si es SUPER_ADMIN y guardar nombre del rol
+    this.isSuperAdminSelected = rolData?.codigo === 'SUPER_ADMIN';
+    this.selectedRolNombre = rolData?.nombre || '';
+
+    if (this.isSuperAdminSelected) {
+      // SUPER_ADMIN siempre tiene tenant SYSTEM
+      tenantControl?.setValue('SYSTEM');
+      tenantControl?.clearValidators();
+      tenantControl?.disable();
+    } else if (rolData?.requiereTenant) {
       tenantControl?.setValidators([Validators.required]);
       tenantControl?.enable();
+      // Limpiar si tenía SYSTEM
+      if (tenantControl?.value === 'SYSTEM') {
+        tenantControl?.setValue('');
+      }
     } else {
       tenantControl?.clearValidators();
       tenantControl?.setValue(null);
@@ -120,6 +180,54 @@ export class UsuarioDialogComponent implements OnInit {
   getRolDescription(rolId: string): string {
     const rolData = this.roles.find(r => r.rolId === rolId);
     return rolData?.descripcion || '';
+  }
+
+  getRolNombre(): string {
+    if (this.selectedRolNombre) {
+      return this.selectedRolNombre;
+    }
+    // Fallback para modo creación si aún no se ha cargado el nombre
+    if (this.isCreate && this.isSuperAdminSelected) {
+      return 'Super Administrador';
+    }
+    const rolId = this.usuarioForm.get('rolId')?.value;
+    const rolData = this.roles.find(r => r.rolId === rolId);
+    return rolData?.nombre || this.data.usuario?.rolCodigo || '';
+  }
+
+  togglePasswordVisibility(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+  toggleConfirmPasswordVisibility(): void {
+    this.showConfirmPassword = !this.showConfirmPassword;
+  }
+
+  generatePassword(): void {
+    const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*';
+    let password = '';
+
+    // Asegurar al menos uno de cada tipo
+    password += 'abcdefghijklmnopqrstuvwxyz'[Math.floor(Math.random() * 26)];
+    password += 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[Math.floor(Math.random() * 26)];
+    password += '0123456789'[Math.floor(Math.random() * 10)];
+    password += '!@#$%^&*'[Math.floor(Math.random() * 8)];
+
+    // Completar hasta 8 caracteres
+    for (let i = 4; i < 8; i++) {
+      password += chars[Math.floor(Math.random() * chars.length)];
+    }
+
+    // Mezclar
+    password = password.split('').sort(() => Math.random() - 0.5).join('');
+
+    this.usuarioForm.patchValue({
+      password: password,
+      confirmPassword: password
+    });
+
+    this.showPassword = true;
+    this.showConfirmPassword = true;
   }
 
   requiereTenant(): boolean {

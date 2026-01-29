@@ -4,6 +4,7 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { RolesService, Rol } from '../../../core/services/roles.service';
 import { UsuariosService, Usuario, CreateUsuarioRequest, UpdateUsuarioRequest } from '../../../core/services/usuarios.service'; // Importar Usuario, Create/Update Request
 
@@ -21,7 +22,8 @@ export interface UsuarioEmpresaDialogData {
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
-    MatIconModule
+    MatIconModule,
+    MatTooltipModule
   ],
   templateUrl: './usuario-empresa-dialog.html',
   styleUrl: './usuario-empresa-dialog.scss'

@@ -7,9 +7,9 @@
         <p class="subtitle">Administra usuarios y permisos del sistema</p>
       </div>
     </div>
-    <button mat-raised-button color="primary" (click)="openUsuarioDialog()">
-      <mat-icon>person_add</mat-icon>
-      Nuevo Usuario
+    <button mat-raised-button color="primary" (click)="openCreateDialog()">
+      <mat-icon>security</mat-icon>
+      Nuevo Super Admin
     </button>
   </div>
 
@@ -74,9 +74,7 @@
       <ng-container matColumnDef="rol">
         <th mat-header-cell *matHeaderCellDef>Rol / Grupo</th>
         <td mat-cell *matCellDef="let usuario">
-          <mat-chip [class]="getRolColor(usuario.rol)">
-            {{ getRolLabel(usuario.rol) }}
-          </mat-chip>
+          {{ getRolLabel(usuario.rol) }}
         </td>
       </ng-container>
 
@@ -115,13 +113,28 @@
         <td mat-cell *matCellDef="let usuario">
           <div class="action-buttons">
             <button mat-icon-button
-                    (click)="openUsuarioDialog(usuario)"
+                    (click)="viewUsuario(usuario)"
+                    matTooltip="Ver datos"
+                    color="primary">
+              <mat-icon>visibility</mat-icon>
+            </button>
+
+            <button mat-icon-button
+                    (click)="openEditDialog(usuario)"
                     matTooltip="Editar usuario"
                     color="primary">
               <mat-icon>edit</mat-icon>
             </button>
 
             <button mat-icon-button
+                    (click)="changePassword(usuario)"
+                    matTooltip="Cambiar contraseña"
+                    color="accent">
+              <mat-icon>vpn_key</mat-icon>
+            </button>
+
+            <button mat-icon-button
+                    *ngIf="!esSuperAdminPrincipal(usuario)"
                     (click)="toggleEstadoUsuario(usuario)"
                     [matTooltip]="usuario.activo ? 'Desactivar usuario' : 'Activar usuario'"
                     [color]="usuario.activo ? 'warn' : 'accent'">
@@ -129,13 +142,7 @@
             </button>
 
             <button mat-icon-button
-                    (click)="resetPassword(usuario)"
-                    matTooltip="Resetear contraseña"
-                    color="accent">
-              <mat-icon>vpn_key</mat-icon>
-            </button>
-
-            <button mat-icon-button
+                    *ngIf="!esSuperAdminPrincipal(usuario)"
                     (click)="deleteUsuario(usuario)"
                     matTooltip="Eliminar usuario"
                     color="warn">

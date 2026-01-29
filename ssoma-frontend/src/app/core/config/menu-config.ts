@@ -22,7 +22,7 @@ export const MENU_ITEMS: MenuItem[] = [
     roles: ['SUPER_ADMIN']
   },
   {
-    label: 'Todos los Contratistas',
+    label: 'Todas las Empresas',
     icon: 'business',
     route: '/empresas',
     roles: ['SUPER_ADMIN']
@@ -37,24 +37,6 @@ export const MENU_ITEMS: MenuItem[] = [
     label: 'Roles',
     icon: 'admin_panel_settings',
     route: '/roles',
-    roles: ['SUPER_ADMIN']
-  },
-  {
-    label: 'Acreditación Global',
-    icon: 'assignment_turned_in',
-    route: '/acreditacion',
-    roles: ['SUPER_ADMIN']
-  },
-  {
-    label: 'Pasaportes',
-    icon: 'badge',
-    route: '/pasaporte',
-    roles: ['SUPER_ADMIN']
-  },
-  {
-    label: 'Reglas de Negocio',
-    icon: 'rule',
-    route: '/reglas-negocio',
     roles: ['SUPER_ADMIN']
   },
   

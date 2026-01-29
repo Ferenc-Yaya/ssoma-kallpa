@@ -20,16 +20,28 @@
     <p>Cargando usuarios...</p>
   </div>
 
+  <!-- Buscador -->
+  <div *ngIf="!loading" class="search-container">
+    <div class="search-box">
+      <mat-icon class="search-icon">search</mat-icon>
+      <input type="text"
+             [(ngModel)]="searchTerm"
+             (input)="aplicarFiltros()"
+             placeholder="Búsqueda: nombre, email, rol"
+             class="search-input">
+    </div>
+  </div>
+
   <!-- Lista de usuarios -->
   <mat-card *ngIf="!loading" class="usuarios-card">
     <mat-card-header>
       <mat-icon mat-card-avatar>people</mat-icon>
       <mat-card-title>Lista de Usuarios</mat-card-title>
-      <mat-card-subtitle>{{ usuarios.length }} usuario(s) registrado(s)</mat-card-subtitle>
+      <mat-card-subtitle>{{ usuariosFiltrados.length }} de {{ usuarios.length }} usuario(s)</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
       <!-- Tabla -->
-      <table mat-table [dataSource]="usuarios" class="usuarios-table" *ngIf="usuarios.length > 0">
+      <table mat-table [dataSource]="usuariosFiltrados" class="usuarios-table" *ngIf="usuariosFiltrados.length > 0">
         <!-- Username -->
         <ng-container matColumnDef="username">
           <th mat-header-cell *matHeaderCellDef>Username</th>
@@ -86,6 +98,11 @@
                       matTooltip="Editar usuario">
                 <mat-icon>edit</mat-icon>
               </button>
+              <button mat-icon-button color="accent"
+                      (click)="changePassword(usuario)"
+                      matTooltip="Cambiar contraseña">
+                <mat-icon>vpn_key</mat-icon>
+              </button>
               <button mat-icon-button color="warn"
                       (click)="deleteUsuario(usuario)"
                       matTooltip="Eliminar">
@@ -100,6 +117,11 @@
       </table>
 
       <!-- Sin usuarios -->
+      <div *ngIf="usuariosFiltrados.length === 0 && usuarios.length > 0" class="no-usuarios">
+        <mat-icon>search_off</mat-icon>
+        <p>No se encontraron usuarios con ese criterio.</p>
+        <p class="hint">Intenta con otra búsqueda.</p>
+      </div>
       <div *ngIf="usuarios.length === 0" class="no-usuarios">
         <mat-icon>people_outline</mat-icon>
         <p>No hay usuarios registrados para esta empresa.</p>
