@@ -23,10 +23,33 @@
     <mat-card-header>
       <mat-icon mat-card-avatar>business</mat-icon>
       <mat-card-title>Lista de Contratistas</mat-card-title>
-      <mat-card-subtitle>{{ contratistas.length }} contratista(s) encontrado(s)</mat-card-subtitle>
+      <mat-card-subtitle>{{ contratistasFiltrados.length }} contratista(s) encontrado(s)</mat-card-subtitle>
     </mat-card-header>
     <mat-card-content>
-      <table mat-table [dataSource]="contratistas" class="contratistas-table" *ngIf="contratistas.length > 0">
+      <!-- Barra de búsqueda -->
+      <div class="search-bar">
+        <mat-icon>search</mat-icon>
+        <input type="text"
+               placeholder="Buscar por razón social..."
+               [(ngModel)]="searchTerm"
+               (input)="filtrarContratistas()">
+        <button mat-icon-button *ngIf="searchTerm" (click)="limpiarBusqueda()" matTooltip="Limpiar búsqueda">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <table mat-table [dataSource]="contratistasFiltrados" class="contratistas-table" *ngIf="contratistasFiltrados.length > 0">
+        <!-- Logo Column -->
+        <ng-container matColumnDef="logo">
+          <th mat-header-cell *matHeaderCellDef></th>
+          <td mat-cell *matCellDef="let element">
+            <div class="empresa-logo">
+              <img *ngIf="element.logoUrl" [src]="element.logoUrl" [alt]="element.razonSocial">
+              <mat-icon *ngIf="!element.logoUrl">business</mat-icon>
+            </div>
+          </td>
+        </ng-container>
+
         <!-- Razón Social Column -->
         <ng-container matColumnDef="razonSocial">
           <th mat-header-cell *matHeaderCellDef>Razón Social</th>
@@ -63,6 +86,12 @@
               <button mat-icon-button color="primary" (click)="openEditContratistaDialog(element)" matTooltip="Editar contratista">
                 <mat-icon>edit</mat-icon>
               </button>
+              <button mat-icon-button
+                      [color]="element.activo ? 'warn' : 'primary'"
+                      (click)="toggleEstado(element)"
+                      [matTooltip]="element.activo ? 'Desactivar' : 'Activar'">
+                <mat-icon>{{ element.activo ? 'block' : 'check_circle' }}</mat-icon>
+              </button>
               <button mat-icon-button color="warn" (click)="deleteContratista(element)" matTooltip="Eliminar contratista">
                 <mat-icon>delete</mat-icon>
               </button>
@@ -74,12 +103,17 @@
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
       </table>
 
-      <div *ngIf="contratistas.length === 0 && !loading" class="no-contratistas">
-        <mat-icon>domain_disabled</mat-icon>
-        <p>No se encontraron contratistas para esta empresa principal.</p>
-        <button mat-raised-button color="primary" (click)="openCreateContratistaDialog()">
+      <div *ngIf="contratistasFiltrados.length === 0 && !loading" class="no-contratistas">
+        <mat-icon>{{ searchTerm ? 'search_off' : 'domain_disabled' }}</mat-icon>
+        <p *ngIf="!searchTerm">No se encontraron contratistas para esta empresa principal.</p>
+        <p *ngIf="searchTerm">No se encontraron contratistas con "{{ searchTerm }}"</p>
+        <button mat-raised-button color="primary" (click)="openCreateContratistaDialog()" *ngIf="!searchTerm">
           <mat-icon>add_business</mat-icon>
           Agregar Primer Contratista
+        </button>
+        <button mat-stroked-button color="primary" (click)="limpiarBusqueda()" *ngIf="searchTerm">
+          <mat-icon>clear</mat-icon>
+          Limpiar búsqueda
         </button>
       </div>
     </mat-card-content>

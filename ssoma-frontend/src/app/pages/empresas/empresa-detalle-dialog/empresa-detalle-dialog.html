@@ -1,0 +1,153 @@
+<h2 mat-dialog-title>
+  <mat-icon>visibility</mat-icon>
+  Detalle de Empresa
+</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="empresaForm" class="empresa-form">
+    <!-- Datos básicos -->
+    <div class="form-section">
+      <h3 class="section-title">Datos de la Empresa</h3>
+
+      <div class="form-field">
+        <label>Razón Social</label>
+        <input type="text" formControlName="razonSocial" placeholder="Razón social">
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label>RUC</label>
+          <input type="text" formControlName="ruc" placeholder="RUC">
+        </div>
+
+        <div class="form-field">
+          <label>Tipo de Empresa</label>
+          <select formControlName="tipoId">
+            <option value="">Sin asignar</option>
+            <option *ngFor="let tipo of tiposContratista" [value]="tipo.tipoId">
+              {{ tipo.nombre }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label>Teléfono</label>
+          <input type="text" formControlName="telefono" placeholder="Teléfono">
+        </div>
+
+        <div class="form-field">
+          <label>Email</label>
+          <input type="email" formControlName="email" placeholder="Email">
+        </div>
+      </div>
+
+      <div class="form-field">
+        <label>Dirección</label>
+        <textarea formControlName="direccion" rows="2" placeholder="Dirección"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-field">
+          <label>Rubro Comercial</label>
+          <input type="text" formControlName="rubroComercial" placeholder="Rubro comercial">
+        </div>
+
+        <div class="form-field">
+          <label>Sitio Web</label>
+          <input type="text" formControlName="sitioWeb" placeholder="Sitio web">
+        </div>
+      </div>
+    </div>
+
+    <!-- Score de Seguridad -->
+    <div class="form-section">
+      <h3 class="section-title">
+        <mat-icon>shield</mat-icon>
+        Score de Seguridad
+      </h3>
+
+      <div class="score-container">
+        <div class="score-slider">
+          <mat-slider min="0" max="100" step="1" discrete [displayWith]="formatScore" [disabled]="true">
+            <input matSliderThumb formControlName="scoreSeguridad">
+          </mat-slider>
+        </div>
+        <div class="score-value"
+             [class.score-bajo]="getScoreValue() < 50"
+             [class.score-medio]="getScoreValue() >= 50 && getScoreValue() < 80"
+             [class.score-alto]="getScoreValue() >= 80">
+          {{ getScoreValue() }}/100
+        </div>
+      </div>
+    </div>
+
+    <!-- Logo -->
+    <div class="form-section">
+      <h3 class="section-title">Logo de la Empresa</h3>
+
+      <div class="logo-upload-container">
+        <div class="logo-preview" *ngIf="logoPreview">
+          <img [src]="logoPreview" alt="Logo">
+        </div>
+        <div class="no-logo" *ngIf="!logoPreview">
+          <mat-icon>image_not_supported</mat-icon>
+          <span>Sin logo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Contactos -->
+    <div class="form-section">
+      <div class="section-header">
+        <h3 class="section-title">
+          <mat-icon>contacts</mat-icon>
+          Contactos
+        </h3>
+      </div>
+
+      <div class="contactos-list" *ngIf="contactos.length > 0" formArrayName="contactos">
+        <div class="contacto-item" *ngFor="let contacto of contactos.controls; let i = index" [formGroupName]="i">
+          <div class="contacto-header">
+            <span class="contacto-number">Contacto {{ i + 1 }}</span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Nombre Completo</label>
+              <input type="text" formControlName="nombreCompleto" placeholder="Nombre completo">
+            </div>
+            <div class="form-field">
+              <label>Cargo</label>
+              <input type="text" formControlName="cargo" placeholder="Cargo">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-field">
+              <label>Teléfono</label>
+              <input type="text" formControlName="telefono" placeholder="Teléfono">
+            </div>
+            <div class="form-field">
+              <label>Email</label>
+              <input type="email" formControlName="email" placeholder="Email">
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="empty-contactos" *ngIf="contactos.length === 0">
+        <mat-icon>person_off</mat-icon>
+        <p>No hay contactos registrados</p>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onClose()">
+    <mat-icon>close</mat-icon>
+    Cerrar
+  </button>
+</mat-dialog-actions>

@@ -1,6 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -36,6 +37,7 @@ export class UsuariosComponent implements OnInit {
   usuarios: Usuario[] = [];
   usuariosFiltrados: Usuario[] = [];
   searchTerm: string = '';
+  loading: boolean = true;
   displayedColumns: string[] = ['username', 'nombreCompleto', 'rol', 'tenant', 'activo', 'acciones'];
 
   // Filtros
@@ -59,7 +61,8 @@ export class UsuariosComponent implements OnInit {
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private usuariosService: UsuariosService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +70,7 @@ export class UsuariosComponent implements OnInit {
   }
 
   loadUsuarios(): void {
+    this.loading = true;
     this.usuariosService.getAllUsuarios().subscribe({
       next: (usuarios) => {
         this.usuarios = usuarios.map(u => ({
@@ -74,13 +78,27 @@ export class UsuariosComponent implements OnInit {
           rol: u.rolCodigo as 'SUPER_ADMIN' | 'ADMIN_EMPRESA_PRINCIPAL' | 'ADMIN_CONTRATISTA'
         }));
         this.aplicarFiltros();
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error cargando usuarios:', error);
         this.showNotification('Error al cargar los usuarios', 'error');
+        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard-superadmin']);
+  }
+
+  limpiarBusqueda(): void {
+    this.searchTerm = '';
+    this.filtroRol = 'TODOS';
+    this.filtroEstado = 'TODOS';
+    this.aplicarFiltros();
   }
 
   aplicarFiltros(): void {

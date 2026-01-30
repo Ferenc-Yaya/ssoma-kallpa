@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
+import { forkJoin } from 'rxjs';
 import { EmpresaService, EmpresaDTO } from '../../core/services/empresa.service';
 import { UsuariosService, Usuario } from '../../core/services/usuarios.service';
 
@@ -34,7 +35,8 @@ export class DashboardSuperadminComponent implements OnInit {
 
   constructor(
     private empresaService: EmpresaService,
-    private usuariosService: UsuariosService
+    private usuariosService: UsuariosService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -44,9 +46,11 @@ export class DashboardSuperadminComponent implements OnInit {
   loadData(): void {
     this.loading = true;
 
-    // Cargar empresas
-    this.empresaService.getAllEmpresas().subscribe({
-      next: (empresas) => {
+    forkJoin({
+      empresas: this.empresaService.getAllEmpresas(),
+      usuarios: this.usuariosService.getAllUsuarios()
+    }).subscribe({
+      next: ({ empresas, usuarios }) => {
         // Filtrar empresas principales (tipoNombre contiene 'Principal' o 'HOST')
         this.empresasPrincipales = empresas.filter(e =>
           e.tipoNombre?.toLowerCase().includes('principal') ||
@@ -61,22 +65,18 @@ export class DashboardSuperadminComponent implements OnInit {
 
         this.totalEmpresasPrincipales = this.empresasPrincipales.length;
         this.totalContratistas = this.empresasContratistas.length;
-      },
-      error: (error) => {
-        console.error('Error cargando empresas:', error);
-      }
-    });
 
-    // Cargar usuarios
-    this.usuariosService.getAllUsuarios().subscribe({
-      next: (usuarios) => {
+        // Usuarios
         this.usuarios = usuarios;
         this.totalUsuarios = usuarios.length;
+
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error cargando usuarios:', error);
+        console.error('Error cargando datos:', error);
         this.loading = false;
+        this.cdr.detectChanges();
       }
     });
   }

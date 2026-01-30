@@ -23,6 +23,13 @@ export interface EmpresaDTO {
   contactos?: any[];
 }
 
+export interface Contacto {
+  nombreCompleto: string;
+  cargo?: string;
+  telefono?: string;
+  email?: string;
+}
+
 export interface CreateEmpresaRequest {
   ruc: string;
   razonSocial: string;
@@ -31,8 +38,10 @@ export interface CreateEmpresaRequest {
   telefono?: string;
   email?: string;
   logoUrl?: string;
-  sitioWeb?: string; // Añadido
-  rubroComercial?: string; // Añadido
+  sitioWeb?: string;
+  rubroComercial?: string;
+  scoreSeguridad?: number;
+  contactos?: Contacto[];
   tenantId: string;
   activo: boolean;
 }
@@ -40,7 +49,7 @@ export interface CreateEmpresaRequest {
 export interface UpdateEmpresaRequest {
   ruc?: string;
   razonSocial?: string;
-  tipoId?: string; // Añadido
+  tipoId?: string;
   direccion?: string;
   telefono?: string;
   email?: string;
@@ -48,6 +57,8 @@ export interface UpdateEmpresaRequest {
   logoUrl?: string;
   sitioWeb?: string;
   rubroComercial?: string;
+  scoreSeguridad?: number;
+  contactos?: Contacto[];
 }
 
 @Injectable({
@@ -93,7 +104,9 @@ export class EmpresaService {
    * Crea una nueva empresa
    */
   createEmpresa(request: CreateEmpresaRequest): Observable<EmpresaDTO> {
-    return this.http.post<EmpresaDTO>(this.apiUrl, request);
+    // Enviar el header X-Tenant-ID con el tenant donde se crea la empresa
+    const headers = { 'X-Tenant-ID': request.tenantId };
+    return this.http.post<EmpresaDTO>(this.apiUrl, request, { headers });
   }
 
   /**

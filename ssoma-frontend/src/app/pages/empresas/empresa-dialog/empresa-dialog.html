@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ isEdit ? 'Editar Empresa' : 'Nueva Empresa' }}</h2>
+<h2 mat-dialog-title>{{ isViewOnly ? 'Detalle de Empresa' : (isEdit ? 'Editar Empresa' : 'Nueva Empresa') }}</h2>
 
 <mat-dialog-content>
   <div class="dialog-content">
@@ -7,29 +7,31 @@
       <h3 class="section-title">Información Básica</h3>
 
       <div class="form-group">
-        <label>Razón Social *</label>
+        <label>Razón Social <span *ngIf="!isViewOnly">*</span></label>
         <input type="text"
                [(ngModel)]="empresaForm.razonSocial"
                placeholder="Ingrese razón social"
+               [disabled]="isViewOnly"
                class="form-input">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>RUC *</label>
+          <label>RUC <span *ngIf="!isViewOnly">*</span></label>
           <input type="text"
                  [(ngModel)]="empresaForm.ruc"
                  placeholder="Ingrese RUC (11 dígitos)"
                  maxlength="11"
+                 [disabled]="isViewOnly"
                  class="form-input">
-          <small *ngIf="empresaForm.ruc && empresaForm.ruc.length !== 11" class="error-text">
+          <small *ngIf="empresaForm.ruc && empresaForm.ruc.length !== 11 && !isViewOnly" class="error-text">
             El RUC debe tener 11 dígitos
           </small>
         </div>
 
         <div class="form-group">
-          <label>Tipo de Contratista *</label>
-          <select [(ngModel)]="empresaForm.tipoId" class="form-input">
+          <label>Tipo de Contratista <span *ngIf="!isViewOnly">*</span></label>
+          <select [(ngModel)]="empresaForm.tipoId" [disabled]="isViewOnly" class="form-input">
             <option [ngValue]="undefined">Seleccionar...</option>
             <option *ngFor="let tipo of tiposContratista" [ngValue]="tipo.tipoId">
               {{ tipo.nombre }}
@@ -39,27 +41,30 @@
       </div>
 
       <div class="form-group">
-        <label>Dirección *</label>
+        <label>Dirección <span *ngIf="!isViewOnly">*</span></label>
         <input type="text"
                [(ngModel)]="empresaForm.direccion"
                placeholder="Ingrese dirección completa"
+               [disabled]="isViewOnly"
                class="form-input">
       </div>
 
       <div class="form-row">
         <div class="form-group">
-          <label>Teléfono *</label>
+          <label>Teléfono <span *ngIf="!isViewOnly">*</span></label>
           <input type="text"
                  [(ngModel)]="empresaForm.telefono"
                  placeholder="Ej: 01-4567890"
+                 [disabled]="isViewOnly"
                  class="form-input">
         </div>
 
         <div class="form-group">
-          <label>Email *</label>
+          <label>Email <span *ngIf="!isViewOnly">*</span></label>
           <input type="email"
                  [(ngModel)]="empresaForm.email"
                  placeholder="correo@empresa.com"
+                 [disabled]="isViewOnly"
                  class="form-input">
         </div>
       </div>
@@ -70,6 +75,7 @@
           <input type="text"
                  [(ngModel)]="empresaForm.sitioWeb"
                  placeholder="www.ejemplo.com"
+                 [disabled]="isViewOnly"
                  class="form-input">
         </div>
 
@@ -78,6 +84,7 @@
           <input type="text"
                  [(ngModel)]="empresaForm.rubroComercial"
                  placeholder="Ej: Minería, Transporte"
+                 [disabled]="isViewOnly"
                  class="form-input">
         </div>
       </div>
@@ -87,11 +94,11 @@
         <div class="logo-upload-container">
           <div class="logo-preview" *ngIf="logoPreview">
             <img [src]="logoPreview" alt="Logo preview">
-            <button type="button" class="remove-logo-btn" (click)="removeLogo()" title="Eliminar logo">
+            <button type="button" class="remove-logo-btn" (click)="removeLogo()" title="Eliminar logo" *ngIf="!isViewOnly">
               <mat-icon>close</mat-icon>
             </button>
           </div>
-          <div class="upload-area" *ngIf="!logoPreview">
+          <div class="upload-area" *ngIf="!logoPreview && !isViewOnly">
             <input type="file"
                    #fileInput
                    accept="image/*"
@@ -103,11 +110,15 @@
             </button>
             <small class="hint">Formatos: JPG, PNG. Máximo 5MB</small>
           </div>
+          <div class="no-logo" *ngIf="!logoPreview && isViewOnly">
+            <mat-icon>image_not_supported</mat-icon>
+            <span>Sin logo</span>
+          </div>
         </div>
       </div>
 
       <div class="form-group" style="margin-top: 10px;">
-        <mat-checkbox [(ngModel)]="empresaForm.activo" color="primary">
+        <mat-checkbox [(ngModel)]="empresaForm.activo" color="primary" [disabled]="isViewOnly">
             Empresa Activa
         </mat-checkbox>
       </div>
@@ -117,7 +128,7 @@
     <div class="section">
       <div class="section-header">
         <h3 class="section-title">Contactos</h3>
-        <button mat-raised-button color="primary" type="button" (click)="agregarContacto()">
+        <button mat-raised-button color="primary" type="button" (click)="agregarContacto()" *ngIf="!isViewOnly">
           <mat-icon>add</mat-icon>
           Agregar Contacto
         </button>
@@ -127,7 +138,7 @@
         <div class="contacto-card" *ngFor="let contacto of contactos; let i = index">
           <div class="contacto-header">
             <span class="contacto-numero">Contacto {{ i + 1 }}</span>
-            <button mat-icon-button color="warn" type="button" (click)="eliminarContacto(i)">
+            <button mat-icon-button color="warn" type="button" (click)="eliminarContacto(i)" *ngIf="!isViewOnly">
               <mat-icon>delete</mat-icon>
             </button>
           </div>
@@ -135,36 +146,40 @@
           <div class="contacto-body">
             <div class="form-row">
               <div class="form-group">
-                <label>Nombre Completo *</label>
+                <label>Nombre Completo <span *ngIf="!isViewOnly">*</span></label>
                 <input type="text"
                        [(ngModel)]="contacto.nombreCompleto"
                        placeholder="Nombres y apellidos"
+                       [disabled]="isViewOnly"
                        class="form-input">
               </div>
 
               <div class="form-group">
-                <label>Cargo *</label>
+                <label>Cargo <span *ngIf="!isViewOnly">*</span></label>
                 <input type="text"
                        [(ngModel)]="contacto.cargo"
                        placeholder="Ej: Gerente General"
+                       [disabled]="isViewOnly"
                        class="form-input">
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label>Teléfono *</label>
+                <label>Teléfono <span *ngIf="!isViewOnly">*</span></label>
                 <input type="text"
                        [(ngModel)]="contacto.telefono"
                        placeholder="Número de teléfono"
+                       [disabled]="isViewOnly"
                        class="form-input">
               </div>
 
               <div class="form-group">
-                <label>Email *</label>
+                <label>Email <span *ngIf="!isViewOnly">*</span></label>
                 <input type="email"
                        [(ngModel)]="contacto.email"
                        placeholder="correo@empresa.com"
+                       [disabled]="isViewOnly"
                        class="form-input">
               </div>
             </div>
@@ -172,7 +187,8 @@
             <div class="form-row">
               <mat-checkbox
                 [(ngModel)]="contacto.esPrincipal"
-                (change)="onPrincipalChange(i)">
+                (change)="onPrincipalChange(i)"
+                [disabled]="isViewOnly">
                 Contacto Principal
               </mat-checkbox>
             </div>
@@ -183,7 +199,7 @@
       <div class="empty-state" *ngIf="contactos.length === 0">
         <mat-icon>person_add</mat-icon>
         <p>No hay contactos agregados</p>
-        <small>Agrega al menos un contacto para facilitar la comunicación</small>
+        <small *ngIf="!isViewOnly">Agrega al menos un contacto para facilitar la comunicación</small>
       </div>
     </div>
 
@@ -191,11 +207,12 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button mat-dialog-close>Cancelar</button>
-  <button mat-raised-button 
-          color="primary" 
+  <button mat-button mat-dialog-close>{{ isViewOnly ? 'Cerrar' : 'Cancelar' }}</button>
+  <button mat-raised-button
+          color="primary"
           [disabled]="!isValid()"
-          (click)="onSave()">
+          (click)="onSave()"
+          *ngIf="!isViewOnly">
     {{ isEdit ? 'Guardar' : 'Crear' }}
   </button>
 </mat-dialog-actions>

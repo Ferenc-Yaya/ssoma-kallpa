@@ -1,5 +1,7 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
@@ -17,6 +19,7 @@ import { RolesService, Rol } from '../../core/services/roles.service';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
     MatTableModule,
     MatIconModule,
@@ -31,13 +34,17 @@ import { RolesService, Rol } from '../../core/services/roles.service';
 })
 export class RolesComponent implements OnInit {
   roles: Rol[] = [];
-  displayedColumns: string[] = ['nombre', 'codigo', 'descripcion', 'nivelJerarquia', 'requiereTenant', 'usuarios', 'activo', 'acciones'];
+  rolesFiltrados: Rol[] = [];
+  searchTerm: string = '';
+  loading: boolean = true;
+  displayedColumns: string[] = ['nombre', 'nivelJerarquia', 'requiereTenant', 'usuarios', 'activo', 'acciones'];
 
   constructor(
     private dialog: MatDialog,
     private snackBar: MatSnackBar,
     private rolesService: RolesService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router
   ) {}
 
   ngOnInit(): void {
@@ -45,16 +52,44 @@ export class RolesComponent implements OnInit {
   }
 
   loadRoles(): void {
+    this.loading = true;
     this.rolesService.getAllRoles().subscribe({
       next: (roles) => {
         this.roles = roles.sort((a, b) => a.nivelJerarquia - b.nivelJerarquia);
+        this.filterRoles();
+        this.loading = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error cargando roles:', error);
         this.showNotification('Error al cargar los roles', 'error');
+        this.loading = false;
+        this.cdr.detectChanges();
       }
     });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard-superadmin']);
+  }
+
+  limpiarBusqueda(): void {
+    this.searchTerm = '';
+    this.filterRoles();
+  }
+
+  filterRoles(): void {
+    const term = this.searchTerm.toLowerCase().trim();
+
+    if (!term) {
+      this.rolesFiltrados = this.roles;
+      return;
+    }
+
+    this.rolesFiltrados = this.roles.filter(rol =>
+      rol.nombre.toLowerCase().includes(term) ||
+      rol.codigo.toLowerCase().includes(term)
+    );
   }
 
   getNivelLabel(nivel: number): string {

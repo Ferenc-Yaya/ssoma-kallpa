@@ -201,12 +201,24 @@ html, body {
 .snackbar-info {
   background-color: #3b82f6 !important;
   color: white !important;
-  
+
   .mat-mdc-snack-bar-label {
     color: white !important;
   }
-  
+
   .mat-mdc-button {
     color: white !important;
+  }
+}
+
+// Estilos para el diálogo de contratista
+.contratista-dialog-panel {
+  .mat-mdc-dialog-container {
+    padding: 0 !important;
+    overflow: hidden !important;
+
+    .mat-mdc-dialog-surface {
+      overflow: hidden !important;
+    }
   }
 }

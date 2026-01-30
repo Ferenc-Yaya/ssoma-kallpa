@@ -1,111 +1,196 @@
 .empresas-page {
-  .back-button-container {
-    margin-bottom: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem;
+}
 
-    button {
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+
+  .header-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .back-button {
+      color: #1F438C;
+    }
+
+    .header-info {
+      h1 {
+        margin: 0;
+        font-size: 1.5rem;
+        color: #333;
+      }
+
+      .subtitle {
+        margin: 0.25rem 0 0 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+    }
+  }
+}
+
+.loading-container {
+  text-align: center;
+  padding: 3rem;
+  color: #666;
+}
+
+.empresas-card {
+  mat-card-header {
+    mat-icon[mat-card-avatar] {
+      background: #1F438C;
+      color: white;
+      padding: 8px;
+      border-radius: 50%;
+      font-size: 24px;
+      width: 40px;
+      height: 40px;
       display: flex;
       align-items: center;
-      gap: 8px;
-      color: #1e40af;
-      font-weight: 500;
+      justify-content: center;
+    }
+  }
+}
 
-      mat-icon {
-        font-size: 20px;
-        width: 20px;
-        height: 20px;
-      }
+// Barra de búsqueda
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  margin-bottom: 16px;
 
-      &:hover {
-        background-color: #eff6ff;
-      }
+  mat-icon {
+    color: #64748b;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+    color: #1e293b;
+
+    &::placeholder {
+      color: #94a3b8;
     }
   }
 
-  .page-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 2rem;
-
-    h1 {
-      margin: 0;
-      color: #333;
-    }
-  }
-
-  .search-container {
-    position: relative;
-    max-width: 500px;
-    margin-bottom: 1.5rem;
-
-    .search-icon {
-      position: absolute;
-      left: 0.875rem;
-      top: 50%;
-      transform: translateY(-50%);
-      color: #666;
-      z-index: 1;
-    }
-
-    .search-input {
-      width: 100%;
-      padding: 0.875rem 0.875rem 0.875rem 3rem;
-      border: 1px solid #ddd;
-      border-radius: 6px;
-      font-size: 1rem;
-      transition: all 0.2s;
-
-      &:focus {
-        outline: none;
-        border-color: #1F438C;
-        box-shadow: 0 0 0 3px rgba(31, 67, 140, 0.1);
-      }
-
-      &::placeholder {
-        color: #999;
-      }
-    }
-  }
-
-  .table-container {
-    background: white;
-    border-radius: 8px;
-    overflow: hidden;
-  }
-
-  .empresas-table {
-    width: 100%;
-  }
-
-  .chip-activo {
-    background: #d1fae5 !important;
-    color: #065f46 !important;
-    font-weight: 500 !important;
-  }
-
-  .chip-inactivo {
-    background: #fee2e2 !important;
-    color: #991b1b !important;
-    font-weight: 500 !important;
-  }
-
-  .chip-tipo {
-    background: #eff6ff !important;
-    color: #1e40af !important;
-    font-weight: 500 !important;
-    border: 1px solid #bfdbfe !important;
-  }
-
-  .no-results {
-    padding: 3rem;
-    text-align: center;
-    color: #999;
+  button {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
 
     mat-icon {
-      font-size: 4rem;
-      width: 4rem;
-      height: 4rem;
-      margin-bottom: 1rem;
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
     }
+  }
+}
+
+// Logo de empresa
+.empresa-logo {
+  width: 40px;
+  height: 40px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #64748b;
+  }
+}
+
+.empresas-table {
+  width: 100%;
+  margin-top: 1rem;
+
+  th.mat-header-cell {
+    font-weight: 600;
+    color: #333;
+    background: #f5f5f5;
+  }
+
+  td.mat-cell {
+    padding: 12px 16px;
+    vertical-align: middle;
+  }
+
+  tr.mat-row:hover {
+    background: #f9f9f9;
+  }
+
+  // Columna de logo más estrecha
+  .mat-column-logo {
+    width: 60px;
+    padding-right: 0 !important;
+  }
+}
+
+.acciones {
+  display: flex;
+  gap: 4px;
+}
+
+.chip-activo {
+  background: #d1fae5 !important;
+  color: #065f46 !important;
+}
+
+.chip-inactivo {
+  background: #fee2e2 !important;
+  color: #991b1b !important;
+}
+
+.chip-tipo {
+  background: #eff6ff !important;
+  color: #1e40af !important;
+  font-weight: 500 !important;
+  border: 1px solid #bfdbfe !important;
+}
+
+.no-empresas {
+  text-align: center;
+  padding: 3rem;
+  color: #999;
+
+  mat-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    margin-bottom: 1rem;
+    color: #ccc;
+  }
+
+  p {
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
   }
 }

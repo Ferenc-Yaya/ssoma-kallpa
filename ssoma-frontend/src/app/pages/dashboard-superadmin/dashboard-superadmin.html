@@ -1,162 +1,60 @@
 <div class="dashboard-superadmin">
 
+  <h1 class="dashboard-title">Panel de Control</h1>
+  <p class="dashboard-subtitle">Resumen general del sistema SSOMA</p>
+
   <!-- Tarjetas de estadísticas principales -->
   <div class="stats-grid">
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon tenant-icon">
-          <mat-icon>domain</mat-icon>
-        </div>
-        <div class="stat-info">
-          <h3 class="stat-value">{{ totalEmpresasPrincipales }}</h3>
-          <p class="stat-label">Empresas Principales</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <a routerLink="/empresa-principal" class="stat-card-link">
+      <mat-card class="stat-card tenant-card">
+        <mat-card-content>
+          <div class="stat-icon tenant-icon">
+            <mat-icon>domain</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3 class="stat-value">{{ totalEmpresasPrincipales }}</h3>
+            <p class="stat-label">Empresas Principales</p>
+          </div>
+          <div class="stat-action">
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </a>
 
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon company-icon">
-          <mat-icon>business</mat-icon>
-        </div>
-        <div class="stat-info">
-          <h3 class="stat-value">{{ totalContratistas }}</h3>
-          <p class="stat-label">Contratistas</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <a routerLink="/empresas" class="stat-card-link">
+      <mat-card class="stat-card company-card">
+        <mat-card-content>
+          <div class="stat-icon company-icon">
+            <mat-icon>business</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3 class="stat-value">{{ totalContratistas }}</h3>
+            <p class="stat-label">Contratistas</p>
+          </div>
+          <div class="stat-action">
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </a>
 
-    <mat-card class="stat-card">
-      <mat-card-content>
-        <div class="stat-icon user-icon">
-          <mat-icon>people</mat-icon>
-        </div>
-        <div class="stat-info">
-          <h3 class="stat-value">{{ totalUsuarios }}</h3>
-          <p class="stat-label">Total Usuarios</p>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <a routerLink="/usuarios" class="stat-card-link">
+      <mat-card class="stat-card user-card">
+        <mat-card-content>
+          <div class="stat-icon user-icon">
+            <mat-icon>people</mat-icon>
+          </div>
+          <div class="stat-info">
+            <h3 class="stat-value">{{ totalUsuarios }}</h3>
+            <p class="stat-label">Total Usuarios</p>
+          </div>
+          <div class="stat-action">
+            <mat-icon>arrow_forward</mat-icon>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </a>
   </div>
 
-  <!-- Empresas Principales -->
-  <div class="section">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>domain</mat-icon>
-          Empresas Principales
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="empresas-list" *ngIf="empresasPrincipales.length > 0; else noEmpresasPrincipales">
-          <div class="empresa-item" *ngFor="let empresa of empresasPrincipales">
-            <div class="empresa-logo">
-              <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" [alt]="empresa.razonSocial">
-              <mat-icon *ngIf="!empresa.logoUrl">domain</mat-icon>
-            </div>
-            <div class="empresa-info">
-              <h4>{{ empresa.razonSocial }}</h4>
-              <p class="ruc">RUC: {{ empresa.ruc }}</p>
-              <p class="tenant">Tenant: {{ empresa.tenantId }}</p>
-            </div>
-            <div class="empresa-status">
-              <span class="status-badge" [class.active]="empresa.activo" [class.inactive]="!empresa.activo">
-                {{ empresa.activo ? 'Activo' : 'Inactivo' }}
-              </span>
-            </div>
-          </div>
-        </div>
-        <ng-template #noEmpresasPrincipales>
-          <div class="empty-state">
-            <mat-icon>domain_disabled</mat-icon>
-            <p>No hay empresas principales registradas</p>
-          </div>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Contratistas -->
-  <div class="section">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>business</mat-icon>
-          Contratistas
-        </mat-card-title>
-        <button mat-button color="primary" routerLink="/empresas">Ver todos</button>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="empresas-list" *ngIf="empresasContratistas.length > 0; else noContratistas">
-          <div class="empresa-item" *ngFor="let empresa of empresasContratistas.slice(0, 5)">
-            <div class="empresa-logo">
-              <img *ngIf="empresa.logoUrl" [src]="empresa.logoUrl" [alt]="empresa.razonSocial">
-              <mat-icon *ngIf="!empresa.logoUrl">business</mat-icon>
-            </div>
-            <div class="empresa-info">
-              <h4>{{ empresa.razonSocial }}</h4>
-              <p class="ruc">RUC: {{ empresa.ruc }}</p>
-              <p class="tipo">{{ empresa.tipoNombre || 'Contratista' }}</p>
-            </div>
-            <div class="empresa-status">
-              <span class="status-badge" [class.active]="empresa.activo" [class.inactive]="!empresa.activo">
-                {{ empresa.activo ? 'Activo' : 'Inactivo' }}
-              </span>
-            </div>
-          </div>
-          <div class="ver-mas" *ngIf="empresasContratistas.length > 5">
-            <p>y {{ empresasContratistas.length - 5 }} contratistas más...</p>
-          </div>
-        </div>
-        <ng-template #noContratistas>
-          <div class="empty-state">
-            <mat-icon>business_center</mat-icon>
-            <p>No hay contratistas registrados</p>
-          </div>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
-  </div>
-
-  <!-- Usuarios -->
-  <div class="section">
-    <mat-card>
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>people</mat-icon>
-          Usuarios del Sistema
-        </mat-card-title>
-        <button mat-button color="primary" routerLink="/usuarios">Ver todos</button>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="usuarios-list" *ngIf="usuarios.length > 0; else noUsuarios">
-          <div class="usuario-item" *ngFor="let usuario of usuarios.slice(0, 5)">
-            <div class="usuario-avatar">
-              <mat-icon>account_circle</mat-icon>
-            </div>
-            <div class="usuario-info">
-              <h4>{{ usuario.nombreCompleto }}</h4>
-              <p class="username">@{{ usuario.username }}</p>
-              <p class="rol">{{ usuario.rolNombre || usuario.rolCodigo }}</p>
-            </div>
-            <div class="usuario-status">
-              <span class="status-badge" [class.active]="usuario.activo" [class.inactive]="!usuario.activo">
-                {{ usuario.activo ? 'Activo' : 'Inactivo' }}
-              </span>
-            </div>
-          </div>
-          <div class="ver-mas" *ngIf="usuarios.length > 5">
-            <p>y {{ usuarios.length - 5 }} usuarios más...</p>
-          </div>
-        </div>
-        <ng-template #noUsuarios>
-          <div class="empty-state">
-            <mat-icon>person_off</mat-icon>
-            <p>No hay usuarios registrados</p>
-          </div>
-        </ng-template>
-      </mat-card-content>
-    </mat-card>
-  </div>
 </div>

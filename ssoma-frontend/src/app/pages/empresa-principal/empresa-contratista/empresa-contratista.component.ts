@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
@@ -8,10 +9,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { EmpresaService, EmpresaDTO, CreateEmpresaRequest, UpdateEmpresaRequest } from '../../../core/services/empresa.service';
 import { TiposContratistaService } from '../../../core/services/tipos-contratista.service';
 import { FileUploadService } from '../../../core/services/file-upload.service';
-import { EmpresaDialogComponent } from '../empresa-dialog/empresa-dialog';
+import { ContratistaDialogComponent } from '../contratista-dialog/contratista-dialog';
 import { ConfirmDialogComponent } from '../../../shared/confirm-dialog/confirm-dialog';
 import { combineLatest } from 'rxjs';
 
@@ -20,13 +22,15 @@ import { combineLatest } from 'rxjs';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
     MatTableModule,
     MatIconModule,
     MatButtonModule,
     MatChipsModule,
     MatSnackBarModule,
-    MatDialogModule
+    MatDialogModule,
+    MatTooltipModule
   ],
   templateUrl: './empresa-contratista.component.html',
   styleUrls: ['./empresa-contratista.component.scss']
@@ -35,9 +39,11 @@ export class EmpresaContratistaComponent implements OnInit {
   tenantId: string = '';
   empresaPrincipalNombre: string = '';
   contratistas: EmpresaDTO[] = [];
-  displayedColumns: string[] = ['razonSocial', 'ruc', 'tipoNombre', 'activo', 'acciones'];
+  contratistasFiltrados: EmpresaDTO[] = [];
+  displayedColumns: string[] = ['logo', 'razonSocial', 'ruc', 'tipoNombre', 'activo', 'acciones'];
   loading = true;
   tipoContratistaId: string | null = null;
+  searchTerm: string = '';
 
   constructor(
     private route: ActivatedRoute,
@@ -104,6 +110,7 @@ export class EmpresaContratistaComponent implements OnInit {
         this.contratistas = empresas.filter(
           e => e.tipoNombre !== 'Empresa Principal'
         );
+        this.filtrarContratistas();
 
         console.log('✅ [CONTRATISTAS] Contratistas después de filtrar:', this.contratistas);
         console.log('📊 [CONTRATISTAS] Cantidad de contratistas:', this.contratistas.length);
@@ -124,17 +131,15 @@ export class EmpresaContratistaComponent implements OnInit {
   }
 
   openCreateContratistaDialog(): void {
-    if (!this.tipoContratistaId) {
-      this.showNotification('Error: No se pudo determinar el tipo de contratista', 'error');
-      return;
-    }
-
-    const dialogRef = this.dialog.open(EmpresaDialogComponent, {
-      width: '650px',
+    const dialogRef = this.dialog.open(ContratistaDialogComponent, {
+      width: '600px',
+      maxHeight: '85vh',
+      autoFocus: false,
+      panelClass: 'contratista-dialog-panel',
       data: {
         isEdit: false,
-        tenantId: this.tenantId, // Asociar al tenant principal
-        tipoId: this.tipoContratistaId // Forzar tipo Contratista
+        tenantId: this.tenantId,
+        tipoId: this.tipoContratistaId
       }
     });
 
@@ -150,13 +155,16 @@ export class EmpresaContratistaComponent implements OnInit {
   }
 
   openEditContratistaDialog(empresa: EmpresaDTO): void {
-    const dialogRef = this.dialog.open(EmpresaDialogComponent, {
-      width: '650px',
+    const dialogRef = this.dialog.open(ContratistaDialogComponent, {
+      width: '600px',
+      maxHeight: '85vh',
+      autoFocus: false,
+      panelClass: 'contratista-dialog-panel',
       data: {
-        empresa: empresa, // Pasar la empresa existente
+        empresa: empresa,
         isEdit: true,
-        tenantId: this.tenantId, // Asegurar que el tenantId se mantiene
-        tipoId: this.tipoContratistaId // Asegurar que el tipo es Contratista
+        tenantId: this.tenantId,
+        tipoId: empresa.tipoId
       }
     });
 
@@ -220,16 +228,18 @@ export class EmpresaContratistaComponent implements OnInit {
 
   createEmpresa(data: any): void {
     const request: CreateEmpresaRequest = {
-      tenantId: this.tenantId, // Asociar al tenant principal
+      tenantId: this.tenantId,
       ruc: data.ruc,
       razonSocial: data.razonSocial,
-      tipoId: this.tipoContratistaId!, // Usar el tipo Contratista
+      tipoId: data.tipoId,
       direccion: data.direccion || null,
       telefono: data.telefono || null,
       email: data.email || null,
       logoUrl: data.logoUrl || null,
       sitioWeb: data.sitioWeb || null,
       rubroComercial: data.rubroComercial || null,
+      scoreSeguridad: data.scoreSeguridad || 0,
+      contactos: data.contactos || [],
       activo: data.activo !== undefined ? data.activo : true
     };
 
@@ -249,13 +259,15 @@ export class EmpresaContratistaComponent implements OnInit {
     const request: UpdateEmpresaRequest = {
       ruc: data.ruc,
       razonSocial: data.razonSocial,
-      tipoId: this.tipoContratistaId!, // Asegurar que el tipo es Contratista
+      tipoId: data.tipoId,
       direccion: data.direccion || null,
       telefono: data.telefono || null,
       email: data.email || null,
       logoUrl: data.logoUrl || null,
       sitioWeb: data.sitioWeb || null,
       rubroComercial: data.rubroComercial || null,
+      scoreSeguridad: data.scoreSeguridad || 0,
+      contactos: data.contactos || [],
       activo: data.activo !== undefined ? data.activo : true
     };
 
@@ -267,6 +279,39 @@ export class EmpresaContratistaComponent implements OnInit {
       error: (error) => {
         console.error('Error al actualizar contratista:', error);
         this.showNotification(error?.error?.message || 'Error al actualizar contratista', 'error');
+      }
+    });
+  }
+
+  filtrarContratistas(): void {
+    if (!this.searchTerm.trim()) {
+      this.contratistasFiltrados = [...this.contratistas];
+    } else {
+      const term = this.searchTerm.toLowerCase().trim();
+      this.contratistasFiltrados = this.contratistas.filter(c =>
+        c.razonSocial.toLowerCase().includes(term)
+      );
+    }
+  }
+
+  limpiarBusqueda(): void {
+    this.searchTerm = '';
+    this.filtrarContratistas();
+  }
+
+  toggleEstado(empresa: EmpresaDTO): void {
+    const nuevoEstado = !empresa.activo;
+    const accion = nuevoEstado ? 'activar' : 'desactivar';
+
+    this.empresaService.toggleEstado(empresa.id, nuevoEstado).subscribe({
+      next: () => {
+        empresa.activo = nuevoEstado;
+        this.showNotification(`Contratista ${nuevoEstado ? 'activado' : 'desactivado'} exitosamente`, 'success');
+        this.cdr.detectChanges();
+      },
+      error: (error) => {
+        console.error(`Error al ${accion} contratista:`, error);
+        this.showNotification(`Error al ${accion} contratista`, 'error');
       }
     });
   }

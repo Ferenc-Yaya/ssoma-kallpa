@@ -49,8 +49,8 @@
                 <mat-icon>people</mat-icon>
               </button>
               <button mat-icon-button color="accent" (click)="viewEmpresaDetail(empresa)"
-                      matTooltip="Ver detalle">
-                <mat-icon>visibility</mat-icon>
+                      matTooltip="Ver contratistas">
+                <mat-icon>business</mat-icon>
               </button>
               <button mat-icon-button
                       [color]="empresa.activo ? 'warn' : 'primary'"
@@ -112,17 +112,6 @@
               <div>
                 <label>Rubro Comercial</label>
                 <span>{{ empresa.rubroComercial || 'No especificado' }}</span>
-              </div>
-            </div>
-            <div class="info-item">
-              <mat-icon>shield</mat-icon>
-              <div>
-                <label>Score de Seguridad</label>
-                <mat-chip [class.chip-score-alto]="empresa.scoreSeguridad >= 80"
-                          [class.chip-score-medio]="empresa.scoreSeguridad >= 50 && empresa.scoreSeguridad < 80"
-                          [class.chip-score-bajo]="empresa.scoreSeguridad < 50">
-                  {{ empresa.scoreSeguridad }}/100
-                </mat-chip>
               </div>
             </div>
             <div class="info-item">

@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { MainLayoutComponent } from './pages/main-layout/main-layout';
-// import { DashboardComponent } from './pages/dashboard/dashboard';
+import { DashboardComponent } from './pages/dashboard/dashboard';
 // import { DashboardContratistaComponent } from './pages/dashboard-contratista/dashboard-contratista';
 import { DashboardSuperadminComponent } from './pages/dashboard-superadmin/dashboard-superadmin';
 import { EmpresasComponent } from './pages/empresas/empresas';
@@ -25,7 +25,7 @@ export const routes: Routes = [
     path: '',
     component: MainLayoutComponent,
     children: [
-      // { path: 'dashboard', component: DashboardComponent },
+      { path: 'dashboard', component: DashboardComponent },
       // { path: 'dashboard-contratista', component: DashboardContratistaComponent },
       { path: 'dashboard-superadmin', component: DashboardSuperadminComponent },
       {

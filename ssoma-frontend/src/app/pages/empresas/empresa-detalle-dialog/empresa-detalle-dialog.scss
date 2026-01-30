@@ -1,0 +1,322 @@
+// Dialog title
+h2[mat-dialog-title] {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #1e293b;
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  padding: 16px 20px;
+  border-bottom: 1px solid #e2e8f0;
+
+  mat-icon {
+    color: #3b82f6;
+    font-size: 22px;
+    width: 22px;
+    height: 22px;
+  }
+}
+
+// Dialog content - único scroll aquí
+mat-dialog-content {
+  padding: 16px 20px !important;
+  margin: 0 !important;
+  max-height: 65vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+}
+
+.empresa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+// Secciones del formulario - SIN overflow
+.form-section {
+  background: #f8fafc;
+  border-radius: 6px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+
+  .section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+
+    .section-title {
+      margin: 0;
+    }
+  }
+
+  .section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #334155;
+    margin: 0 0 10px 0;
+
+    mat-icon {
+      font-size: 16px;
+      width: 16px;
+      height: 16px;
+      color: #3b82f6;
+    }
+  }
+}
+
+// Row de campos
+.form-row {
+  display: flex;
+  gap: 12px;
+  width: 100%;
+
+  .form-field {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+// Campos del formulario
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  width: 100%;
+  margin-bottom: 6px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  label {
+    font-size: 11px;
+    font-weight: 600;
+    color: #475569;
+    margin: 0;
+  }
+
+  input,
+  textarea,
+  select {
+    width: 100%;
+    padding: 6px 8px;
+    font-size: 13px;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    outline: none;
+    transition: border-color 0.2s;
+    font-family: inherit;
+    background: white;
+    box-sizing: border-box;
+
+    &::placeholder {
+      color: #94a3b8;
+    }
+
+    &:focus {
+      border-color: #3b82f6;
+    }
+
+    &:disabled {
+      background-color: #f1f5f9;
+      color: #475569;
+      cursor: not-allowed;
+    }
+  }
+
+  textarea {
+    resize: none;
+    height: 40px;
+  }
+
+  select {
+    cursor: pointer;
+    height: 32px;
+
+    &:disabled {
+      cursor: not-allowed;
+    }
+  }
+
+  input {
+    height: 32px;
+  }
+}
+
+// Score de seguridad
+.score-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .score-slider {
+    flex: 1;
+
+    mat-slider {
+      width: 100%;
+    }
+  }
+
+  .score-value {
+    min-width: 60px;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    text-align: center;
+
+    &.score-bajo {
+      background: #fee2e2;
+      color: #dc2626;
+    }
+
+    &.score-medio {
+      background: #fef3c7;
+      color: #d97706;
+    }
+
+    &.score-alto {
+      background: #dcfce7;
+      color: #16a34a;
+    }
+  }
+}
+
+// Logo
+.logo-upload-container {
+  .logo-preview {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background-color: white;
+    }
+  }
+
+  .no-logo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 80px;
+    height: 80px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 6px;
+    background-color: white;
+    color: #94a3b8;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+      margin-bottom: 4px;
+    }
+
+    span {
+      font-size: 10px;
+    }
+  }
+}
+
+// Contactos - SIN scroll interno
+.contactos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contacto-item {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 8px;
+
+  .contacto-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+
+    .contacto-number {
+      font-size: 11px;
+      font-weight: 600;
+      color: #3b82f6;
+    }
+  }
+
+  .form-field {
+    margin-bottom: 4px;
+  }
+
+  .form-row {
+    gap: 8px;
+  }
+}
+
+.empty-contactos {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px;
+  background: white;
+  border-radius: 4px;
+  border: 1px dashed #cbd5e1;
+
+  mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+    color: #94a3b8;
+  }
+
+  p {
+    font-size: 12px;
+    color: #64748b;
+    margin: 0;
+  }
+}
+
+// Dialog actions
+mat-dialog-actions {
+  padding: 12px 20px !important;
+  margin: 0 !important;
+  border-top: 1px solid #e2e8f0;
+  gap: 8px;
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Responsive
+@media (max-width: 600px) {
+  mat-dialog-content {
+    min-width: unset !important;
+  }
+
+  .form-row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

@@ -55,6 +55,7 @@ export class EmpresaDialogComponent implements OnInit {
   };
 
   isEdit: boolean;
+  isViewOnly: boolean;
   tiposContratista: TipoContratista[] = [];
   contactos: EmpresaContacto[] = [];
 
@@ -64,13 +65,14 @@ export class EmpresaDialogComponent implements OnInit {
 
   constructor(
     public dialogRef: MatDialogRef<EmpresaDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { empresa?: any; tenantId?: string },
+    @Inject(MAT_DIALOG_DATA) public data: { empresa?: any; tenantId?: string; isViewOnly?: boolean },
     private tiposContratistaService: TiposContratistaService,
     private cdr: ChangeDetectorRef
   ) {
     this.isEdit = !!data.empresa;
+    this.isViewOnly = !!data.isViewOnly;
 
-    if (this.isEdit && data.empresa) {
+    if ((this.isEdit || this.isViewOnly) && data.empresa) {
       // Modo edición - clonamos los datos
       this.empresaForm = {
         empresaId: data.empresa.empresaId || data.empresa.id,

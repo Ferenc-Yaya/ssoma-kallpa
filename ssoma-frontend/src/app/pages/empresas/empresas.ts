@@ -6,11 +6,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCardModule } from '@angular/material/card';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { EmpresasService } from '../../core/services/empresas';
 import { Empresa } from '../../core/models/empresa.model';
 import { EmpresaDialogComponent } from './empresa-dialog/empresa-dialog';
+import { EmpresaDetalleDialogComponent } from './empresa-detalle-dialog/empresa-detalle-dialog';
 import { ConfirmDialogComponent } from '../../shared/confirm-dialog/confirm-dialog';
 import { FileUploadService } from '../../core/services/file-upload.service';
 
@@ -18,12 +21,14 @@ import { FileUploadService } from '../../core/services/file-upload.service';
   selector: 'app-empresas',
   standalone: true,
   imports: [
-    CommonModule, 
+    CommonModule,
     FormsModule,
     MatButtonModule,
     MatTableModule,
     MatChipsModule,
     MatIconModule,
+    MatCardModule,
+    MatTooltipModule,
     MatDialogModule,
     MatSnackBarModule
   ],
@@ -34,7 +39,8 @@ export class EmpresasComponent implements OnInit {
   empresas: Empresa[] = [];
   empresasFiltradas: Empresa[] = [];
   searchTerm: string = '';
-  displayedColumns: string[] = ['razonSocial', 'ruc', 'tipo', 'estado', 'acciones'];
+  loading: boolean = true;
+  displayedColumns: string[] = ['logo', 'razonSocial', 'ruc', 'tipo', 'estado', 'acciones'];
 
   // Filtro por tenant (para vista de contratistas de una empresa principal)
   tenantFilter: string | null = null;
@@ -63,39 +69,49 @@ export class EmpresasComponent implements OnInit {
   }
 
   loadEmpresas(): void {
+    this.loading = true;
+    const filtro = this.tenantFilter || undefined;
 
-      const filtro = this.tenantFilter || undefined;
+    console.log('Cargando empresas con filtro:', filtro);
 
-      console.log('Cargando empresas con filtro:', filtro);
-
-      this.empresasService.getEmpresas(filtro).subscribe({
-        next: (data: Empresa[]) => {
-
-          if (data.length > 0) {
-            console.log('Estructura de datos recibida:', data[0]);
-          }
-
-          if (this.tenantFilter) {
-            // Filtrar solo contratistas (excluir empresas principales)
-            this.empresas = data.filter(e => {
-              // Usar tipoNombre que viene como string del backend
-              const tipoNombre = (e.tipoNombre || '').toLowerCase();
-              return tipoNombre !== 'empresa principal' &&
-                     tipoNombre !== 'host';
-            });
-          } else {
-            this.empresas = data;
-          }
-
-          this.empresasFiltradas = this.empresas;
-          this.cdr.detectChanges();
-        },
-        error: (error: any) => {
-          console.error('Error al cargar empresas:', error);
-          this.showMessage('Error al cargar empresas', 'error');
+    this.empresasService.getEmpresas(filtro).subscribe({
+      next: (data: Empresa[]) => {
+        if (data.length > 0) {
+          console.log('Estructura de datos recibida:', data[0]);
         }
-      });
-    }
+
+        if (this.tenantFilter) {
+          // Filtrar solo contratistas (excluir empresas principales)
+          this.empresas = data.filter(e => {
+            const tipoNombre = (e.tipoNombre || '').toLowerCase();
+            return tipoNombre !== 'empresa principal' &&
+                   tipoNombre !== 'host';
+          });
+        } else {
+          this.empresas = data;
+        }
+
+        this.empresasFiltradas = this.empresas;
+        this.loading = false;
+        this.cdr.detectChanges();
+      },
+      error: (error: any) => {
+        console.error('Error al cargar empresas:', error);
+        this.showMessage('Error al cargar empresas', 'error');
+        this.loading = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  goBack(): void {
+    this.router.navigate(['/dashboard-superadmin']);
+  }
+
+  limpiarBusqueda(): void {
+    this.searchTerm = '';
+    this.filterEmpresas();
+  }
 
   filterEmpresas(): void {
     const term = this.searchTerm.toLowerCase().trim();
@@ -191,7 +207,10 @@ export class EmpresasComponent implements OnInit {
   }
 
   verDetalle(empresa: Empresa): void {
-    this.router.navigate(['/empresas', empresa.empresaId]);
+    this.dialog.open(EmpresaDetalleDialogComponent, {
+      width: '550px',
+      data: { empresa }
+    });
   }
 
   verPersonal(empresa: Empresa): void {
