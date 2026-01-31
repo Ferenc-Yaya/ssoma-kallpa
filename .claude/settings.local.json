@@ -9,7 +9,9 @@
       "Bash(mvn clean compile:*)",
       "Bash(npm run build:*)",
       "Bash(find:*)",
-      "Bash(xargs rm -rf)"
+      "Bash(xargs rm -rf)",
+      "Bash(npx ng build:*)",
+      "Bash(npx tsc:*)"
     ]
   }
 }

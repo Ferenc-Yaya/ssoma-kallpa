@@ -1,97 +1,485 @@
 .dashboard {
-  padding: 1rem;
+  padding: 1.5rem;
+  max-width: 1600px;
+  margin: 0 auto;
 }
 
-// Tarjetas KPI - 6 cards en grid
-.kpi-cards {
+// Header
+.dashboard-header {
+  margin-bottom: 1.5rem;
+
+  h1 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: #1e293b;
+  }
+
+  .dashboard-subtitle {
+    margin: 0.25rem 0 0 0;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+}
+
+// Semáforos Principales
+.semaforos-principales {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(3, 1fr);
   gap: 1rem;
   margin-bottom: 1.5rem;
 }
 
-.kpi-card {
-  &.alert {
-    border-left: 3px solid #ef4444;
+.semaforo-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-radius: 12px;
+  color: white;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+
+  &.semaforo-verde {
+    background: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
   }
 
-  mat-card-content {
-    padding: 1.25rem;
+  &.semaforo-amarillo {
+    background: linear-gradient(135deg, #eab308 0%, #ca8a04 100%);
   }
 
-  .kpi-layout {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
+  &.semaforo-rojo {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
   }
 
-  .kpi-icon-container {
-    width: 52px;
-    height: 52px;
-    border-radius: 8px;
+  .semaforo-icon {
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
 
     mat-icon {
-      font-size: 28px;
-      width: 28px;
-      height: 28px;
-      color: white;
-    }
-
-    &.primary {
-      background: linear-gradient(135deg, #1F438C 0%, #2563eb 100%);
-    }
-
-    &.accent {
-      background: linear-gradient(135deg, #241C40 0%, #6366f1 100%);
-    }
-
-    &.tools {
-      background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%);
-    }
-
-    &.warn {
-      background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
-    }
-
-    &.success {
-      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
-    }
-
-    &.danger {
-      background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%);
+      font-size: 32px;
+      width: 32px;
+      height: 32px;
     }
   }
 
-  .kpi-content {
-    flex: 1;
+  .semaforo-content {
+    display: flex;
+    flex-direction: column;
 
-    .kpi-number {
-      margin: 0;
-      font-size: 2rem;
+    .semaforo-numero {
+      font-size: 2.5rem;
       font-weight: 700;
-      color: #1e293b;
       line-height: 1;
-
-      &.danger {
-        color: #ef4444;
-      }
     }
 
-    .kpi-label {
-      margin: 0.5rem 0 0 0;
-      font-size: 0.75rem;
-      color: #64748b;
+    .semaforo-label {
+      font-size: 1rem;
       font-weight: 500;
-      line-height: 1.2;
+      opacity: 0.9;
+      margin-top: 0.25rem;
     }
   }
 }
 
-// Grid de semáforo y top observaciones
+// Tarjetas de Resumen
+.resumen-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.resumen-card {
+  .resumen-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: linear-gradient(135deg, #1F438C 0%, #2563eb 100%);
+    color: white;
+    border-radius: 4px 4px 0 0;
+    margin: -16px -16px 0 -16px;
+
+    mat-icon {
+      font-size: 24px;
+      width: 24px;
+      height: 24px;
+    }
+
+    span {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+  }
+
+  .resumen-body {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+    padding: 1rem 0;
+
+    &.simple {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .resumen-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0.5rem;
+      border-radius: 8px;
+      background: #f8fafc;
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+        margin-bottom: 0.25rem;
+      }
+
+      .cantidad {
+        font-size: 1.5rem;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .etiqueta {
+        font-size: 0.7rem;
+        color: #64748b;
+        text-align: center;
+        margin-top: 0.25rem;
+      }
+
+      &.ok {
+        mat-icon, .cantidad { color: #22c55e; }
+      }
+
+      &.revision {
+        mat-icon, .cantidad { color: #3b82f6; }
+      }
+
+      &.observado {
+        mat-icon, .cantidad { color: #f59e0b; }
+      }
+
+      &.vencido {
+        mat-icon, .cantidad { color: #ef4444; }
+      }
+
+      &.por-vencer {
+        mat-icon, .cantidad { color: #f97316; }
+      }
+    }
+  }
+
+  .resumen-footer {
+    padding: 0.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: #64748b;
+    border-top: 1px solid #e2e8f0;
+  }
+}
+
+// Grid de Alertas y Problemas
+.alertas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+// Centro de Alertas
+.alertas-card {
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+
+      mat-icon {
+        color: #ef4444;
+      }
+
+      .badge-total {
+        margin-left: auto;
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+    }
+  }
+
+  .alertas-resumen {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    .alerta-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+
+      &:hover {
+        transform: translateX(4px);
+      }
+
+      mat-icon {
+        font-size: 20px;
+        width: 20px;
+        height: 20px;
+      }
+
+      .alerta-texto {
+        font-size: 0.875rem;
+        flex: 1;
+      }
+
+      &.critico {
+        background: #fee2e2;
+        color: #dc2626;
+
+        mat-icon { color: #dc2626; }
+      }
+
+      &.urgente {
+        background: #ffedd5;
+        color: #ea580c;
+
+        mat-icon { color: #ea580c; }
+      }
+
+      &.advertencia {
+        background: #fef3c7;
+        color: #d97706;
+
+        mat-icon { color: #d97706; }
+      }
+
+      &.info {
+        background: #dbeafe;
+        color: #2563eb;
+
+        mat-icon { color: #2563eb; }
+      }
+
+      &.observacion {
+        background: #fce7f3;
+        color: #be185d;
+
+        mat-icon { color: #be185d; }
+      }
+
+      &.revision {
+        background: #e0e7ff;
+        color: #4338ca;
+
+        mat-icon { color: #4338ca; }
+      }
+    }
+  }
+}
+
+// Problemas Detectados
+.problemas-card {
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+
+      mat-icon {
+        color: #f59e0b;
+      }
+    }
+  }
+
+  .problemas-lista {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+
+    .problema-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem;
+      background: #f8fafc;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      border-left: 3px solid #3b82f6;
+
+      &:hover {
+        background: #f1f5f9;
+        transform: translateX(4px);
+      }
+
+      .problema-icono {
+        width: 40px;
+        height: 40px;
+        background: #dbeafe;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          color: #3b82f6;
+        }
+
+        &.warning {
+          background: #fef3c7;
+
+          mat-icon { color: #d97706; }
+        }
+
+        &.danger {
+          background: #fee2e2;
+
+          mat-icon { color: #dc2626; }
+        }
+      }
+
+      .problema-info {
+        flex: 1;
+
+        .problema-titulo {
+          display: block;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #1e293b;
+        }
+
+        .problema-descripcion {
+          display: block;
+          font-size: 0.75rem;
+          color: #64748b;
+          margin-top: 0.125rem;
+        }
+      }
+
+      .problema-cantidad {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #1e293b;
+        min-width: 40px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+// Detalle de Alertas
+.detalle-alertas-card {
+  margin-bottom: 1.5rem;
+
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      width: 100%;
+
+      button {
+        margin-left: auto;
+      }
+    }
+  }
+
+  .alertas-table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      background: #f8fafc;
+
+      th {
+        padding: 0.75rem;
+        text-align: left;
+        font-weight: 600;
+        font-size: 0.75rem;
+        color: #64748b;
+        text-transform: uppercase;
+        border-bottom: 2px solid #e2e8f0;
+      }
+    }
+
+    tbody {
+      td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        border-bottom: 1px solid #e2e8f0;
+      }
+
+      tr:hover {
+        background: #f8fafc;
+      }
+    }
+
+    .prioridad-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+
+      &.prioridad-alta {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      &.prioridad-media {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      &.prioridad-baja {
+        background: #dcfce7;
+        color: #16a34a;
+      }
+    }
+
+    .tipo-badge {
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 600;
+
+      &.tipo-vencimiento {
+        background: #fee2e2;
+        color: #dc2626;
+      }
+
+      &.tipo-observacion {
+        background: #fef3c7;
+        color: #d97706;
+      }
+
+      &.tipo-incumplimiento {
+        background: #fce7f3;
+        color: #be185d;
+      }
+    }
+  }
+}
+
+// Grid de Semáforo y Rankings
 .dashboard-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
@@ -99,8 +487,8 @@
   margin-bottom: 1.5rem;
 }
 
-// Semáforo Corporativo
-.semaforo-card {
+// Semáforo Chart
+.semaforo-chart-card {
   mat-card-header {
     mat-card-title {
       display: flex;
@@ -170,8 +558,107 @@
   }
 }
 
+// Rankings
+.rankings-card {
+  mat-card-header {
+    mat-card-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 1rem;
+      font-weight: 600;
+
+      mat-icon {
+        color: #f59e0b;
+      }
+    }
+  }
+
+  .rankings-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+  }
+
+  .ranking-section {
+    .ranking-titulo {
+      font-size: 0.875rem;
+      font-weight: 600;
+      margin: 0 0 0.75rem 0;
+      padding-bottom: 0.5rem;
+      border-bottom: 2px solid;
+
+      &.mejores {
+        color: #22c55e;
+        border-color: #22c55e;
+      }
+
+      &.peores {
+        color: #ef4444;
+        border-color: #ef4444;
+      }
+    }
+
+    .ranking-lista {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.5rem;
+        background: #f8fafc;
+        border-radius: 4px;
+
+        .ranking-pos {
+          width: 24px;
+          height: 24px;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 0.875rem;
+          font-weight: 600;
+          color: #64748b;
+
+          mat-icon {
+            color: #f59e0b;
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+
+          &.warning {
+            color: #ef4444;
+          }
+        }
+
+        .ranking-empresa {
+          flex: 1;
+          font-size: 0.8125rem;
+          color: #1e293b;
+          white-space: nowrap;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .ranking-valor {
+          font-size: 0.875rem;
+          font-weight: 700;
+
+          &.verde { color: #22c55e; }
+          &.rojo { color: #ef4444; }
+        }
+      }
+    }
+  }
+}
+
 // Top 5 Observaciones
 .observaciones-card {
+  margin-bottom: 1.5rem;
+
   mat-card-header {
     mat-card-title {
       display: flex;
@@ -203,23 +690,12 @@
       font-size: 0.875rem;
     }
 
-    .estado-badge {
-      display: inline-block;
-      padding: 0.25rem 0.75rem;
-      border-radius: 4px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      text-transform: uppercase;
+    .text-danger {
+      color: #ef4444;
+    }
 
-      &.estado-critico {
-        background: #fee2e2;
-        color: #dc2626;
-      }
-
-      &.estado-advertencia {
-        background: #fef3c7;
-        color: #d97706;
-      }
+    .text-warning {
+      color: #f59e0b;
     }
 
     .semaforo-badge {
@@ -250,8 +726,6 @@
 
 // Proveedores y Contratos
 .proveedores-card {
-  margin-top: 1.5rem;
-
   mat-card-header {
     mat-card-title {
       display: flex;
@@ -277,7 +751,7 @@
 
   .filtro-search {
     flex: 1;
-    min-width: 200px;
+    min-width: 250px;
   }
 
   .filtro-select {
@@ -313,20 +787,6 @@
     color: #1e293b;
   }
 
-  .header-button {
-    text-transform: none;
-    font-weight: 600;
-    font-size: 0.75rem;
-    color: #64748b;
-    padding: 0;
-
-    mat-icon {
-      font-size: 18px;
-      width: 18px;
-      height: 18px;
-    }
-  }
-
   .proveedor-expandable {
     text-transform: none;
     font-size: 0.875rem;
@@ -342,13 +802,34 @@
     }
   }
 
-  .contratos-badge {
-    background: #e0f2fe;
-    color: #0369a1;
-    padding: 0.25rem 0.5rem;
-    border-radius: 4px;
-    font-size: 0.75rem;
-    font-weight: 600;
+  // Barra de cumplimiento
+  .cumplimiento-bar {
+    position: relative;
+    width: 100%;
+    height: 20px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+
+    .cumplimiento-fill {
+      height: 100%;
+      border-radius: 10px;
+      transition: width 0.3s;
+
+      &.bajo { background: linear-gradient(90deg, #ef4444, #f87171); }
+      &.medio { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+      &.alto { background: linear-gradient(90deg, #22c55e, #4ade80); }
+    }
+
+    .cumplimiento-texto {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e293b;
+    }
   }
 
   .estado-chip {
@@ -370,33 +851,22 @@
       background: #fee2e2;
       color: #dc2626;
 
-      .estado-icon {
-        color: #dc2626;
-      }
+      .estado-icon { color: #dc2626; }
     }
 
     &.estado-apto {
       background: #dcfce7;
       color: #16a34a;
 
-      .estado-icon {
-        color: #16a34a;
-      }
+      .estado-icon { color: #16a34a; }
     }
 
     &.estado-pendiente {
       background: #fef3c7;
       color: #d97706;
 
-      .estado-icon {
-        color: #d97706;
-      }
+      .estado-icon { color: #d97706; }
     }
-  }
-
-  .acreditacion-text {
-    font-weight: 600;
-    color: #1e293b;
   }
 
   .proveedor-row {
@@ -433,10 +903,7 @@
       text-transform: uppercase;
       border-bottom: 1px solid #cbd5e1;
 
-      &:first-child {
-        text-align: left;
-      }
-
+      &:first-child,
       &:nth-child(2) {
         text-align: left;
       }
@@ -505,20 +972,45 @@
 }
 
 // Responsivo
-@media (max-width: 1024px) {
-  .kpi-cards {
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+@media (max-width: 1200px) {
+  .semaforos-principales {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .rankings-card .rankings-container {
+    grid-template-columns: 1fr;
   }
 }
 
 @media (max-width: 768px) {
   .dashboard {
-    padding: 0.5rem;
+    padding: 1rem;
   }
 
-  .kpi-cards {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 0.75rem;
+  .semaforos-principales {
+    grid-template-columns: 1fr;
+  }
+
+  .semaforo-card {
+    .semaforo-numero {
+      font-size: 2rem;
+    }
+  }
+
+  .resumen-cards {
+    grid-template-columns: 1fr;
+  }
+
+  .resumen-card .resumen-body {
+    grid-template-columns: repeat(3, 1fr);
+
+    &.simple {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .alertas-grid {
+    grid-template-columns: 1fr;
   }
 
   .dashboard-grid {

@@ -48,7 +48,7 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   displayedColumnsObservaciones: string[] = ['posicion', 'empresa', 'documentosVencidos', 'documentosFaltantes', 'semaforo'];
 
   // Columnas para tabla de proveedores
-  displayedColumnsProveedores: string[] = ['proveedor', 'empleados', 'activos', 'materialesPeligrosos', 'contratos', 'acreditacion'];
+  displayedColumnsProveedores: string[] = ['proveedor', 'servicioOC', 'empleados', 'activos', 'cumplimiento', 'estado'];
 
   // Filtros
   searchText: string = '';
@@ -60,20 +60,102 @@ export class DashboardComponent implements OnInit, AfterViewInit {
   // Control de filas expandidas
   expandedElement: any | null = null;
 
+  // Control de alertas
+  mostrarDetalleAlertas: boolean = false;
+  alertasFiltradas: any[] = [];
+
   ngOnInit(): void {
     this.aplicarFiltros();
-  }
-
-  toggleRow(element: any): void {
-    this.expandedElement = this.expandedElement === element ? null : element;
   }
 
   ngAfterViewInit(): void {
     this.createSemaforoChart();
   }
 
+  // Obtener total de alertas
+  getTotalAlertas(): number {
+    return this.stats.alertasVencimientos.hoy +
+           this.stats.alertasVencimientos.tresDias +
+           this.stats.alertasVencimientos.sieteDias +
+           this.stats.alertasVencimientos.quinceDias +
+           this.stats.problemas.observacionesSinRespuesta +
+           this.stats.problemas.documentosSinRevisar;
+  }
+
+  // Filtrar alertas por tipo
+  filtrarAlertas(tipo: string): void {
+    this.mostrarDetalleAlertas = true;
+
+    switch (tipo) {
+      case 'hoy':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
+          a.tipo === 'vencimiento' && a.diasRestantes === 0
+        );
+        break;
+      case '3dias':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
+          a.tipo === 'vencimiento' && a.diasRestantes !== undefined && a.diasRestantes > 0 && a.diasRestantes <= 3
+        );
+        break;
+      case '7dias':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
+          a.tipo === 'vencimiento' && a.diasRestantes !== undefined && a.diasRestantes > 3 && a.diasRestantes <= 7
+        );
+        break;
+      case '15dias':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
+          a.tipo === 'vencimiento' && a.diasRestantes !== undefined && a.diasRestantes > 7 && a.diasRestantes <= 15
+        );
+        break;
+      default:
+        this.alertasFiltradas = this.stats.detalleAlertas;
+    }
+  }
+
+  // Cerrar detalle de alertas
+  cerrarDetalleAlertas(): void {
+    this.mostrarDetalleAlertas = false;
+    this.alertasFiltradas = [];
+  }
+
+  // Ver detalle de problemas
+  verDetalle(tipo: string): void {
+    this.mostrarDetalleAlertas = true;
+
+    switch (tipo) {
+      case 'sinRevisar':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a => a.tipo === 'vencimiento');
+        break;
+      case 'sinRespuesta':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a => a.tipo === 'observacion');
+        break;
+      case 'altoIndice':
+      case 'errores':
+      case 'reiterativos':
+        this.alertasFiltradas = this.stats.detalleAlertas.filter(a => a.tipo === 'incumplimiento');
+        break;
+      default:
+        this.alertasFiltradas = this.stats.detalleAlertas;
+    }
+  }
+
+  // Obtener label del tipo de alerta
+  getTipoLabel(tipo: string): string {
+    const labels: { [key: string]: string } = {
+      'vencimiento': 'Vencimiento',
+      'observacion': 'Observación',
+      'incumplimiento': 'Incumplimiento'
+    };
+    return labels[tipo] || tipo;
+  }
+
+  toggleRow(element: any): void {
+    this.expandedElement = this.expandedElement === element ? null : element;
+  }
+
   createSemaforoChart(): void {
     const ctx = document.getElementById('semaforoChart') as HTMLCanvasElement;
+    if (!ctx) return;
 
     this.chart = new Chart(ctx, {
       type: 'doughnut',
@@ -107,8 +189,11 @@ export class DashboardComponent implements OnInit, AfterViewInit {
 
   aplicarFiltros(): void {
     this.proveedoresFiltrados = this.stats.proveedores.filter(p => {
+      const searchLower = this.searchText.toLowerCase();
       const matchSearch = !this.searchText ||
-        p.proveedor.toLowerCase().includes(this.searchText.toLowerCase());
+        p.proveedor.toLowerCase().includes(searchLower) ||
+        p.ruc.toLowerCase().includes(searchLower) ||
+        p.servicioOC.toLowerCase().includes(searchLower);
 
       const matchEstado = this.filterEstado === 'todos' ||
         p.estado === this.filterEstado;

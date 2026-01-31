@@ -11,7 +11,7 @@ import { EmpresaDetalleComponent } from './pages/empresa-detalle/empresa-detalle
 // import { EmpresaActivosComponent } from './pages/empresa-activos/empresa-activos';
 // import { ContratosComponent } from './pages/contratos/contratos';
 // import { PersonalKallpaComponent } from './pages/personal-kallpa/personal-kallpa';
-// import { ReglasNegocioComponent } from './pages/reglas-negocio/reglas-negocio';
+import { ReglasNegocioComponent } from './pages/reglas-negocio/reglas-negocio';
 // import { PersonalDocumentosComponent } from './pages/personal-documentos/personal-documentos';
 // import { ActivoDocumentosComponent } from './pages/activo-documentos/activo-documentos';
 import { EmpresaMaterialesPeligrososComponent } from './pages/empresa-materiales-peligrosos/empresa-materiales-peligrosos';
@@ -60,7 +60,7 @@ export const routes: Routes = [
       // { path: 'empresas/:id/materiales-peligrosos/:materialId/documentos', component: MaterialPeligrosoDocumentosComponent },
       // { path: 'contratos', component: ContratosComponent },
       // { path: 'personal-kallpa', component: PersonalKallpaComponent },
-      // { path: 'reglas-negocio', component: ReglasNegocioComponent },
+      { path: 'reglas-negocio', component: ReglasNegocioComponent },
 
       // Rutas de acreditación - Comentadas hasta que se implemente backend
       // {
