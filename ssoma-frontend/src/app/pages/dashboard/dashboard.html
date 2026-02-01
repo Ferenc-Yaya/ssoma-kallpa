@@ -1,570 +1,265 @@
-<div class="dashboard">
-  <!-- Header con título -->
-  <div class="dashboard-header">
-    <h1>Dashboard Administrador DSH / Kallpa</h1>
-    <p class="dashboard-subtitle">Panel de control de gestión de contratistas</p>
+<div class="dashboard-admin">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>Dashboard Administrador Kallpa</h1>
+    <p class="subtitle">Gestión de Contratistas y Cumplimiento Documental</p>
   </div>
 
-  <!-- Semáforos Principales -->
-  <div class="semaforos-principales">
-    <div class="semaforo-card semaforo-verde">
-      <div class="semaforo-icon">
-        <mat-icon>check_circle</mat-icon>
-      </div>
-      <div class="semaforo-content">
-        <span class="semaforo-numero">{{ stats.semaforos.habilitados }}</span>
-        <span class="semaforo-label">Habilitados</span>
+  <!-- Indicadores principales -->
+  <div class="indicadores-principales">
+    <div class="indicador contratistas" (click)="filtroEstado = 'todos'; onFiltroChange()">
+      <mat-icon>business</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalContratistas }}</span>
+        <span class="label">Contratistas</span>
       </div>
     </div>
-
-    <div class="semaforo-card semaforo-amarillo">
-      <div class="semaforo-icon">
-        <mat-icon>schedule</mat-icon>
-      </div>
-      <div class="semaforo-content">
-        <span class="semaforo-numero">{{ stats.semaforos.porVencer }}</span>
-        <span class="semaforo-label">Por Vencer</span>
+    <div class="indicador contratos">
+      <mat-icon>assignment</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalContratos }}</span>
+        <span class="label">Contratos</span>
       </div>
     </div>
-
-    <div class="semaforo-card semaforo-rojo">
-      <div class="semaforo-icon">
-        <mat-icon>cancel</mat-icon>
+    <div class="indicador vencidos" (click)="filtroEstado = 'atencion'; onFiltroChange()">
+      <mat-icon>error</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalDocumentosVencidos }}</span>
+        <span class="label">Docs. Vencidos</span>
       </div>
-      <div class="semaforo-content">
-        <span class="semaforo-numero">{{ stats.semaforos.incumplimientos }}</span>
-        <span class="semaforo-label">Incumplimientos</span>
+    </div>
+    <div class="indicador por-vencer">
+      <mat-icon>schedule</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalDocumentosPorVencer }}</span>
+        <span class="label">Docs. Por Vencer</span>
       </div>
     </div>
   </div>
 
-  <!-- Tarjetas de Resumen -->
-  <div class="resumen-cards">
-    <!-- Documentos -->
-    <mat-card class="resumen-card">
-      <div class="resumen-header">
-        <mat-icon>description</mat-icon>
-        <span>Documentos</span>
-      </div>
-      <div class="resumen-body">
-        <div class="resumen-item ok">
-          <mat-icon>check_circle</mat-icon>
-          <span class="cantidad">{{ stats.documentos.aprobados }}</span>
-          <span class="etiqueta">Aprobados</span>
-        </div>
-        <div class="resumen-item revision">
-          <mat-icon>hourglass_empty</mat-icon>
-          <span class="cantidad">{{ stats.documentos.enRevision }}</span>
-          <span class="etiqueta">En Revisión</span>
-        </div>
-        <div class="resumen-item observado">
-          <mat-icon>error_outline</mat-icon>
-          <span class="cantidad">{{ stats.documentos.observados }}</span>
-          <span class="etiqueta">Observados</span>
-        </div>
-        <div class="resumen-item vencido">
-          <mat-icon>cancel</mat-icon>
-          <span class="cantidad">{{ stats.documentos.vencidos }}</span>
-          <span class="etiqueta">Vencidos</span>
-        </div>
-        <div class="resumen-item por-vencer">
-          <mat-icon>schedule</mat-icon>
-          <span class="cantidad">{{ stats.documentos.porVencer }}</span>
-          <span class="etiqueta">Por Vencer</span>
-        </div>
-      </div>
-    </mat-card>
-
-    <!-- Personal -->
-    <mat-card class="resumen-card">
-      <div class="resumen-header">
-        <mat-icon>people</mat-icon>
-        <span>Personal</span>
-      </div>
-      <div class="resumen-body simple">
-        <div class="resumen-item ok">
-          <mat-icon>check_circle</mat-icon>
-          <span class="cantidad">{{ stats.personal.habilitados }}</span>
-          <span class="etiqueta">Habilitados</span>
-        </div>
-        <div class="resumen-item vencido">
-          <mat-icon>cancel</mat-icon>
-          <span class="cantidad">{{ stats.personal.inhabilitados }}</span>
-          <span class="etiqueta">Inhabilitados</span>
-        </div>
-      </div>
-      <div class="resumen-footer">
-        <span>Total: {{ stats.personal.total }} trabajadores</span>
-      </div>
-    </mat-card>
-
-    <!-- Vehículos -->
-    <mat-card class="resumen-card">
-      <div class="resumen-header">
-        <mat-icon>local_shipping</mat-icon>
-        <span>Vehículos</span>
-      </div>
-      <div class="resumen-body simple">
-        <div class="resumen-item ok">
-          <mat-icon>check_circle</mat-icon>
-          <span class="cantidad">{{ stats.vehiculos.habilitados }}</span>
-          <span class="etiqueta">Habilitados</span>
-        </div>
-        <div class="resumen-item vencido">
-          <mat-icon>cancel</mat-icon>
-          <span class="cantidad">{{ stats.vehiculos.inhabilitados }}</span>
-          <span class="etiqueta">Inhabilitados</span>
-        </div>
-      </div>
-      <div class="resumen-footer">
-        <span>Total: {{ stats.vehiculos.total }} vehículos</span>
-      </div>
-    </mat-card>
-
-    <!-- Equipos -->
-    <mat-card class="resumen-card">
-      <div class="resumen-header">
-        <mat-icon>build</mat-icon>
-        <span>Equipos</span>
-      </div>
-      <div class="resumen-body simple">
-        <div class="resumen-item ok">
-          <mat-icon>check_circle</mat-icon>
-          <span class="cantidad">{{ stats.equipos.habilitados }}</span>
-          <span class="etiqueta">Habilitados</span>
-        </div>
-        <div class="resumen-item vencido">
-          <mat-icon>cancel</mat-icon>
-          <span class="cantidad">{{ stats.equipos.inhabilitados }}</span>
-          <span class="etiqueta">Inhabilitados</span>
-        </div>
-      </div>
-      <div class="resumen-footer">
-        <span>Total: {{ stats.equipos.total }} equipos</span>
-      </div>
-    </mat-card>
+  <!-- Resumen de estados -->
+  <div class="resumen-estados" *ngIf="todosLosContratistas.length > 0">
+    <div class="estado-card nuevo" (click)="filtroEstado = 'nuevo'; onFiltroChange()"
+         [class.activo]="filtroEstado === 'nuevo'" *ngIf="resumenEstados.nuevos > 0">
+      <span class="numero">{{ resumenEstados.nuevos }}</span>
+      <span class="label">Nuevos</span>
+    </div>
+    <div class="estado-card atencion" (click)="filtroEstado = 'atencion'; onFiltroChange()"
+         [class.activo]="filtroEstado === 'atencion'" *ngIf="resumenEstados.requierenAtencion > 0">
+      <span class="numero">{{ resumenEstados.requierenAtencion }}</span>
+      <span class="label">Req. Atención</span>
+    </div>
+    <div class="estado-card verde" (click)="filtroEstado = 'habilitado'; onFiltroChange()"
+         [class.activo]="filtroEstado === 'habilitado'">
+      <span class="numero">{{ resumenEstados.habilitados }}</span>
+      <span class="label">Habilitados</span>
+    </div>
+    <div class="estado-card amarillo" (click)="filtroEstado = 'parcial'; onFiltroChange()"
+         [class.activo]="filtroEstado === 'parcial'">
+      <span class="numero">{{ resumenEstados.parciales }}</span>
+      <span class="label">Parciales</span>
+    </div>
+    <div class="estado-card rojo" (click)="filtroEstado = 'bloqueado'; onFiltroChange()"
+         [class.activo]="filtroEstado === 'bloqueado'">
+      <span class="numero">{{ resumenEstados.bloqueados }}</span>
+      <span class="label">Bloqueados</span>
+    </div>
+    <div class="estado-card total" (click)="filtroEstado = 'todos'; onFiltroChange()"
+         [class.activo]="filtroEstado === 'todos'">
+      <span class="numero">{{ resumenEstados.total }}</span>
+      <span class="label">Total</span>
+    </div>
   </div>
 
-  <!-- Centro de Alertas y Problemas -->
-  <div class="alertas-grid">
-    <!-- Centro de Alertas -->
-    <mat-card class="alertas-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>notifications_active</mat-icon>
-          Centro de Alertas
-          <span class="badge-total">{{ getTotalAlertas() }} nuevas</span>
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="alertas-resumen">
-          <div class="alerta-item critico" (click)="filtrarAlertas('hoy')">
-            <mat-icon>error</mat-icon>
-            <span class="alerta-texto">HOY: {{ stats.alertasVencimientos.hoy }} documentos vencen hoy</span>
-          </div>
-          <div class="alerta-item urgente" (click)="filtrarAlertas('3dias')">
-            <mat-icon>warning</mat-icon>
-            <span class="alerta-texto">3 DÍAS: {{ stats.alertasVencimientos.tresDias }} documentos próximos a vencer</span>
-          </div>
-          <div class="alerta-item advertencia" (click)="filtrarAlertas('7dias')">
-            <mat-icon>schedule</mat-icon>
-            <span class="alerta-texto">7 DÍAS: {{ stats.alertasVencimientos.sieteDias }} documentos próximos a vencer</span>
-          </div>
-          <div class="alerta-item info" (click)="filtrarAlertas('15dias')">
-            <mat-icon>info</mat-icon>
-            <span class="alerta-texto">15 DÍAS: {{ stats.alertasVencimientos.quinceDias }} documentos próximos a vencer</span>
-          </div>
-          <div class="alerta-item observacion">
-            <mat-icon>comment</mat-icon>
-            <span class="alerta-texto">{{ stats.problemas.observacionesSinRespuesta }} observaciones sin respuesta del contratista</span>
-          </div>
-          <div class="alerta-item revision">
-            <mat-icon>pending_actions</mat-icon>
-            <span class="alerta-texto">{{ stats.problemas.documentosSinRevisar }} documentos pendientes de revisión</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filtros-bar" *ngIf="todosLosContratistas.length > 0">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar contratista</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="RUC, razón social o tipo...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
 
-    <!-- Problemas Detectados -->
-    <mat-card class="problemas-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>report_problem</mat-icon>
-          Problemas Detectados
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="problemas-lista">
-          <div class="problema-item" (click)="verDetalle('sinRevisar')">
-            <div class="problema-icono">
-              <mat-icon>pending_actions</mat-icon>
-            </div>
-            <div class="problema-info">
-              <span class="problema-titulo">Documentos sin revisar (>48h)</span>
-              <span class="problema-descripcion">Documentos ingresados sin revisión de la plataforma</span>
-            </div>
-            <span class="problema-cantidad">{{ stats.problemas.documentosSinRevisar }}</span>
-          </div>
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="filtroEstado" (ngModelChange)="onFiltroChange()">
+        <mat-option value="todos">Todos los estados</mat-option>
+        <mat-option value="nuevo">Nuevo</mat-option>
+        <mat-option value="atencion">Requiere Atención</mat-option>
+        <mat-option value="habilitado">Habilitado</mat-option>
+        <mat-option value="parcial">Parcial</mat-option>
+        <mat-option value="bloqueado">Bloqueado</mat-option>
+      </mat-select>
+    </mat-form-field>
 
-          <div class="problema-item" (click)="verDetalle('sinRespuesta')">
-            <div class="problema-icono warning">
-              <mat-icon>chat_bubble_outline</mat-icon>
-            </div>
-            <div class="problema-info">
-              <span class="problema-titulo">Observaciones sin respuesta (>3 días)</span>
-              <span class="problema-descripcion">Observaciones pendientes de atención por contratista</span>
-            </div>
-            <span class="problema-cantidad">{{ stats.problemas.observacionesSinRespuesta }}</span>
-          </div>
-
-          <div class="problema-item" (click)="verDetalle('altoIndice')">
-            <div class="problema-icono danger">
-              <mat-icon>trending_down</mat-icon>
-            </div>
-            <div class="problema-info">
-              <span class="problema-titulo">Contratistas con alto índice de observaciones</span>
-              <span class="problema-descripcion">Empresas con más del 30% de documentos observados</span>
-            </div>
-            <span class="problema-cantidad">{{ stats.problemas.contratistasAltoIndice }}</span>
-          </div>
-
-          <div class="problema-item" (click)="verDetalle('errores')">
-            <div class="problema-icono warning">
-              <mat-icon>replay</mat-icon>
-            </div>
-            <div class="problema-info">
-              <span class="problema-titulo">Documentos con errores recurrentes</span>
-              <span class="problema-descripcion">Documentos observados múltiples veces por el mismo motivo</span>
-            </div>
-            <span class="problema-cantidad">{{ stats.problemas.erroresRecurrentes }}</span>
-          </div>
-
-          <div class="problema-item" (click)="verDetalle('reiterativos')">
-            <div class="problema-icono danger">
-              <mat-icon>block</mat-icon>
-            </div>
-            <div class="problema-info">
-              <span class="problema-titulo">Incumplimientos reiterativos</span>
-              <span class="problema-descripcion">Mismo tipo de incumplimiento repetido 3+ veces</span>
-            </div>
-            <span class="problema-cantidad">{{ stats.problemas.incumplimientosReiterativos }}</span>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+    <span class="resultados-info">
+      {{ contratistasFiltrados.length }} de {{ todosLosContratistas.length }} contratistas
+    </span>
   </div>
 
-  <!-- Detalle de Alertas Expandido -->
-  <mat-card class="detalle-alertas-card" *ngIf="mostrarDetalleAlertas">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>list_alt</mat-icon>
-        Detalle de Alertas
-        <button mat-icon-button (click)="cerrarDetalleAlertas()">
-          <mat-icon>close</mat-icon>
-        </button>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <table class="alertas-table">
-        <thead>
-          <tr>
-            <th>Prioridad</th>
-            <th>Tipo</th>
-            <th>Contratista</th>
-            <th>Documento</th>
-            <th>Detalle</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr *ngFor="let alerta of alertasFiltradas" [class]="'alerta-row-' + alerta.prioridad">
-            <td>
-              <span class="prioridad-badge" [class]="'prioridad-' + alerta.prioridad">
-                {{ alerta.prioridad | uppercase }}
-              </span>
-            </td>
-            <td>
-              <span class="tipo-badge" [class]="'tipo-' + alerta.tipo">
-                {{ getTipoLabel(alerta.tipo) }}
-              </span>
-            </td>
-            <td>{{ alerta.contratista }}</td>
-            <td>{{ alerta.documento }}</td>
-            <td>{{ alerta.mensaje }}</td>
-          </tr>
-        </tbody>
-      </table>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Grid de Semáforo y Rankings -->
-  <div class="dashboard-grid">
-    <!-- Semáforo Corporativo -->
-    <mat-card class="semaforo-chart-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>traffic</mat-icon>
-          Semáforo Corporativo
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="chart-wrapper">
-          <div class="chart-container">
-            <canvas id="semaforoChart"></canvas>
-          </div>
-          <div class="semaforo-stats">
-            <div class="stat-item">
-              <span class="stat-indicator green"></span>
-              <span class="stat-label">Apto</span>
-              <span class="stat-number green">{{ stats.semaforo.apto }}%</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-indicator yellow"></span>
-              <span class="stat-label">Pendiente</span>
-              <span class="stat-number yellow">{{ stats.semaforo.pendiente }}%</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-indicator red"></span>
-              <span class="stat-label">Bloqueado</span>
-              <span class="stat-number red">{{ stats.semaforo.bloqueado }}%</span>
-            </div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
-
-    <!-- Rankings -->
-    <mat-card class="rankings-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>leaderboard</mat-icon>
-          Ranking de Contratistas
-        </mat-card-title>
-      </mat-card-header>
-      <mat-card-content>
-        <div class="rankings-container">
-          <!-- Mejores -->
-          <div class="ranking-section">
-            <h4 class="ranking-titulo mejores">Top 5 Mejores Cumplimientos</h4>
-            <div class="ranking-lista">
-              <div class="ranking-item" *ngFor="let item of stats.rankingMejores">
-                <span class="ranking-pos">
-                  <mat-icon *ngIf="item.posicion === 1">emoji_events</mat-icon>
-                  <span *ngIf="item.posicion !== 1">{{ item.posicion }}</span>
-                </span>
-                <span class="ranking-empresa">{{ item.empresa }}</span>
-                <span class="ranking-valor verde">{{ item.cumplimiento }}%</span>
-              </div>
-            </div>
-          </div>
-
-          <!-- Peores -->
-          <div class="ranking-section">
-            <h4 class="ranking-titulo peores">Top 5 Mayores Incumplimientos</h4>
-            <div class="ranking-lista">
-              <div class="ranking-item" *ngFor="let item of stats.rankingPeores">
-                <span class="ranking-pos warning">{{ item.posicion }}</span>
-                <span class="ranking-empresa">{{ item.empresa }}</span>
-                <span class="ranking-valor rojo">{{ item.cumplimiento }}%</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  <!-- Sin contratistas -->
+  <div class="sin-datos" *ngIf="todosLosContratistas.length === 0">
+    <mat-icon>business</mat-icon>
+    <h2>No hay contratistas registrados</h2>
+    <p>Registra tu primer contratista para comenzar.</p>
   </div>
 
-  <!-- Top 5 Observaciones -->
-  <mat-card class="observaciones-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>warning</mat-icon>
-        Top 5 Contratistas con más Observaciones
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <table mat-table [dataSource]="stats.topObservaciones" class="observaciones-table">
-        <ng-container matColumnDef="posicion">
-          <th mat-header-cell *matHeaderCellDef>#</th>
-          <td mat-cell *matCellDef="let item">{{ item.posicion }}</td>
-        </ng-container>
+  <!-- Sin resultados de búsqueda -->
+  <div class="sin-datos" *ngIf="todosLosContratistas.length > 0 && contratistasFiltrados.length === 0">
+    <mat-icon>search_off</mat-icon>
+    <h2>No se encontraron contratistas</h2>
+    <p>Intenta con otros términos de búsqueda o cambia los filtros.</p>
+  </div>
 
-        <ng-container matColumnDef="empresa">
-          <th mat-header-cell *matHeaderCellDef>Empresa</th>
-          <td mat-cell *matCellDef="let item">{{ item.empresa }}</td>
-        </ng-container>
+  <!-- Tabla de contratistas -->
+  <div class="tabla-container" *ngIf="contratistasPaginados.length > 0">
+    <table mat-table [dataSource]="contratistasPaginados" multiTemplateDataRows class="tabla-contratistas">
 
-        <ng-container matColumnDef="documentosVencidos">
-          <th mat-header-cell *matHeaderCellDef>Doc. Vencidos</th>
-          <td mat-cell *matCellDef="let item">
-            <strong class="text-danger">{{ item.documentosVencidos }}</strong>
-          </td>
-        </ng-container>
+      <!-- Razón Social -->
+      <ng-container matColumnDef="razonSocial">
+        <th mat-header-cell *matHeaderCellDef>Contratista</th>
+        <td mat-cell *matCellDef="let contratista">
+          <button mat-button class="btn-expandir" (click)="toggleRow(contratista); $event.stopPropagation()">
+            <mat-icon>{{ expandedElement === contratista ? 'expand_less' : 'expand_more' }}</mat-icon>
+            <span class="nombre-contratista">{{ contratista.razonSocial }}</span>
+          </button>
+        </td>
+      </ng-container>
 
-        <ng-container matColumnDef="documentosFaltantes">
-          <th mat-header-cell *matHeaderCellDef>Doc. Faltantes</th>
-          <td mat-cell *matCellDef="let item">
-            <strong class="text-warning">{{ item.documentosFaltantes }}</strong>
-          </td>
-        </ng-container>
+      <!-- RUC -->
+      <ng-container matColumnDef="ruc">
+        <th mat-header-cell *matHeaderCellDef>RUC</th>
+        <td mat-cell *matCellDef="let contratista">{{ contratista.ruc }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="semaforo">
-          <th mat-header-cell *matHeaderCellDef>Semáforo</th>
-          <td mat-cell *matCellDef="let item">
-            <span class="semaforo-badge"
-              [class.semaforo-rojo]="item.colorSemaforo === 'ROJO'"
-              [class.semaforo-amarillo]="item.colorSemaforo === 'AMARILLO'"
-              [class.semaforo-verde]="item.colorSemaforo === 'VERDE'">
-              {{ item.colorSemaforo }}
-            </span>
-          </td>
-        </ng-container>
+      <!-- Tipo -->
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let contratista">{{ contratista.tipoContratista }}</td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumnsObservaciones"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumnsObservaciones;"></tr>
-      </table>
-    </mat-card-content>
-  </mat-card>
+      <!-- Contratos -->
+      <ng-container matColumnDef="contratos">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Contratos</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-contratos">{{ contratista.resumen.contratosActivos }}/{{ contratista.resumen.contratosTotal }}</span>
+        </td>
+      </ng-container>
 
-  <!-- Proveedores y Contratos -->
-  <mat-card class="proveedores-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>folder_shared</mat-icon>
-        Contratistas y Contratos
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <!-- Filtros -->
-      <div class="filtros-container">
-        <mat-form-field class="filtro-search">
-          <mat-icon matPrefix>search</mat-icon>
-          <input matInput placeholder="Buscar por nombre, RUC u OC..." [(ngModel)]="searchText" (ngModelChange)="aplicarFiltros()">
-        </mat-form-field>
+      <!-- Vencidos -->
+      <ng-container matColumnDef="vencidos">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Vencidos</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-vencidos" *ngIf="contratista.resumen.documentosVencidos > 0">
+            {{ contratista.resumen.documentosVencidos }}
+          </span>
+          <span class="badge-ok" *ngIf="contratista.resumen.documentosVencidos === 0">-</span>
+        </td>
+      </ng-container>
 
-        <mat-form-field class="filtro-select">
-          <mat-select [(ngModel)]="filterEstado" (ngModelChange)="aplicarFiltros()" placeholder="Todos los estados">
-            <mat-option value="todos">Todos los estados</mat-option>
-            <mat-option value="APTO">APTO</mat-option>
-            <mat-option value="PENDIENTE">PENDIENTE</mat-option>
-            <mat-option value="BLOQUEADO">BLOQUEADO</mat-option>
-          </mat-select>
-        </mat-form-field>
+      <!-- Por Vencer -->
+      <ng-container matColumnDef="porVencer">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Por Vencer</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-por-vencer" *ngIf="contratista.resumen.documentosPorVencer > 0">
+            {{ contratista.resumen.documentosPorVencer }}
+          </span>
+          <span class="badge-ok" *ngIf="contratista.resumen.documentosPorVencer === 0">-</span>
+        </td>
+      </ng-container>
 
-        <button mat-button (click)="limpiarFiltros()" class="btn-limpiar">
-          Limpiar filtros
-        </button>
-      </div>
+      <!-- Cumplimiento -->
+      <ng-container matColumnDef="cumplimiento">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Cumplimiento</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-cumplimiento" [class]="getCumplimientoClass(contratista.porcentajeCumplimiento)">
+            {{ contratista.porcentajeCumplimiento }}%
+          </span>
+        </td>
+      </ng-container>
 
-      <!-- Tabla de proveedores -->
-      <div class="tabla-proveedores-wrapper">
-        <table mat-table [dataSource]="proveedoresFiltrados" multiTemplateDataRows class="proveedores-table">
-          <ng-container matColumnDef="proveedor">
-            <th mat-header-cell *matHeaderCellDef>Contratista</th>
-            <td mat-cell *matCellDef="let item">
-              <button mat-button class="proveedor-expandable" (click)="toggleRow(item)">
-                <mat-icon>{{ expandedElement === item ? 'expand_less' : 'expand_more' }}</mat-icon>
-                {{ item.proveedor }}
-              </button>
-            </td>
-          </ng-container>
+      <!-- Acciones -->
+      <ng-container matColumnDef="acciones">
+        <th mat-header-cell *matHeaderCellDef></th>
+        <td mat-cell *matCellDef="let contratista">
+          <button mat-icon-button color="primary" matTooltip="Ver detalle" (click)="verDetalleContratista(contratista); $event.stopPropagation()">
+            <mat-icon>visibility</mat-icon>
+          </button>
+        </td>
+      </ng-container>
 
-          <ng-container matColumnDef="servicioOC">
-            <th mat-header-cell *matHeaderCellDef>Servicio/OC</th>
-            <td mat-cell *matCellDef="let item">{{ item.servicioOC }}</td>
-          </ng-container>
+      <!-- Fila expandida con contratos -->
+      <ng-container matColumnDef="expandedDetail">
+        <td mat-cell *matCellDef="let contratista" [attr.colspan]="displayedColumns.length">
+          <div class="detalle-contratos" [@detailExpand]="contratista === expandedElement ? 'expanded' : 'collapsed'">
+            <div class="contratos-wrapper">
+              <h4>Contratos de {{ contratista.razonSocial }}</h4>
+              <table class="tabla-contratos-detalle">
+                <thead>
+                  <tr>
+                    <th></th>
+                    <th>N° Contrato</th>
+                    <th>Descripción</th>
+                    <th>Sede</th>
+                    <th>Estado</th>
+                    <th>Personal</th>
+                    <th>Vehículos</th>
+                    <th>Equipos</th>
+                    <th>Cumplimiento</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let contrato of contratista.contratos">
+                    <td>
+                      <div class="semaforo-mini" [class]="getContratoSemaforoColor(contrato)"></div>
+                    </td>
+                    <td class="numero-contrato">{{ contrato.numero }}</td>
+                    <td>{{ contrato.descripcion }}</td>
+                    <td>
+                      <span class="sede-badge">
+                        <mat-icon>location_on</mat-icon>
+                        {{ contrato.sede }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <span class="estado-badge-mini" [class]="contrato.estado">
+                        {{ getEstadoLabel(contrato.estado) }}
+                      </span>
+                    </td>
+                    <td class="text-center">{{ contrato.personal.habilitados }}/{{ contrato.personal.total }}</td>
+                    <td class="text-center">{{ contrato.vehiculos.habilitados }}/{{ contrato.vehiculos.total }}</td>
+                    <td class="text-center">{{ contrato.herramientas.habilitados }}/{{ contrato.herramientas.total }}</td>
+                    <td class="text-center">
+                      <span class="badge-cumplimiento-mini" [class]="getCumplimientoClass(contrato.porcentajeCumplimiento)">
+                        {{ contrato.porcentajeCumplimiento }}%
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </td>
+      </ng-container>
 
-          <ng-container matColumnDef="empleados">
-            <th mat-header-cell *matHeaderCellDef>Personal</th>
-            <td mat-cell *matCellDef="let item">{{ item.empleados }}</td>
-          </ng-container>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let contratista; columns: displayedColumns;"
+          class="contratista-row"
+          [class.expanded-row]="expandedElement === contratista"
+          (click)="toggleRow(contratista)">
+      </tr>
+      <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detail-row"></tr>
+    </table>
+  </div>
 
-          <ng-container matColumnDef="activos">
-            <th mat-header-cell *matHeaderCellDef>Activos</th>
-            <td mat-cell *matCellDef="let item">{{ item.activos }}</td>
-          </ng-container>
+  <!-- Paginación -->
+  <mat-paginator *ngIf="contratistasFiltrados.length > 0"
+    [length]="contratistasFiltrados.length"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
 
-          <ng-container matColumnDef="cumplimiento">
-            <th mat-header-cell *matHeaderCellDef>Cumplimiento</th>
-            <td mat-cell *matCellDef="let item">
-              <div class="cumplimiento-bar">
-                <div class="cumplimiento-fill"
-                     [style.width.%]="item.cumplimiento"
-                     [class.bajo]="item.cumplimiento < 50"
-                     [class.medio]="item.cumplimiento >= 50 && item.cumplimiento < 80"
-                     [class.alto]="item.cumplimiento >= 80">
-                </div>
-                <span class="cumplimiento-texto">{{ item.cumplimiento }}%</span>
-              </div>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="estado">
-            <th mat-header-cell *matHeaderCellDef>Estado</th>
-            <td mat-cell *matCellDef="let item">
-              <span class="estado-chip"
-                [class.estado-apto]="item.estado === 'APTO'"
-                [class.estado-pendiente]="item.estado === 'PENDIENTE'"
-                [class.estado-bloqueado]="item.estado === 'BLOQUEADO'">
-                <mat-icon class="estado-icon">
-                  {{ item.estado === 'APTO' ? 'check_circle' : item.estado === 'PENDIENTE' ? 'schedule' : 'cancel' }}
-                </mat-icon>
-                {{ item.estado }}
-              </span>
-            </td>
-          </ng-container>
-
-          <!-- Fila expandible con detalle de contratos -->
-          <ng-container matColumnDef="expandedDetail">
-            <td mat-cell *matCellDef="let item" [attr.colspan]="displayedColumnsProveedores.length">
-              <div class="detalle-contratos" [@detailExpand]="item == expandedElement ? 'expanded' : 'collapsed'">
-                <table class="tabla-contratos">
-                  <thead>
-                    <tr>
-                      <th>N° Contrato/OC</th>
-                      <th>Descripción</th>
-                      <th>Personal</th>
-                      <th>Activos</th>
-                      <th>Mat. Pel.</th>
-                      <th>Fecha Inicio</th>
-                      <th>Fecha Fin</th>
-                      <th>Estado</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr *ngFor="let contrato of item.detalleContratos">
-                      <td>{{ contrato.numeroContrato }}</td>
-                      <td>{{ contrato.descripcion }}</td>
-                      <td>{{ contrato.empleados }}</td>
-                      <td>{{ contrato.activos }}</td>
-                      <td>{{ contrato.materialesPel }}</td>
-                      <td>{{ contrato.fechaInicio }}</td>
-                      <td>{{ contrato.fechaFin }}</td>
-                      <td>
-                        <span class="contrato-estado-badge"
-                          [class.contrato-activa]="contrato.estadoContrato === 'ACTIVA'"
-                          [class.contrato-pendiente]="contrato.estadoContrato === 'PENDIENTE'"
-                          [class.contrato-porvencer]="contrato.estadoContrato === 'POR VENCER'">
-                          {{ contrato.estadoContrato }}
-                        </span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumnsProveedores"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumnsProveedores;" class="proveedor-row"></tr>
-          <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="detalle-row"></tr>
-        </table>
-      </div>
-
-      <div class="tabla-footer">
-        <span>Mostrando {{ proveedoresFiltrados.length }} de {{ stats.proveedores.length }} contratistas</span>
-      </div>
-    </mat-card-content>
-  </mat-card>
 </div>

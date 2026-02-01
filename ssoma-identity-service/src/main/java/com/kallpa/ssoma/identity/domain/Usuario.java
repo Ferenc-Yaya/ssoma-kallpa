@@ -39,6 +39,13 @@ public class Usuario extends BaseEntity {
     @JoinColumn(name = "rol_id")
     private Rol rol;
 
+    @Column(name = "empresa_id")
+    private UUID empresaId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empresa_id", insertable = false, updatable = false)
+    private Empresa empresa;
+
     @Column(name = "username", nullable = false, length = 100)
     private String username;
 

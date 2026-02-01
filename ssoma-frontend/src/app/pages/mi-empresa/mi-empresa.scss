@@ -1,0 +1,103 @@
+.mi-empresa-container {
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  gap: 16px;
+
+  p {
+    color: #64748b;
+    font-size: 14px;
+  }
+}
+
+.empresa-card {
+  mat-card-header {
+    margin-bottom: 24px;
+
+    mat-icon[mat-card-avatar] {
+      background: #3b82f6;
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+    }
+
+    mat-card-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1e293b;
+    }
+
+    mat-card-subtitle {
+      color: #64748b;
+    }
+  }
+}
+
+.empresa-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-section {
+  padding: 16px 0;
+
+  h3 {
+    margin: 0 0 16px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+}
+
+.full-width {
+  width: 100%;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+mat-divider {
+  margin: 8px 0;
+}
+
+mat-card-actions {
+  padding: 16px 24px;
+  gap: 12px;
+
+  button {
+    min-width: 140px;
+  }
+}
+
+.btn-spinner {
+  display: inline-block;
+}
+
+// Estilos para inputs readonly
+input[readonly] {
+  color: #64748b;
+  background: #f8fafc;
+}

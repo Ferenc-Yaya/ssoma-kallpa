@@ -52,6 +52,7 @@ public class AuthService {
                 usuario.getUsername(),
                 usuario.getTenantId(),
                 usuario.getRol() != null ? usuario.getRol().getCodigo() : "USER",
+                usuario.getEmpresaId() != null ? usuario.getEmpresaId().toString() : null,
                 "Login exitoso"
         );
     }

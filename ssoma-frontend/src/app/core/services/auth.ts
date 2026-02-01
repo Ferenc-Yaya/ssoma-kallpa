@@ -13,6 +13,7 @@ export interface LoginResponse {
   username: string;
   tenantId: string;
   rol: string;
+  empresaId: string | null;
   message: string;
 }
 
@@ -31,6 +32,9 @@ export class AuthService {
           this.saveTenantId(response.tenantId);
           this.saveUsername(response.username);
           this.saveRole(response.rol);
+          if (response.empresaId) {
+            this.saveEmpresaId(response.empresaId);
+          }
         })
       );
   }
@@ -67,11 +71,20 @@ export class AuthService {
     return localStorage.getItem('rol');
   }
 
+  saveEmpresaId(empresaId: string): void {
+    localStorage.setItem('empresa_id', empresaId);
+  }
+
+  getEmpresaId(): string | null {
+    return localStorage.getItem('empresa_id');
+  }
+
   logout(): void {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('current_tenant');
     localStorage.removeItem('username');
     localStorage.removeItem('rol');
+    localStorage.removeItem('empresa_id');
   }
 
   isAuthenticated(): boolean {

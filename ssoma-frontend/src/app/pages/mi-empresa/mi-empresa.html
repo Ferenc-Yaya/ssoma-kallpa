@@ -1,0 +1,112 @@
+<div class="mi-empresa-container">
+
+  <!-- Loading -->
+  <div class="loading-container" *ngIf="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+    <p>Cargando datos de la empresa...</p>
+  </div>
+
+  <!-- Formulario -->
+  <mat-card *ngIf="!loading" class="empresa-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>business</mat-icon>
+      <mat-card-title>Datos de Mi Empresa</mat-card-title>
+      <mat-card-subtitle>Actualiza la información de tu empresa</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="empresaForm" class="empresa-form">
+
+        <!-- RUC (solo lectura) -->
+        <div class="form-section">
+          <h3>Identificación</h3>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>RUC</mat-label>
+            <input matInput formControlName="ruc" readonly>
+            <mat-icon matSuffix>lock</mat-icon>
+            <mat-hint>El RUC no puede ser modificado</mat-hint>
+          </mat-form-field>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Información General -->
+        <div class="form-section">
+          <h3>Información General</h3>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Razón Social</mat-label>
+            <input matInput formControlName="razonSocial" placeholder="Nombre legal de la empresa">
+            <mat-error *ngIf="empresaForm.get('razonSocial')?.invalid">
+              {{ getErrorMessage('razonSocial') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Rubro Comercial</mat-label>
+            <input matInput formControlName="rubroComercial" placeholder="Ej: Construcción, Minería, Servicios...">
+            <mat-error *ngIf="empresaForm.get('rubroComercial')?.invalid">
+              {{ getErrorMessage('rubroComercial') }}
+            </mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Dirección</mat-label>
+            <textarea matInput formControlName="direccion" rows="2" placeholder="Dirección fiscal de la empresa"></textarea>
+            <mat-error *ngIf="empresaForm.get('direccion')?.invalid">
+              {{ getErrorMessage('direccion') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+        <mat-divider></mat-divider>
+
+        <!-- Contacto -->
+        <div class="form-section">
+          <h3>Información de Contacto</h3>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Teléfono</mat-label>
+              <input matInput formControlName="telefono" placeholder="Ej: 01-2345678">
+              <mat-icon matPrefix>phone</mat-icon>
+              <mat-error *ngIf="empresaForm.get('telefono')?.invalid">
+                {{ getErrorMessage('telefono') }}
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Email</mat-label>
+              <input matInput formControlName="email" type="email" placeholder="contacto@empresa.com">
+              <mat-icon matPrefix>email</mat-icon>
+              <mat-error *ngIf="empresaForm.get('email')?.invalid">
+                {{ getErrorMessage('email') }}
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Sitio Web</mat-label>
+            <input matInput formControlName="sitioWeb" placeholder="https://www.miempresa.com">
+            <mat-icon matPrefix>language</mat-icon>
+            <mat-error *ngIf="empresaForm.get('sitioWeb')?.invalid">
+              {{ getErrorMessage('sitioWeb') }}
+            </mat-error>
+          </mat-form-field>
+        </div>
+
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button (click)="cancelar()" [disabled]="saving">
+        Cancelar
+      </button>
+      <button mat-flat-button color="primary" (click)="guardarCambios()" [disabled]="saving || empresaForm.invalid">
+        <mat-spinner *ngIf="saving" diameter="20" class="btn-spinner"></mat-spinner>
+        <span *ngIf="!saving">Guardar Cambios</span>
+      </button>
+    </mat-card-actions>
+  </mat-card>
+
+</div>

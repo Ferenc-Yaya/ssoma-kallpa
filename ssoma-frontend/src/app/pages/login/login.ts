@@ -57,11 +57,11 @@ export class LoginComponent {
           if (response.rol === 'SUPER_ADMIN') {
             this.router.navigate(['/dashboard-superadmin']);
           } else if (response.rol === 'ADMIN_CONTRATISTA') {
-            this.router.navigate(['/empresas']);
+            this.router.navigate(['/dashboard-contratista']);
           } else if (response.rol === 'ADMIN_EMPRESA_PRINCIPAL') {
             this.router.navigate(['/empresa-principal']);
           } else {
-            this.router.navigate(['/empresas']);
+            this.router.navigate(['/dashboard']);
           }
 
           this.loading = false;

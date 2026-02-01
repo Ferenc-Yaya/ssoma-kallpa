@@ -1,243 +1,170 @@
 <div class="dashboard-contratista">
-  <!-- Fila 1: 4 Tarjetas KPI -->
-  <div class="kpi-cards">
-    <mat-card class="kpi-card">
-      <mat-card-content>
-        <div class="kpi-layout">
-          <div class="kpi-icon-container accent">
-            <mat-icon>people</mat-icon>
-          </div>
-          <div class="kpi-content">
-            <h2 class="kpi-number">{{ stats.totalPersonal }}</h2>
-            <p class="kpi-label">Personal Registrado</p>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
 
-    <mat-card class="kpi-card">
-      <mat-card-content>
-        <div class="kpi-layout">
-          <div class="kpi-icon-container tools">
-            <mat-icon>build</mat-icon>
-          </div>
-          <div class="kpi-content">
-            <h2 class="kpi-number">{{ stats.totalActivos }}</h2>
-            <p class="kpi-label">Total Activos</p>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  <!-- Header -->
+  <div class="header">
+    <h1>{{ nombreEmpresa }}</h1>
+    <p class="subtitle">Mis Contratos y Estado de Cumplimiento</p>
+  </div>
 
-    <mat-card class="kpi-card">
-      <mat-card-content>
-        <div class="kpi-layout">
-          <div class="kpi-icon-container warn">
-            <mat-icon>warning</mat-icon>
-          </div>
-          <div class="kpi-content">
-            <h2 class="kpi-number">{{ stats.materialesPeligrosos }}</h2>
-            <p class="kpi-label">Materiales Peligrosos</p>
-          </div>
-        </div>
-      </mat-card-content>
-    </mat-card>
+  <!-- Resumen de estados -->
+  <div class="resumen-estados" *ngIf="todosLosContratos.length > 0">
+    <div class="estado-card nuevo" (click)="filtroEstado = 'nuevo'; onFiltroChange()" *ngIf="resumenEstados.nuevos > 0">
+      <span class="numero">{{ resumenEstados.nuevos }}</span>
+      <span class="label">Nuevos</span>
+    </div>
+    <div class="estado-card atencion" (click)="filtroEstado = 'atencion'; onFiltroChange()" *ngIf="resumenEstados.requierenAtencion > 0">
+      <span class="numero">{{ resumenEstados.requierenAtencion }}</span>
+      <span class="label">Req. Atención</span>
+    </div>
+    <div class="estado-card verde" (click)="filtroEstado = 'habilitado'; onFiltroChange()">
+      <span class="numero">{{ resumenEstados.habilitados }}</span>
+      <span class="label">Habilitados</span>
+    </div>
+    <div class="estado-card amarillo" (click)="filtroEstado = 'parcial'; onFiltroChange()">
+      <span class="numero">{{ resumenEstados.parciales }}</span>
+      <span class="label">Parciales</span>
+    </div>
+    <div class="estado-card gris" (click)="filtroEstado = 'finalizado'; onFiltroChange()">
+      <span class="numero">{{ resumenEstados.finalizados }}</span>
+      <span class="label">Finalizados</span>
+    </div>
+    <div class="estado-card total" (click)="filtroEstado = 'todos'; onFiltroChange()">
+      <span class="numero">{{ resumenEstados.total }}</span>
+      <span class="label">Total</span>
+    </div>
+  </div>
 
-    <mat-card class="kpi-card">
-      <mat-card-content>
-        <div class="kpi-layout">
-          <div class="kpi-icon-container success">
-            <mat-icon>assignment</mat-icon>
+  <!-- Barra de búsqueda y filtros -->
+  <div class="filtros-bar" *ngIf="todosLosContratos.length > 0">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Buscar contrato</mat-label>
+      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Número, descripción o empresa...">
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Estado</mat-label>
+      <mat-select [(ngModel)]="filtroEstado" (ngModelChange)="onFiltroChange()">
+        <mat-option value="todos">Todos los estados</mat-option>
+        <mat-option value="nuevo">Nuevo</mat-option>
+        <mat-option value="atencion">Requiere Atención</mat-option>
+        <mat-option value="habilitado">Habilitado</mat-option>
+        <mat-option value="parcial">Parcial</mat-option>
+        <mat-option value="finalizado">Finalizado</mat-option>
+      </mat-select>
+    </mat-form-field>
+
+    <span class="resultados-info">
+      {{ contratosFiltrados.length }} de {{ todosLosContratos.length }} contratos
+    </span>
+  </div>
+
+  <!-- Sin contratos -->
+  <div class="sin-contratos" *ngIf="todosLosContratos.length === 0">
+    <mat-icon>assignment</mat-icon>
+    <h2>No tienes contratos asignados</h2>
+    <p>Contacta con la empresa principal para que te asignen un contrato.</p>
+  </div>
+
+  <!-- Sin resultados de búsqueda -->
+  <div class="sin-contratos" *ngIf="todosLosContratos.length > 0 && contratosFiltrados.length === 0">
+    <mat-icon>search_off</mat-icon>
+    <h2>No se encontraron contratos</h2>
+    <p>Intenta con otros términos de búsqueda o cambia los filtros.</p>
+  </div>
+
+  <!-- Lista de contratos -->
+  <div class="contratos-grid" *ngIf="contratosPaginados.length > 0">
+    <mat-card *ngFor="let contrato of contratosPaginados" class="contrato-card" [class]="getSemaforoColor(contrato)">
+
+      <!-- Header del contrato con semáforo -->
+      <div class="contrato-header">
+        <div class="semaforo-estado">
+          <div class="semaforo" [class]="getSemaforoColor(contrato)">
+            <div class="luz"></div>
           </div>
-          <div class="kpi-content">
-            <h2 class="kpi-number">{{ stats.contratosVigentes }}</h2>
-            <p class="kpi-label">Contratos Vigentes</p>
+          <div class="estado-info">
+            <span class="numero-contrato">{{ contrato.numero }}</span>
+            <span class="estado-badge" [class]="getEstadoClass(contrato.estado)">
+              {{ getEstadoLabel(contrato.estado) }}
+            </span>
           </div>
         </div>
-      </mat-card-content>
+        <div class="cumplimiento-badge" [class]="getSemaforoColor(contrato)">
+          <span class="porcentaje">{{ contrato.porcentajeCumplimiento }}%</span>
+        </div>
+      </div>
+
+      <!-- Info del contrato -->
+      <div class="contrato-info">
+        <h3>{{ contrato.descripcion }}</h3>
+        <div class="meta-info">
+          <span class="empresa">
+            <mat-icon>business</mat-icon>
+            {{ contrato.empresaPrincipal }}
+          </span>
+          <span class="fechas">
+            <mat-icon>date_range</mat-icon>
+            {{ contrato.fechaInicio }} - {{ contrato.fechaFin }}
+          </span>
+        </div>
+      </div>
+
+      <!-- Recursos del contrato -->
+      <div class="recursos-lista">
+        <div *ngFor="let recurso of contrato.recursos" class="recurso-fila"
+             [class.tiene-vencidos]="recurso.vencidos > 0"
+             [class.oculto]="recurso.total === 0">
+          <div class="recurso-info">
+            <mat-icon>{{ recurso.icono }}</mat-icon>
+            <span class="nombre">{{ recurso.nombre }}</span>
+          </div>
+          <div class="recurso-barra">
+            <div class="barra-bg">
+              <div class="barra-fill" [style.width.%]="getPorcentajeRecurso(recurso)"
+                   [class.verde]="getPorcentajeRecurso(recurso) >= 90"
+                   [class.amarillo]="getPorcentajeRecurso(recurso) >= 70 && getPorcentajeRecurso(recurso) < 90"
+                   [class.rojo]="getPorcentajeRecurso(recurso) < 70"></div>
+            </div>
+          </div>
+          <div class="recurso-numeros">
+            <span class="cantidad">{{ recurso.habilitados }}/{{ recurso.total }}</span>
+          </div>
+          <div class="recurso-alertas">
+            <span class="vencidos" *ngIf="recurso.vencidos > 0">{{ recurso.vencidos }} venc.</span>
+            <span class="por-vencer" *ngIf="recurso.porVencer > 0">{{ recurso.porVencer }} x vencer</span>
+            <span class="ok" *ngIf="recurso.vencidos === 0 && recurso.porVencer === 0">✓</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Acción del contrato -->
+      <div class="contrato-acciones">
+        <button mat-flat-button color="primary" class="btn-gestionar" (click)="gestionarContrato(contrato)">
+          <mat-icon>edit</mat-icon>
+          Gestionar Contrato
+        </button>
+        <button mat-stroked-button
+                color="accent"
+                class="btn-pasaporte"
+                [disabled]="contrato.estado !== 'habilitado' && contrato.estado !== 'finalizado'"
+                (click)="verPasaporte(contrato)">
+          <mat-icon>badge</mat-icon>
+          Ver Pasaporte
+        </button>
+      </div>
+
     </mat-card>
   </div>
 
-  <!-- Nuevos Contratos - Requieren Acción -->
-  <mat-card class="contratos-nuevos-card" *ngIf="stats.contratosNuevos.length > 0">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon class="icon-alert">notification_important</mat-icon>
-        Nuevos Contratos - Requieren Acción
-        <span class="badge-count">{{ stats.contratosNuevos.length }}</span>
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="contratos-nuevos-list">
-        <div class="contrato-nuevo-item" *ngFor="let contrato of stats.contratosNuevos">
-          <div class="contrato-nuevo-header">
-            <div class="contrato-nuevo-badge"
-              [class.riesgo-alto]="contrato.nivel_riesgo === 'ALTO'"
-              [class.riesgo-medio]="contrato.nivel_riesgo === 'MEDIO'"
-              [class.riesgo-bajo]="contrato.nivel_riesgo === 'BAJO'">
-              <mat-icon>new_releases</mat-icon>
-              <span>NUEVO</span>
-            </div>
-            <span class="fecha-creacion">Creado: {{ contrato.fecha_creacion }}</span>
-          </div>
+  <!-- Paginación -->
+  <mat-paginator *ngIf="contratosFiltrados.length > pageSize"
+    [length]="contratosFiltrados.length"
+    [pageSize]="pageSize"
+    [pageIndex]="pageIndex"
+    [pageSizeOptions]="[6, 12, 24]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
 
-          <div class="contrato-nuevo-info">
-            <h3 class="contrato-numero">{{ contrato.numero_contrato }}</h3>
-            <p class="contrato-descripcion">{{ contrato.descripcion }}</p>
-
-            <div class="contrato-detalles">
-              <div class="detalle-item">
-                <mat-icon>calendar_today</mat-icon>
-                <span><strong>Vigencia:</strong> {{ contrato.fecha_inicio }} - {{ contrato.fecha_fin }}</span>
-              </div>
-              <div class="detalle-item">
-                <mat-icon>attach_money</mat-icon>
-                <span><strong>Monto Estimado:</strong> S/ {{ contrato.monto_estimado | number:'1.2-2' }}</span>
-              </div>
-              <div class="detalle-item">
-                <mat-icon
-                  [class.riesgo-icon-alto]="contrato.nivel_riesgo === 'ALTO'"
-                  [class.riesgo-icon-medio]="contrato.nivel_riesgo === 'MEDIO'"
-                  [class.riesgo-icon-bajo]="contrato.nivel_riesgo === 'BAJO'">
-                  {{ contrato.nivel_riesgo === 'ALTO' ? 'report_problem' : contrato.nivel_riesgo === 'MEDIO' ? 'warning' : 'check_circle' }}
-                </mat-icon>
-                <span><strong>Nivel de Riesgo:</strong> {{ contrato.nivel_riesgo }}</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="contrato-requisitos">
-            <h4 class="requisitos-title">Requisitos para Vincular:</h4>
-            <div class="requisitos-grid">
-              <div class="requisito-item" [class.requerido]="contrato.requiere_personal">
-                <mat-icon [class.icon-required]="contrato.requiere_personal">people</mat-icon>
-                <span>Personal</span>
-                <mat-icon class="check-icon" *ngIf="contrato.requiere_personal">arrow_forward</mat-icon>
-              </div>
-              <div class="requisito-item" [class.requerido]="contrato.requiere_activos">
-                <mat-icon [class.icon-required]="contrato.requiere_activos">build</mat-icon>
-                <span>Activos</span>
-                <mat-icon class="check-icon" *ngIf="contrato.requiere_activos">arrow_forward</mat-icon>
-              </div>
-              <div class="requisito-item" [class.requerido]="contrato.requiere_materiales_peligrosos">
-                <mat-icon [class.icon-required]="contrato.requiere_materiales_peligrosos">warning</mat-icon>
-                <span>Mat. Peligrosos</span>
-                <mat-icon class="check-icon" *ngIf="contrato.requiere_materiales_peligrosos">arrow_forward</mat-icon>
-              </div>
-            </div>
-
-            <div class="documentos-requeridos">
-              <h5 class="docs-title">Documentos Requeridos:</h5>
-              <ul class="docs-list">
-                <li *ngFor="let doc of contrato.documentos_requeridos">
-                  <mat-icon>description</mat-icon>
-                  <span>{{ doc }}</span>
-                </li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="contrato-acciones">
-            <button mat-raised-button color="primary" class="btn-iniciar">
-              <mat-icon>play_arrow</mat-icon>
-              Iniciar Vinculación
-            </button>
-            <button mat-button class="btn-detalles">
-              Ver Detalles Completos
-            </button>
-          </div>
-        </div>
-      </div>
-    </mat-card-content>
-  </mat-card>
-
-  <!-- Detalle de Contratos -->
-  <mat-card class="contratos-card">
-    <mat-card-header>
-      <mat-card-title>
-        <mat-icon>folder_shared</mat-icon>
-        Mis Contratos
-      </mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div class="tabla-contratos-wrapper">
-        <table mat-table [dataSource]="stats.contratos" class="contratos-table">
-
-          <ng-container matColumnDef="contrato">
-            <th mat-header-cell *matHeaderCellDef>N° Contrato</th>
-            <td mat-cell *matCellDef="let item">
-              <strong>{{ item.numero_contrato }}</strong>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="descripcion">
-            <th mat-header-cell *matHeaderCellDef>Descripción</th>
-            <td mat-cell *matCellDef="let item">{{ item.descripcion }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="fechas">
-            <th mat-header-cell *matHeaderCellDef>Vigencia</th>
-            <td mat-cell *matCellDef="let item">
-              <div class="fechas-container">
-                <div class="fecha-item">
-                  <mat-icon class="fecha-icon">event</mat-icon>
-                  <span>{{ item.fecha_inicio }}</span>
-                </div>
-                <div class="fecha-separator">-</div>
-                <div class="fecha-item">
-                  <mat-icon class="fecha-icon">event</mat-icon>
-                  <span>{{ item.fecha_fin }}</span>
-                </div>
-              </div>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="personal">
-            <th mat-header-cell *matHeaderCellDef>Personal</th>
-            <td mat-cell *matCellDef="let item">{{ item.personal_asignado }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="activos">
-            <th mat-header-cell *matHeaderCellDef>Activos</th>
-            <td mat-cell *matCellDef="let item">{{ item.activos_asignados }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="materiales">
-            <th mat-header-cell *matHeaderCellDef>Mat. Pel.</th>
-            <td mat-cell *matCellDef="let item">{{ item.materiales_peligrosos }}</td>
-          </ng-container>
-
-          <ng-container matColumnDef="estado">
-            <th mat-header-cell *matHeaderCellDef>Estado</th>
-            <td mat-cell *matCellDef="let item">
-              <span
-                class="estado-badge"
-                [class.estado-apto]="item.estado_acreditacion === 'APTO'"
-                [class.estado-observado]="item.estado_acreditacion === 'OBSERVADO'"
-                [class.estado-pendiente]="item.estado_acreditacion === 'PENDIENTE'">
-                {{ item.estado_acreditacion }}
-              </span>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="progreso">
-            <th mat-header-cell *matHeaderCellDef>Progreso Documentos</th>
-            <td mat-cell *matCellDef="let item">
-              <div class="progreso-container">
-                <mat-progress-bar
-                  mode="determinate"
-                  [value]="item.progreso_documentos"
-                  [color]="getProgresoColor(item.progreso_documentos)">
-                </mat-progress-bar>
-                <span class="progreso-text">{{ item.progreso_documentos }}%</span>
-              </div>
-            </td>
-          </ng-container>
-
-          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        </table>
-      </div>
-    </mat-card-content>
-  </mat-card>
 </div>

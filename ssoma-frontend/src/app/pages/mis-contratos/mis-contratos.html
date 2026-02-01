@@ -1,0 +1,591 @@
+<div class="mis-contratos-container">
+
+  <!-- Header del contrato -->
+  <div class="contrato-header" *ngIf="contrato">
+    <button mat-icon-button (click)="volver()" class="btn-volver">
+      <mat-icon>arrow_back</mat-icon>
+    </button>
+    <div class="contrato-info">
+      <h1>{{ contrato.numero }}</h1>
+      <p class="descripcion">{{ contrato.descripcion }}</p>
+      <div class="meta">
+        <span class="sede">
+          <mat-icon>location_on</mat-icon>
+          {{ contrato.sede }}
+        </span>
+        <span class="fechas">
+          <mat-icon>date_range</mat-icon>
+          {{ contrato.fechaInicio }} - {{ contrato.fechaFin }}
+        </span>
+        <span class="estado-badge" [ngClass]="contrato.estado">
+          {{ contrato.estado | uppercase }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabs de recursos -->
+  <mat-card class="recursos-card" *ngIf="contrato">
+    <mat-tab-group [(selectedIndex)]="selectedTabIndex" animationDuration="200ms">
+
+      <!-- Tab Personal -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>people</mat-icon>
+          <span>Personal</span>
+          <span class="tab-count">{{ getPersonalCount() }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-header">
+            <h3>Personal Asignado</h3>
+            <button mat-flat-button color="primary" (click)="abrirFormulario('personal')">
+              <mat-icon>add</mat-icon>
+              Agregar Personal
+            </button>
+          </div>
+
+          <div class="recursos-lista" *ngIf="contrato.personal.length > 0">
+            <div class="recurso-item" *ngFor="let persona of contrato.personal">
+              <div class="recurso-principal">
+                <div class="avatar">
+                  <mat-icon>person</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="nombre">{{ persona.nombres }} {{ persona.apellidos }}</span>
+                  <span class="detalle">DNI: {{ persona.dni }} | {{ persona.cargo }}</span>
+                </div>
+                <span class="estado-chip" [ngClass]="getEstadoClass(persona.estado)">
+                  {{ getEstadoLabel(persona.estado) }}
+                </span>
+              </div>
+              <div class="recurso-documentos">
+                <span class="docs-label">Documentos:</span>
+                <div class="docs-chips">
+                  <span *ngFor="let doc of persona.documentos"
+                        class="doc-chip"
+                        [ngClass]="getEstadoClass(doc.estado)"
+                        [matTooltip]="'Vence: ' + doc.fechaVencimiento">
+                    {{ doc.nombre }}
+                  </span>
+                </div>
+              </div>
+              <div class="recurso-acciones">
+                <button mat-icon-button matTooltip="Editar" (click)="abrirFormulario('personal', persona)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Ver documentos" (click)="verDocumentos(persona)">
+                  <mat-icon>folder_open</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar('personal', persona.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="contrato.personal.length === 0">
+            <mat-icon>people_outline</mat-icon>
+            <p>No hay personal asignado a este contrato</p>
+            <button mat-stroked-button color="primary" (click)="abrirFormulario('personal')">
+              Agregar primer personal
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab Herramientas -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>construction</mat-icon>
+          <span>Herramientas</span>
+          <span class="tab-count">{{ getHerramientasCount() }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-header">
+            <h3>Herramientas y Equipos</h3>
+            <button mat-flat-button color="primary" (click)="abrirFormulario('herramienta')">
+              <mat-icon>add</mat-icon>
+              Agregar Herramienta
+            </button>
+          </div>
+
+          <div class="recursos-lista" *ngIf="contrato.herramientas.length > 0">
+            <div class="recurso-item" *ngFor="let herramienta of contrato.herramientas">
+              <div class="recurso-principal">
+                <div class="avatar herramienta">
+                  <mat-icon>build</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="nombre">{{ herramienta.nombre }}</span>
+                  <span class="detalle">{{ herramienta.codigo }} | {{ herramienta.marca }} {{ herramienta.modelo }}</span>
+                </div>
+                <span class="estado-chip" [ngClass]="getEstadoClass(herramienta.estado)">
+                  {{ getEstadoLabel(herramienta.estado) }}
+                </span>
+              </div>
+              <div class="recurso-documentos">
+                <span class="docs-label">Documentos:</span>
+                <div class="docs-chips">
+                  <span *ngFor="let doc of herramienta.documentos"
+                        class="doc-chip"
+                        [ngClass]="getEstadoClass(doc.estado)"
+                        [matTooltip]="'Vence: ' + doc.fechaVencimiento">
+                    {{ doc.nombre }}
+                  </span>
+                </div>
+              </div>
+              <div class="recurso-acciones">
+                <button mat-icon-button matTooltip="Editar" (click)="abrirFormulario('herramienta', herramienta)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Ver documentos" (click)="verDocumentos(herramienta)">
+                  <mat-icon>folder_open</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar('herramienta', herramienta.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="contrato.herramientas.length === 0">
+            <mat-icon>construction</mat-icon>
+            <p>No hay herramientas registradas</p>
+            <button mat-stroked-button color="primary" (click)="abrirFormulario('herramienta')">
+              Agregar primera herramienta
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab Vehículos -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>local_shipping</mat-icon>
+          <span>Vehículos</span>
+          <span class="tab-count">{{ getVehiculosCount() }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-header">
+            <h3>Vehículos</h3>
+            <button mat-flat-button color="primary" (click)="abrirFormulario('vehiculo')">
+              <mat-icon>add</mat-icon>
+              Agregar Vehículo
+            </button>
+          </div>
+
+          <div class="recursos-lista" *ngIf="contrato.vehiculos.length > 0">
+            <div class="recurso-item" *ngFor="let vehiculo of contrato.vehiculos">
+              <div class="recurso-principal">
+                <div class="avatar vehiculo">
+                  <mat-icon>directions_car</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="nombre">{{ vehiculo.placa }}</span>
+                  <span class="detalle">{{ vehiculo.marca }} {{ vehiculo.modelo }} ({{ vehiculo.anio }}) - {{ vehiculo.tipo }}</span>
+                </div>
+                <span class="estado-chip" [ngClass]="getEstadoClass(vehiculo.estado)">
+                  {{ getEstadoLabel(vehiculo.estado) }}
+                </span>
+              </div>
+              <div class="recurso-documentos">
+                <span class="docs-label">Documentos:</span>
+                <div class="docs-chips">
+                  <span *ngFor="let doc of vehiculo.documentos"
+                        class="doc-chip"
+                        [ngClass]="getEstadoClass(doc.estado)"
+                        [matTooltip]="'Vence: ' + doc.fechaVencimiento">
+                    {{ doc.nombre }}
+                  </span>
+                </div>
+              </div>
+              <div class="recurso-acciones">
+                <button mat-icon-button matTooltip="Editar" (click)="abrirFormulario('vehiculo', vehiculo)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Ver documentos" (click)="verDocumentos(vehiculo)">
+                  <mat-icon>folder_open</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar('vehiculo', vehiculo.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="contrato.vehiculos.length === 0">
+            <mat-icon>local_shipping</mat-icon>
+            <p>No hay vehículos registrados</p>
+            <button mat-stroked-button color="primary" (click)="abrirFormulario('vehiculo')">
+              Agregar primer vehículo
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab Materiales Peligrosos -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>warning</mat-icon>
+          <span>Mat. Peligrosos</span>
+          <span class="tab-count">{{ getMaterialesCount() }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-header">
+            <h3>Materiales Peligrosos</h3>
+            <button mat-flat-button color="primary" (click)="abrirFormulario('material')">
+              <mat-icon>add</mat-icon>
+              Agregar Material
+            </button>
+          </div>
+
+          <div class="recursos-lista" *ngIf="contrato.materialesPeligrosos.length > 0">
+            <div class="recurso-item" *ngFor="let material of contrato.materialesPeligrosos">
+              <div class="recurso-principal">
+                <div class="avatar material">
+                  <mat-icon>science</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="nombre">{{ material.nombre }}</span>
+                  <span class="detalle">ONU: {{ material.codigoONU }} | {{ material.clase }} | {{ material.cantidad }} {{ material.unidad }}</span>
+                </div>
+                <span class="estado-chip" [ngClass]="getEstadoClass(material.estado)">
+                  {{ getEstadoLabel(material.estado) }}
+                </span>
+              </div>
+              <div class="recurso-documentos">
+                <span class="docs-label">Documentos:</span>
+                <div class="docs-chips">
+                  <span *ngFor="let doc of material.documentos"
+                        class="doc-chip"
+                        [ngClass]="getEstadoClass(doc.estado)"
+                        [matTooltip]="'Vence: ' + doc.fechaVencimiento">
+                    {{ doc.nombre }}
+                  </span>
+                </div>
+              </div>
+              <div class="recurso-acciones">
+                <button mat-icon-button matTooltip="Editar" (click)="abrirFormulario('material', material)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Ver documentos" (click)="verDocumentos(material)">
+                  <mat-icon>folder_open</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar('material', material.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="contrato.materialesPeligrosos.length === 0">
+            <mat-icon>warning_amber</mat-icon>
+            <p>No hay materiales peligrosos registrados</p>
+            <button mat-stroked-button color="primary" (click)="abrirFormulario('material')">
+              Agregar primer material
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!-- Tab Documentos -->
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon>description</mat-icon>
+          <span>Documentos</span>
+          <span class="tab-count">{{ getDocumentosCount() }}</span>
+        </ng-template>
+
+        <div class="tab-content">
+          <div class="tab-header">
+            <h3>Documentos de la Empresa</h3>
+            <button mat-flat-button color="primary" (click)="abrirFormulario('documento')">
+              <mat-icon>add</mat-icon>
+              Agregar Documento
+            </button>
+          </div>
+
+          <div class="recursos-lista" *ngIf="contrato.documentos.length > 0">
+            <div class="recurso-item documento-item" *ngFor="let doc of contrato.documentos">
+              <div class="recurso-principal">
+                <div class="avatar documento">
+                  <mat-icon>insert_drive_file</mat-icon>
+                </div>
+                <div class="info">
+                  <span class="nombre">{{ doc.nombre }}</span>
+                  <span class="detalle">{{ doc.tipoDocumento }} | Emitido: {{ doc.fechaEmision }} | Vence: {{ doc.fechaVencimiento }}</span>
+                </div>
+                <span class="estado-chip" [ngClass]="getEstadoClass(doc.estado)">
+                  {{ getEstadoLabel(doc.estado) }}
+                </span>
+              </div>
+              <div class="recurso-acciones">
+                <button mat-icon-button matTooltip="Descargar" *ngIf="doc.archivoUrl">
+                  <mat-icon>download</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Editar" (click)="abrirFormulario('documento', doc)">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button matTooltip="Eliminar" color="warn" (click)="eliminar('documento', doc.id)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="empty-state" *ngIf="contrato.documentos.length === 0">
+            <mat-icon>description</mat-icon>
+            <p>No hay documentos registrados</p>
+            <button mat-stroked-button color="primary" (click)="abrirFormulario('documento')">
+              Agregar primer documento
+            </button>
+          </div>
+        </div>
+      </mat-tab>
+
+    </mat-tab-group>
+  </mat-card>
+
+  <!-- Panel lateral de formulario -->
+  <div class="formulario-panel" [class.abierto]="mostrarFormulario">
+    <div class="panel-overlay" (click)="cerrarFormulario()"></div>
+    <div class="panel-contenido">
+      <div class="panel-header">
+        <h2>
+          <ng-container [ngSwitch]="formularioTipo">
+            <span *ngSwitchCase="'personal'">{{ editandoId ? 'Editar' : 'Agregar' }} Personal</span>
+            <span *ngSwitchCase="'herramienta'">{{ editandoId ? 'Editar' : 'Agregar' }} Herramienta</span>
+            <span *ngSwitchCase="'vehiculo'">{{ editandoId ? 'Editar' : 'Agregar' }} Vehículo</span>
+            <span *ngSwitchCase="'material'">{{ editandoId ? 'Editar' : 'Agregar' }} Material Peligroso</span>
+            <span *ngSwitchCase="'documento'">{{ editandoId ? 'Editar' : 'Agregar' }} Documento</span>
+          </ng-container>
+        </h2>
+        <button mat-icon-button (click)="cerrarFormulario()">
+          <mat-icon>close</mat-icon>
+        </button>
+      </div>
+
+      <div class="panel-body">
+        <!-- Formulario Personal -->
+        <form *ngIf="formularioTipo === 'personal'" [formGroup]="personalForm" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombres</mat-label>
+            <input matInput formControlName="nombres" placeholder="Ej: Juan Carlos">
+            <mat-error *ngIf="personalForm.get('nombres')?.hasError('required')">Campo requerido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Apellidos</mat-label>
+            <input matInput formControlName="apellidos" placeholder="Ej: Pérez García">
+            <mat-error *ngIf="personalForm.get('apellidos')?.hasError('required')">Campo requerido</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>DNI</mat-label>
+            <input matInput formControlName="dni" placeholder="Ej: 12345678" maxlength="8">
+            <mat-error *ngIf="personalForm.get('dni')?.hasError('required')">Campo requerido</mat-error>
+            <mat-error *ngIf="personalForm.get('dni')?.hasError('pattern')">DNI debe tener 8 dígitos</mat-error>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Cargo</mat-label>
+            <input matInput formControlName="cargo" placeholder="Ej: Electricista">
+            <mat-error *ngIf="personalForm.get('cargo')?.hasError('required')">Campo requerido</mat-error>
+          </mat-form-field>
+
+          <div class="upload-section">
+            <label>Adjuntar Documento (opcional)</label>
+            <div class="upload-box">
+              <input type="file" id="archivo-personal" (change)="onArchivoSeleccionado($event)" accept=".pdf,.jpg,.png">
+              <label for="archivo-personal" class="upload-label">
+                <mat-icon>cloud_upload</mat-icon>
+                <span *ngIf="!archivoSeleccionado">Seleccionar archivo</span>
+                <span *ngIf="archivoSeleccionado">{{ archivoSeleccionado.name }}</span>
+              </label>
+            </div>
+          </div>
+        </form>
+
+        <!-- Formulario Herramienta -->
+        <form *ngIf="formularioTipo === 'herramienta'" [formGroup]="herramientaForm" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Taladro Industrial">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Código</mat-label>
+            <input matInput formControlName="codigo" placeholder="Ej: TAL-001">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Marca</mat-label>
+            <input matInput formControlName="marca" placeholder="Ej: DeWalt">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Modelo</mat-label>
+            <input matInput formControlName="modelo" placeholder="Ej: DWD520">
+          </mat-form-field>
+
+          <div class="upload-section">
+            <label>Certificado de Calibración (opcional)</label>
+            <div class="upload-box">
+              <input type="file" id="archivo-herramienta" (change)="onArchivoSeleccionado($event)" accept=".pdf,.jpg,.png">
+              <label for="archivo-herramienta" class="upload-label">
+                <mat-icon>cloud_upload</mat-icon>
+                <span *ngIf="!archivoSeleccionado">Seleccionar archivo</span>
+                <span *ngIf="archivoSeleccionado">{{ archivoSeleccionado.name }}</span>
+              </label>
+            </div>
+          </div>
+        </form>
+
+        <!-- Formulario Vehículo -->
+        <form *ngIf="formularioTipo === 'vehiculo'" [formGroup]="vehiculoForm" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Placa</mat-label>
+            <input matInput formControlName="placa" placeholder="Ej: ABC-123" style="text-transform: uppercase;">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Marca</mat-label>
+            <input matInput formControlName="marca" placeholder="Ej: Toyota">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Modelo</mat-label>
+            <input matInput formControlName="modelo" placeholder="Ej: Hilux">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Año</mat-label>
+            <input matInput type="number" formControlName="anio" placeholder="Ej: 2022">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo</mat-label>
+            <mat-select formControlName="tipo">
+              <mat-option *ngFor="let tipo of getTiposVehiculo()" [value]="tipo">{{ tipo }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="upload-section">
+            <label>SOAT / Revisión Técnica (opcional)</label>
+            <div class="upload-box">
+              <input type="file" id="archivo-vehiculo" (change)="onArchivoSeleccionado($event)" accept=".pdf,.jpg,.png">
+              <label for="archivo-vehiculo" class="upload-label">
+                <mat-icon>cloud_upload</mat-icon>
+                <span *ngIf="!archivoSeleccionado">Seleccionar archivo</span>
+                <span *ngIf="archivoSeleccionado">{{ archivoSeleccionado.name }}</span>
+              </label>
+            </div>
+          </div>
+        </form>
+
+        <!-- Formulario Material Peligroso -->
+        <form *ngIf="formularioTipo === 'material'" [formGroup]="materialForm" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre del Material</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Ácido Sulfúrico">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Código ONU</mat-label>
+            <input matInput formControlName="codigoONU" placeholder="Ej: 1830">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Clase</mat-label>
+            <mat-select formControlName="clase">
+              <mat-option *ngFor="let clase of getClasesMaterial()" [value]="clase">{{ clase }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Cantidad</mat-label>
+              <input matInput type="number" formControlName="cantidad" placeholder="Ej: 100">
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Unidad</mat-label>
+              <mat-select formControlName="unidad">
+                <mat-option value="kg">Kilogramos (kg)</mat-option>
+                <mat-option value="lt">Litros (lt)</mat-option>
+                <mat-option value="gal">Galones (gal)</mat-option>
+                <mat-option value="m3">Metros cúbicos (m³)</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+
+          <div class="upload-section">
+            <label>Hoja de Seguridad (MSDS)</label>
+            <div class="upload-box">
+              <input type="file" id="archivo-material" (change)="onArchivoSeleccionado($event)" accept=".pdf">
+              <label for="archivo-material" class="upload-label">
+                <mat-icon>cloud_upload</mat-icon>
+                <span *ngIf="!archivoSeleccionado">Seleccionar archivo</span>
+                <span *ngIf="archivoSeleccionado">{{ archivoSeleccionado.name }}</span>
+              </label>
+            </div>
+          </div>
+        </form>
+
+        <!-- Formulario Documento -->
+        <form *ngIf="formularioTipo === 'documento'" [formGroup]="documentoForm" class="formulario">
+          <mat-form-field appearance="outline">
+            <mat-label>Tipo de Documento</mat-label>
+            <mat-select formControlName="tipoDocumento">
+              <mat-option *ngFor="let tipo of getTiposDocumento()" [value]="tipo">{{ tipo }}</mat-option>
+            </mat-select>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Nombre del Documento</mat-label>
+            <input matInput formControlName="nombre" placeholder="Ej: Póliza de Responsabilidad Civil">
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de Emisión</mat-label>
+            <input matInput [matDatepicker]="pickerEmision" formControlName="fechaEmision">
+            <mat-datepicker-toggle matSuffix [for]="pickerEmision"></mat-datepicker-toggle>
+            <mat-datepicker #pickerEmision></mat-datepicker>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Fecha de Vencimiento</mat-label>
+            <input matInput [matDatepicker]="pickerVencimiento" formControlName="fechaVencimiento">
+            <mat-datepicker-toggle matSuffix [for]="pickerVencimiento"></mat-datepicker-toggle>
+            <mat-datepicker #pickerVencimiento></mat-datepicker>
+          </mat-form-field>
+
+          <div class="upload-section">
+            <label>Archivo del Documento</label>
+            <div class="upload-box">
+              <input type="file" id="archivo-documento" (change)="onArchivoSeleccionado($event)" accept=".pdf,.jpg,.png">
+              <label for="archivo-documento" class="upload-label">
+                <mat-icon>cloud_upload</mat-icon>
+                <span *ngIf="!archivoSeleccionado">Seleccionar archivo</span>
+                <span *ngIf="archivoSeleccionado">{{ archivoSeleccionado.name }}</span>
+              </label>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel-footer">
+        <button mat-button (click)="cerrarFormulario()">Cancelar</button>
+        <button mat-flat-button color="primary" (click)="guardar()">
+          <mat-icon>save</mat-icon>
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+
+</div>

@@ -98,21 +98,15 @@ export const MENU_ITEMS: MenuItem[] = [
     roles: ['ADMIN_CONTRATISTA']
   },
   {
-    label: 'Mi Personal',
-    icon: 'people',
-    route: '/mi-personal',
-    roles: ['ADMIN_CONTRATISTA']
-  },
-  {
-    label: 'Mis Documentos',
+    label: 'Mis Contratos',
     icon: 'description',
-    route: '/mis-documentos',
+    route: '/mis-contratos',
     roles: ['ADMIN_CONTRATISTA']
   },
   {
-    label: 'Pasaportes',
+    label: 'Mis Pasaportes',
     icon: 'badge',
-    route: '/pasaporte',
+    route: '/mis-pasaportes',
     roles: ['ADMIN_CONTRATISTA']
   }
 ];

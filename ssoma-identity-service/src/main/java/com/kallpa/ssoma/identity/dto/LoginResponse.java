@@ -12,5 +12,6 @@ public class LoginResponse {
     private String username;
     private String tenantId;
     private String rol;
+    private String empresaId;
     private String message;
 }

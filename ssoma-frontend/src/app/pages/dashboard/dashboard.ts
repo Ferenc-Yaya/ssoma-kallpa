@@ -1,210 +1,177 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { FormsModule } from '@angular/forms';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { Chart, registerables } from 'chart.js';
-import { DASHBOARD_MOCK, DashboardStats } from '../../mocks/dashboard.mock';
-
-Chart.register(...registerables);
+import { CONTRATISTAS_MOCK, ContratistaMock, ContratoContratista } from '../../mocks/contratistas.mock';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     MatCardModule,
-    MatTableModule,
-    MatChipsModule,
     MatIconModule,
     MatButtonModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    FormsModule
+    MatTableModule,
+    MatPaginatorModule,
+    MatTooltipModule
   ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.scss',
   animations: [
     trigger('detailExpand', [
-      state('collapsed', style({ height: '0px', minHeight: '0', display: 'none' })),
+      state('collapsed,void', style({ height: '0px', minHeight: '0' })),
       state('expanded', style({ height: '*' })),
       transition('expanded <=> collapsed', animate('225ms cubic-bezier(0.4, 0.0, 0.2, 1)')),
     ]),
-  ]
+  ],
 })
-export class DashboardComponent implements OnInit, AfterViewInit {
-  stats: DashboardStats = DASHBOARD_MOCK;
-  chart: any;
+export class DashboardComponent implements OnInit {
+  // Filtros y paginación
+  searchTerm: string = '';
+  filtroEstado: string = 'todos';
+  pageSize: number = 10;
+  pageIndex: number = 0;
 
-  // Columnas para tabla de observaciones
-  displayedColumnsObservaciones: string[] = ['posicion', 'empresa', 'documentosVencidos', 'documentosFaltantes', 'semaforo'];
+  // Datos
+  todosLosContratistas: ContratistaMock[] = CONTRATISTAS_MOCK;
 
-  // Columnas para tabla de proveedores
-  displayedColumnsProveedores: string[] = ['proveedor', 'servicioOC', 'empleados', 'activos', 'cumplimiento', 'estado'];
+  // Columnas de la tabla
+  displayedColumns: string[] = ['razonSocial', 'ruc', 'tipo', 'contratos', 'vencidos', 'porVencer', 'cumplimiento', 'acciones'];
 
-  // Filtros
-  searchText: string = '';
-  filterEstado: string = 'todos';
+  // Fila expandida
+  expandedElement: ContratistaMock | null = null;
 
-  // Datos filtrados
-  proveedoresFiltrados = [...this.stats.proveedores];
+  constructor(private router: Router) {}
 
-  // Control de filas expandidas
-  expandedElement: any | null = null;
+  ngOnInit(): void {}
 
-  // Control de alertas
-  mostrarDetalleAlertas: boolean = false;
-  alertasFiltradas: any[] = [];
+  // Contratistas filtrados
+  get contratistasFiltrados(): ContratistaMock[] {
+    let resultado = this.todosLosContratistas;
 
-  ngOnInit(): void {
-    this.aplicarFiltros();
-  }
-
-  ngAfterViewInit(): void {
-    this.createSemaforoChart();
-  }
-
-  // Obtener total de alertas
-  getTotalAlertas(): number {
-    return this.stats.alertasVencimientos.hoy +
-           this.stats.alertasVencimientos.tresDias +
-           this.stats.alertasVencimientos.sieteDias +
-           this.stats.alertasVencimientos.quinceDias +
-           this.stats.problemas.observacionesSinRespuesta +
-           this.stats.problemas.documentosSinRevisar;
-  }
-
-  // Filtrar alertas por tipo
-  filtrarAlertas(tipo: string): void {
-    this.mostrarDetalleAlertas = true;
-
-    switch (tipo) {
-      case 'hoy':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
-          a.tipo === 'vencimiento' && a.diasRestantes === 0
-        );
-        break;
-      case '3dias':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
-          a.tipo === 'vencimiento' && a.diasRestantes !== undefined && a.diasRestantes > 0 && a.diasRestantes <= 3
-        );
-        break;
-      case '7dias':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
-          a.tipo === 'vencimiento' && a.diasRestantes !== undefined && a.diasRestantes > 3 && a.diasRestantes <= 7
-        );
-        break;
-      case '15dias':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a =>
-          a.tipo === 'vencimiento' && a.diasRestantes !== undefined && a.diasRestantes > 7 && a.diasRestantes <= 15
-        );
-        break;
-      default:
-        this.alertasFiltradas = this.stats.detalleAlertas;
+    if (this.searchTerm.trim()) {
+      const termino = this.searchTerm.toLowerCase();
+      resultado = resultado.filter(c =>
+        c.razonSocial.toLowerCase().includes(termino) ||
+        c.ruc.toLowerCase().includes(termino) ||
+        c.tipoContratista.toLowerCase().includes(termino)
+      );
     }
-  }
 
-  // Cerrar detalle de alertas
-  cerrarDetalleAlertas(): void {
-    this.mostrarDetalleAlertas = false;
-    this.alertasFiltradas = [];
-  }
-
-  // Ver detalle de problemas
-  verDetalle(tipo: string): void {
-    this.mostrarDetalleAlertas = true;
-
-    switch (tipo) {
-      case 'sinRevisar':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a => a.tipo === 'vencimiento');
-        break;
-      case 'sinRespuesta':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a => a.tipo === 'observacion');
-        break;
-      case 'altoIndice':
-      case 'errores':
-      case 'reiterativos':
-        this.alertasFiltradas = this.stats.detalleAlertas.filter(a => a.tipo === 'incumplimiento');
-        break;
-      default:
-        this.alertasFiltradas = this.stats.detalleAlertas;
+    if (this.filtroEstado === 'atencion') {
+      resultado = resultado.filter(c => c.resumen.documentosVencidos > 0);
+    } else if (this.filtroEstado !== 'todos') {
+      resultado = resultado.filter(c => c.estado === this.filtroEstado);
     }
+
+    return resultado;
   }
 
-  // Obtener label del tipo de alerta
-  getTipoLabel(tipo: string): string {
-    const labels: { [key: string]: string } = {
-      'vencimiento': 'Vencimiento',
-      'observacion': 'Observación',
-      'incumplimiento': 'Incumplimiento'
+  // Contratistas paginados
+  get contratistasPaginados(): ContratistaMock[] {
+    const inicio = this.pageIndex * this.pageSize;
+    return this.contratistasFiltrados.slice(inicio, inicio + this.pageSize);
+  }
+
+  // Resumen de estados
+  get resumenEstados() {
+    return {
+      nuevos: this.todosLosContratistas.filter(c => c.estado === 'nuevo').length,
+      requierenAtencion: this.todosLosContratistas.filter(c => c.resumen.documentosVencidos > 0).length,
+      habilitados: this.todosLosContratistas.filter(c => c.estado === 'habilitado').length,
+      parciales: this.todosLosContratistas.filter(c => c.estado === 'parcial').length,
+      bloqueados: this.todosLosContratistas.filter(c => c.estado === 'bloqueado').length,
+      total: this.todosLosContratistas.length
     };
-    return labels[tipo] || tipo;
   }
 
-  toggleRow(element: any): void {
-    this.expandedElement = this.expandedElement === element ? null : element;
+  // Totales globales
+  get totalContratistas(): number {
+    return this.todosLosContratistas.length;
   }
 
-  createSemaforoChart(): void {
-    const ctx = document.getElementById('semaforoChart') as HTMLCanvasElement;
-    if (!ctx) return;
-
-    this.chart = new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: ['Apto', 'Pendiente', 'Bloqueado'],
-        datasets: [{
-          data: [
-            this.stats.semaforo.apto,
-            this.stats.semaforo.pendiente,
-            this.stats.semaforo.bloqueado
-          ],
-          backgroundColor: [
-            '#22c55e',
-            '#eab308',
-            '#ef4444'
-          ],
-          borderWidth: 0
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            display: false
-          }
-        }
-      }
-    });
+  get totalContratos(): number {
+    return this.todosLosContratistas.reduce((sum, c) => sum + c.contratos.length, 0);
   }
 
-  aplicarFiltros(): void {
-    this.proveedoresFiltrados = this.stats.proveedores.filter(p => {
-      const searchLower = this.searchText.toLowerCase();
-      const matchSearch = !this.searchText ||
-        p.proveedor.toLowerCase().includes(searchLower) ||
-        p.ruc.toLowerCase().includes(searchLower) ||
-        p.servicioOC.toLowerCase().includes(searchLower);
-
-      const matchEstado = this.filterEstado === 'todos' ||
-        p.estado === this.filterEstado;
-
-      return matchSearch && matchEstado;
-    });
+  get totalDocumentosVencidos(): number {
+    return this.todosLosContratistas.reduce((sum, c) => sum + c.resumen.documentosVencidos, 0);
   }
 
-  limpiarFiltros(): void {
-    this.searchText = '';
-    this.filterEstado = 'todos';
-    this.aplicarFiltros();
+  get totalDocumentosPorVencer(): number {
+    return this.todosLosContratistas.reduce((sum, c) => sum + c.resumen.documentosPorVencer, 0);
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+  }
+
+  onSearchChange(): void {
+    this.pageIndex = 0;
+  }
+
+  onFiltroChange(): void {
+    this.pageIndex = 0;
+  }
+
+  toggleRow(contratista: ContratistaMock): void {
+    this.expandedElement = this.expandedElement === contratista ? null : contratista;
+  }
+
+  getSemaforoColor(contratista: ContratistaMock): string {
+    if (contratista.estado === 'nuevo') return 'azul';
+    if (contratista.estado === 'bloqueado') return 'rojo';
+    if (contratista.porcentajeCumplimiento >= 90) return 'verde';
+    if (contratista.porcentajeCumplimiento >= 70) return 'amarillo';
+    return 'rojo';
+  }
+
+  getContratoSemaforoColor(contrato: ContratoContratista): string {
+    if (contrato.estado === 'nuevo') return 'azul';
+    if (contrato.estado === 'finalizado') return 'gris';
+    if (contrato.porcentajeCumplimiento >= 90) return 'verde';
+    if (contrato.porcentajeCumplimiento >= 70) return 'amarillo';
+    return 'rojo';
+  }
+
+  getEstadoClass(estado: string): string {
+    return estado;
+  }
+
+  getEstadoLabel(estado: string): string {
+    const labels: { [key: string]: string } = {
+      'nuevo': 'NUEVO',
+      'habilitado': 'HABILITADO',
+      'parcial': 'PARCIAL',
+      'bloqueado': 'BLOQUEADO',
+      'finalizado': 'FINALIZADO'
+    };
+    return labels[estado] || estado.toUpperCase();
+  }
+
+  getCumplimientoClass(porcentaje: number): string {
+    if (porcentaje >= 90) return 'verde';
+    if (porcentaje >= 70) return 'amarillo';
+    return 'rojo';
+  }
+
+  verDetalleContratista(contratista: ContratistaMock): void {
+    this.router.navigate(['/empresas', contratista.id]);
   }
 }

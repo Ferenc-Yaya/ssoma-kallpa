@@ -2,7 +2,7 @@ import { Routes } from '@angular/router';
 import { LoginComponent } from './pages/login/login';
 import { MainLayoutComponent } from './pages/main-layout/main-layout';
 import { DashboardComponent } from './pages/dashboard/dashboard';
-// import { DashboardContratistaComponent } from './pages/dashboard-contratista/dashboard-contratista';
+import { DashboardContratistaComponent } from './pages/dashboard-contratista/dashboard-contratista';
 import { DashboardSuperadminComponent } from './pages/dashboard-superadmin/dashboard-superadmin';
 import { EmpresasComponent } from './pages/empresas/empresas';
 import { EmpresaDetalleComponent } from './pages/empresa-detalle/empresa-detalle';
@@ -26,7 +26,7 @@ export const routes: Routes = [
     component: MainLayoutComponent,
     children: [
       { path: 'dashboard', component: DashboardComponent },
-      // { path: 'dashboard-contratista', component: DashboardContratistaComponent },
+      { path: 'dashboard-contratista', component: DashboardContratistaComponent },
       { path: 'dashboard-superadmin', component: DashboardSuperadminComponent },
       {
         path: 'empresa-principal',
@@ -61,6 +61,26 @@ export const routes: Routes = [
       // { path: 'contratos', component: ContratosComponent },
       // { path: 'personal-kallpa', component: PersonalKallpaComponent },
       { path: 'reglas-negocio', component: ReglasNegocioComponent },
+      {
+        path: 'mi-empresa',
+        loadComponent: () => import('./pages/mi-empresa/mi-empresa').then(m => m.MiEmpresaComponent)
+      },
+      {
+        path: 'mis-contratos',
+        loadComponent: () => import('./pages/mis-contratos/mis-contratos-lista').then(m => m.MisContratosListaComponent)
+      },
+      {
+        path: 'mis-contratos/:id',
+        loadComponent: () => import('./pages/mis-contratos/mis-contratos').then(m => m.MisContratosComponent)
+      },
+      {
+        path: 'mis-pasaportes',
+        loadComponent: () => import('./pages/mis-pasaportes/mis-pasaportes').then(m => m.MisPasaportesComponent)
+      },
+      {
+        path: 'pasaporte/:id',
+        loadComponent: () => import('./pages/pasaporte-contrato/pasaporte-contrato').then(m => m.PasaporteContratoComponent)
+      },
 
       // Rutas de acreditación - Comentadas hasta que se implemente backend
       // {

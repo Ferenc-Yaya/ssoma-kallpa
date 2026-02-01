@@ -1,0 +1,137 @@
+<div class="pasaporte-page" *ngIf="contrato">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div class="header-left">
+      <button mat-icon-button (click)="goBack()" class="back-button" matTooltip="Volver">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-info">
+        <h1>Pasaporte de Contrato</h1>
+        <p class="subtitle">Credencial de acreditación para ingreso a instalaciones</p>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button mat-stroked-button color="primary" (click)="imprimirPasaporte()">
+        <mat-icon>print</mat-icon>
+        Imprimir
+      </button>
+      <button mat-flat-button color="primary" (click)="descargarPDF()">
+        <mat-icon>download</mat-icon>
+        Descargar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Pasaporte Card -->
+  <div class="pasaporte-container">
+    <mat-card class="pasaporte-card">
+
+      <!-- Header del pasaporte -->
+      <div class="pasaporte-header">
+        <div class="logo-empresa">
+          <mat-icon>verified_user</mat-icon>
+          <span>KALLPA SSOMA</span>
+        </div>
+        <div class="estado-badge" [ngClass]="getEstadoClass()">
+          {{ getEstadoLabel() }}
+        </div>
+      </div>
+
+      <!-- Cuerpo del pasaporte -->
+      <div class="pasaporte-body">
+
+        <!-- Columna izquierda: QR -->
+        <div class="qr-section">
+          <div class="qr-container">
+            <img [src]="qrCodeUrl" alt="Código QR del pasaporte" class="qr-code">
+          </div>
+          <p class="qr-instruccion">Escanea para verificar</p>
+        </div>
+
+        <!-- Columna derecha: Información -->
+        <div class="info-section">
+
+          <!-- Información del contrato -->
+          <div class="info-grupo">
+            <h3>
+              <mat-icon>description</mat-icon>
+              Contrato
+            </h3>
+            <div class="info-detalle">
+              <span class="label">Número:</span>
+              <span class="valor numero-contrato">{{ contrato.numero }}</span>
+            </div>
+            <div class="info-detalle">
+              <span class="label">Descripción:</span>
+              <span class="valor">{{ contrato.descripcion }}</span>
+            </div>
+            <div class="info-detalle">
+              <span class="label">Sede:</span>
+              <span class="valor">{{ contrato.sede }}</span>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!-- Información de la empresa contratista -->
+          <div class="info-grupo">
+            <h3>
+              <mat-icon>business</mat-icon>
+              Empresa Contratista
+            </h3>
+            <div class="info-detalle">
+              <span class="label">Razón Social:</span>
+              <span class="valor">Constructora Andina S.A.C.</span>
+            </div>
+            <div class="info-detalle">
+              <span class="label">RUC:</span>
+              <span class="valor">20456789123</span>
+            </div>
+          </div>
+
+          <mat-divider></mat-divider>
+
+          <!-- Vigencia -->
+          <div class="info-grupo">
+            <h3>
+              <mat-icon>event</mat-icon>
+              Vigencia
+            </h3>
+            <div class="fechas-row">
+              <div class="fecha-item">
+                <span class="fecha-label">Emisión</span>
+                <span class="fecha-valor">{{ fechaEmision }}</span>
+              </div>
+              <div class="fecha-item">
+                <span class="fecha-label">Vencimiento</span>
+                <span class="fecha-valor">{{ fechaVencimiento }}</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Footer del pasaporte -->
+      <div class="pasaporte-footer">
+        <p>Este documento acredita que la empresa y sus recursos cumplen con los requisitos SSOMA</p>
+      </div>
+
+    </mat-card>
+
+
+  </div>
+
+</div>
+
+<!-- Estado no encontrado -->
+<div class="no-encontrado" *ngIf="!contrato">
+  <mat-icon>error_outline</mat-icon>
+  <h2>Pasaporte no disponible</h2>
+  <p>El contrato no existe o no tiene pasaporte generado.</p>
+  <button mat-stroked-button color="primary" (click)="goBack()">
+    <mat-icon>arrow_back</mat-icon>
+    Volver
+  </button>
+</div>
