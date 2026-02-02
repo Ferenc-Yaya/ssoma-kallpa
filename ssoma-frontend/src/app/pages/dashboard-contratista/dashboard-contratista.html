@@ -39,7 +39,7 @@
     <div class="search-bar">
       <mat-icon>search</mat-icon>
       <input type="text"
-             placeholder="Buscar por número, descripción o empresa..."
+             placeholder="Buscar por número, descripción o sede..."
              [(ngModel)]="searchTerm"
              (ngModelChange)="onSearchChange()">
       <button mat-icon-button *ngIf="searchTerm" (click)="searchTerm = ''; onSearchChange()" matTooltip="Limpiar búsqueda">
@@ -104,9 +104,9 @@
       <div class="contrato-info">
         <h3>{{ contrato.descripcion }}</h3>
         <div class="meta-info">
-          <span class="empresa">
-            <mat-icon>business</mat-icon>
-            {{ contrato.empresaPrincipal }}
+          <span class="sede">
+            <mat-icon>location_on</mat-icon>
+            {{ contrato.sede }}
           </span>
           <span class="fechas">
             <mat-icon>date_range</mat-icon>

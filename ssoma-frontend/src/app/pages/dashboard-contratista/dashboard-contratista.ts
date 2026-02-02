@@ -57,7 +57,7 @@ export class DashboardContratistaComponent implements OnInit {
       resultado = resultado.filter(c =>
         c.numero.toLowerCase().includes(termino) ||
         c.descripcion.toLowerCase().includes(termino) ||
-        c.empresaPrincipal.toLowerCase().includes(termino)
+        c.sede.toLowerCase().includes(termino)
       );
     }
 
