@@ -12,7 +12,13 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { trigger, state, style, transition, animate } from '@angular/animations';
-import { CONTRATISTAS_MOCK, ContratistaMock, ContratoContratista } from '../../mocks/contratistas.mock';
+import { CONTRATISTAS_MOCK, ContratistaMock, ContratoContratista, DocumentoAlerta } from '../../mocks/contratistas.mock';
+
+interface DocumentoDetalle extends DocumentoAlerta {
+  contratista: string;
+  contratoNumero: string;
+  contratoId: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -51,10 +57,19 @@ export class DashboardComponent implements OnInit {
   todosLosContratistas: ContratistaMock[] = CONTRATISTAS_MOCK;
 
   // Columnas de la tabla
-  displayedColumns: string[] = ['razonSocial', 'ruc', 'tipo', 'contratos', 'vencidos', 'porVencer', 'cumplimiento', 'acciones'];
+  displayedColumns: string[] = ['razonSocial', 'ruc', 'tipo', 'contratos', 'aprobados', 'enRevision', 'observados', 'vencidos', 'porVencer', 'cumplimiento', 'acciones'];
 
   // Fila expandida
   expandedElement: ContratistaMock | null = null;
+
+  // Vista de documentos
+  vistaDocumentos: boolean = false;
+  panelTitulo: string = '';
+  panelTipo: string = '';
+  documentosFiltrados: DocumentoDetalle[] = [];
+  columnasDocumentos: string[] = ['tipo', 'documento', 'entidad', 'contratista', 'contrato', 'estado', 'vencimiento'];
+  pageSizeDocumentos: number = 10;
+  pageIndexDocumentos: number = 0;
 
   constructor(private router: Router) {}
 
@@ -107,6 +122,18 @@ export class DashboardComponent implements OnInit {
 
   get totalContratos(): number {
     return this.todosLosContratistas.reduce((sum, c) => sum + c.contratos.length, 0);
+  }
+
+  get totalDocumentosAprobados(): number {
+    return this.todosLosContratistas.reduce((sum, c) => sum + c.resumen.documentosAprobados, 0);
+  }
+
+  get totalDocumentosEnRevision(): number {
+    return this.todosLosContratistas.reduce((sum, c) => sum + c.resumen.documentosEnRevision, 0);
+  }
+
+  get totalDocumentosObservados(): number {
+    return this.todosLosContratistas.reduce((sum, c) => sum + c.resumen.documentosObservados, 0);
   }
 
   get totalDocumentosVencidos(): number {
@@ -173,5 +200,110 @@ export class DashboardComponent implements OnInit {
 
   verDetalleContratista(contratista: ContratistaMock): void {
     this.router.navigate(['/empresas', contratista.id]);
+  }
+
+  // Obtener todos los documentos de todos los contratistas
+  getTodosLosDocumentos(): DocumentoDetalle[] {
+    const documentos: DocumentoDetalle[] = [];
+
+    this.todosLosContratistas.forEach(contratista => {
+      contratista.contratos.forEach(contrato => {
+        if (contrato.documentos) {
+          contrato.documentos.forEach(doc => {
+            documentos.push({
+              ...doc,
+              contratista: contratista.razonSocial,
+              contratoNumero: contrato.numero,
+              contratoId: contrato.id
+            });
+          });
+        }
+      });
+    });
+
+    return documentos;
+  }
+
+  // Documentos paginados
+  get documentosPaginados(): DocumentoDetalle[] {
+    const inicio = this.pageIndexDocumentos * this.pageSizeDocumentos;
+    return this.documentosFiltrados.slice(inicio, inicio + this.pageSizeDocumentos);
+  }
+
+  // Abrir vista de documentos filtrados por estado
+  abrirPanelDocumentos(tipo: string): void {
+    const todosDocumentos = this.getTodosLosDocumentos();
+
+    switch (tipo) {
+      case 'aprobados':
+        this.panelTitulo = 'Documentos Aprobados';
+        this.documentosFiltrados = todosDocumentos.filter(d => d.estado === 'aprobado');
+        break;
+      case 'en_revision':
+        this.panelTitulo = 'Documentos En Revisión';
+        this.documentosFiltrados = todosDocumentos.filter(d => d.estado === 'en_revision');
+        break;
+      case 'observados':
+        this.panelTitulo = 'Documentos Observados';
+        this.documentosFiltrados = todosDocumentos.filter(d => d.estado === 'observado');
+        break;
+      case 'vencidos':
+        this.panelTitulo = 'Documentos Vencidos';
+        this.documentosFiltrados = todosDocumentos.filter(d => d.estado === 'vencido');
+        break;
+      case 'por_vencer':
+        this.panelTitulo = 'Documentos Por Vencer';
+        this.documentosFiltrados = todosDocumentos.filter(d => d.estado === 'por_vencer');
+        break;
+      default:
+        this.panelTitulo = 'Documentos';
+        this.documentosFiltrados = todosDocumentos;
+    }
+
+    this.panelTipo = tipo;
+    this.pageIndexDocumentos = 0;
+    this.vistaDocumentos = true;
+  }
+
+  cerrarVistaDocumentos(): void {
+    this.vistaDocumentos = false;
+    this.documentosFiltrados = [];
+  }
+
+  onPageChangeDocumentos(event: PageEvent): void {
+    this.pageIndexDocumentos = event.pageIndex;
+    this.pageSizeDocumentos = event.pageSize;
+  }
+
+  getEstadoDocumentoClass(estado: string): string {
+    const clases: { [key: string]: string } = {
+      'aprobado': 'estado-aprobado',
+      'en_revision': 'estado-en-revision',
+      'observado': 'estado-observado',
+      'vencido': 'estado-vencido',
+      'por_vencer': 'estado-por-vencer'
+    };
+    return clases[estado] || '';
+  }
+
+  getEstadoDocumentoLabel(estado: string): string {
+    const labels: { [key: string]: string } = {
+      'aprobado': 'Aprobado',
+      'en_revision': 'En Revisión',
+      'observado': 'Observado',
+      'vencido': 'Vencido',
+      'por_vencer': 'Por Vencer'
+    };
+    return labels[estado] || estado;
+  }
+
+  getTipoDocumentoIcon(tipo: string): string {
+    const iconos: { [key: string]: string } = {
+      'empresa': 'business',
+      'personal': 'person',
+      'vehiculo': 'directions_car',
+      'equipo': 'build'
+    };
+    return iconos[tipo] || 'description';
   }
 }

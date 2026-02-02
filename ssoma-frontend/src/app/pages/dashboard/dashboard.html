@@ -22,75 +22,67 @@
         <span class="label">Contratos</span>
       </div>
     </div>
-    <div class="indicador vencidos" (click)="filtroEstado = 'atencion'; onFiltroChange()">
+    <div class="indicador aprobados" (click)="abrirPanelDocumentos('aprobados')">
+      <mat-icon>check_circle</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalDocumentosAprobados }}</span>
+        <span class="label">Docs. Aprobados</span>
+      </div>
+    </div>
+    <div class="indicador en-revision" (click)="abrirPanelDocumentos('en_revision')">
+      <mat-icon>hourglass_empty</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalDocumentosEnRevision }}</span>
+        <span class="label">En Revisión</span>
+      </div>
+    </div>
+    <div class="indicador observados" (click)="abrirPanelDocumentos('observados')">
+      <mat-icon>visibility</mat-icon>
+      <div class="indicador-info">
+        <span class="numero">{{ totalDocumentosObservados }}</span>
+        <span class="label">Observados</span>
+      </div>
+    </div>
+    <div class="indicador vencidos" (click)="abrirPanelDocumentos('vencidos')">
       <mat-icon>error</mat-icon>
       <div class="indicador-info">
         <span class="numero">{{ totalDocumentosVencidos }}</span>
         <span class="label">Docs. Vencidos</span>
       </div>
     </div>
-    <div class="indicador por-vencer">
+    <div class="indicador por-vencer" (click)="abrirPanelDocumentos('por_vencer')">
       <mat-icon>schedule</mat-icon>
       <div class="indicador-info">
         <span class="numero">{{ totalDocumentosPorVencer }}</span>
-        <span class="label">Docs. Por Vencer</span>
+        <span class="label">Por Vencer</span>
       </div>
     </div>
   </div>
 
-  <!-- Resumen de estados -->
-  <div class="resumen-estados" *ngIf="todosLosContratistas.length > 0">
-    <div class="estado-card nuevo" (click)="filtroEstado = 'nuevo'; onFiltroChange()"
-         [class.activo]="filtroEstado === 'nuevo'" *ngIf="resumenEstados.nuevos > 0">
-      <span class="numero">{{ resumenEstados.nuevos }}</span>
-      <span class="label">Nuevos</span>
-    </div>
-    <div class="estado-card atencion" (click)="filtroEstado = 'atencion'; onFiltroChange()"
-         [class.activo]="filtroEstado === 'atencion'" *ngIf="resumenEstados.requierenAtencion > 0">
-      <span class="numero">{{ resumenEstados.requierenAtencion }}</span>
-      <span class="label">Req. Atención</span>
-    </div>
-    <div class="estado-card verde" (click)="filtroEstado = 'habilitado'; onFiltroChange()"
-         [class.activo]="filtroEstado === 'habilitado'">
-      <span class="numero">{{ resumenEstados.habilitados }}</span>
-      <span class="label">Habilitados</span>
-    </div>
-    <div class="estado-card amarillo" (click)="filtroEstado = 'parcial'; onFiltroChange()"
-         [class.activo]="filtroEstado === 'parcial'">
-      <span class="numero">{{ resumenEstados.parciales }}</span>
-      <span class="label">Parciales</span>
-    </div>
-    <div class="estado-card rojo" (click)="filtroEstado = 'bloqueado'; onFiltroChange()"
-         [class.activo]="filtroEstado === 'bloqueado'">
-      <span class="numero">{{ resumenEstados.bloqueados }}</span>
-      <span class="label">Bloqueados</span>
-    </div>
-    <div class="estado-card total" (click)="filtroEstado = 'todos'; onFiltroChange()"
-         [class.activo]="filtroEstado === 'todos'">
-      <span class="numero">{{ resumenEstados.total }}</span>
-      <span class="label">Total</span>
-    </div>
-  </div>
-
   <!-- Barra de búsqueda y filtros -->
-  <div class="filtros-bar" *ngIf="todosLosContratistas.length > 0">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar contratista</mat-label>
-      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="RUC, razón social o tipo...">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+  <div class="filtros-bar" *ngIf="!vistaDocumentos && todosLosContratistas.length > 0">
+    <div class="search-bar">
+      <mat-icon>search</mat-icon>
+      <input type="text"
+             placeholder="Buscar por RUC, razón social o tipo..."
+             [(ngModel)]="searchTerm"
+             (ngModelChange)="onSearchChange()">
+      <button mat-icon-button *ngIf="searchTerm" (click)="searchTerm = ''; onSearchChange()" matTooltip="Limpiar búsqueda">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
 
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Estado</mat-label>
-      <mat-select [(ngModel)]="filtroEstado" (ngModelChange)="onFiltroChange()">
-        <mat-option value="todos">Todos los estados</mat-option>
-        <mat-option value="nuevo">Nuevo</mat-option>
-        <mat-option value="atencion">Requiere Atención</mat-option>
-        <mat-option value="habilitado">Habilitado</mat-option>
-        <mat-option value="parcial">Parcial</mat-option>
-        <mat-option value="bloqueado">Bloqueado</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="filter-select">
+      <mat-icon>filter_list</mat-icon>
+      <select [(ngModel)]="filtroEstado" (ngModelChange)="onFiltroChange()">
+        <option value="todos">Todos los estados</option>
+        <option value="nuevo">Nuevo</option>
+        <option value="atencion">Requiere Atención</option>
+        <option value="habilitado">Habilitado</option>
+        <option value="parcial">Parcial</option>
+        <option value="bloqueado">Bloqueado</option>
+      </select>
+    </div>
 
     <span class="resultados-info">
       {{ contratistasFiltrados.length }} de {{ todosLosContratistas.length }} contratistas
@@ -98,21 +90,21 @@
   </div>
 
   <!-- Sin contratistas -->
-  <div class="sin-datos" *ngIf="todosLosContratistas.length === 0">
+  <div class="sin-datos" *ngIf="!vistaDocumentos && todosLosContratistas.length === 0">
     <mat-icon>business</mat-icon>
     <h2>No hay contratistas registrados</h2>
     <p>Registra tu primer contratista para comenzar.</p>
   </div>
 
   <!-- Sin resultados de búsqueda -->
-  <div class="sin-datos" *ngIf="todosLosContratistas.length > 0 && contratistasFiltrados.length === 0">
+  <div class="sin-datos" *ngIf="!vistaDocumentos && todosLosContratistas.length > 0 && contratistasFiltrados.length === 0">
     <mat-icon>search_off</mat-icon>
     <h2>No se encontraron contratistas</h2>
     <p>Intenta con otros términos de búsqueda o cambia los filtros.</p>
   </div>
 
   <!-- Tabla de contratistas -->
-  <div class="tabla-container" *ngIf="contratistasPaginados.length > 0">
+  <div class="tabla-container" *ngIf="!vistaDocumentos && contratistasPaginados.length > 0">
     <table mat-table [dataSource]="contratistasPaginados" multiTemplateDataRows class="tabla-contratistas">
 
       <!-- Razón Social -->
@@ -143,6 +135,39 @@
         <th mat-header-cell *matHeaderCellDef class="text-center">Contratos</th>
         <td mat-cell *matCellDef="let contratista" class="text-center">
           <span class="badge-contratos">{{ contratista.resumen.contratosActivos }}/{{ contratista.resumen.contratosTotal }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Aprobados -->
+      <ng-container matColumnDef="aprobados">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Aprobados</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-aprobados" *ngIf="contratista.resumen.documentosAprobados > 0">
+            {{ contratista.resumen.documentosAprobados }}
+          </span>
+          <span class="badge-ok" *ngIf="contratista.resumen.documentosAprobados === 0">-</span>
+        </td>
+      </ng-container>
+
+      <!-- En Revisión -->
+      <ng-container matColumnDef="enRevision">
+        <th mat-header-cell *matHeaderCellDef class="text-center">En Revisión</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-en-revision" *ngIf="contratista.resumen.documentosEnRevision > 0">
+            {{ contratista.resumen.documentosEnRevision }}
+          </span>
+          <span class="badge-ok" *ngIf="contratista.resumen.documentosEnRevision === 0">-</span>
+        </td>
+      </ng-container>
+
+      <!-- Observados -->
+      <ng-container matColumnDef="observados">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Observados</th>
+        <td mat-cell *matCellDef="let contratista" class="text-center">
+          <span class="badge-observados" *ngIf="contratista.resumen.documentosObservados > 0">
+            {{ contratista.resumen.documentosObservados }}
+          </span>
+          <span class="badge-ok" *ngIf="contratista.resumen.documentosObservados === 0">-</span>
         </td>
       </ng-container>
 
@@ -252,13 +277,108 @@
     </table>
   </div>
 
-  <!-- Paginación -->
-  <mat-paginator *ngIf="contratistasFiltrados.length > 0"
+  <!-- Paginación contratistas -->
+  <mat-paginator *ngIf="!vistaDocumentos && contratistasFiltrados.length > 0"
     [length]="contratistasFiltrados.length"
     [pageSize]="pageSize"
     [pageIndex]="pageIndex"
     [pageSizeOptions]="[10, 20, 50]"
     (page)="onPageChange($event)"
+    showFirstLastButtons>
+  </mat-paginator>
+
+  <!-- Tabla de documentos filtrados -->
+  <div class="tabla-container" *ngIf="vistaDocumentos">
+    <div class="tabla-header-docs">
+      <h3>{{ panelTitulo }}</h3>
+      <span class="docs-count">{{ documentosFiltrados.length }} documentos</span>
+      <button mat-stroked-button (click)="cerrarVistaDocumentos()">
+        <mat-icon>arrow_back</mat-icon>
+        Volver a Contratistas
+      </button>
+    </div>
+
+    <table mat-table [dataSource]="documentosPaginados" class="tabla-documentos">
+      <!-- Tipo -->
+      <ng-container matColumnDef="tipo">
+        <th mat-header-cell *matHeaderCellDef>Tipo</th>
+        <td mat-cell *matCellDef="let doc">
+          <div class="tipo-icono" [class]="doc.tipo">
+            <mat-icon>{{ getTipoDocumentoIcon(doc.tipo) }}</mat-icon>
+          </div>
+        </td>
+      </ng-container>
+
+      <!-- Documento -->
+      <ng-container matColumnDef="documento">
+        <th mat-header-cell *matHeaderCellDef>Documento</th>
+        <td mat-cell *matCellDef="let doc">
+          <span class="doc-nombre">{{ doc.nombre }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Entidad -->
+      <ng-container matColumnDef="entidad">
+        <th mat-header-cell *matHeaderCellDef>Entidad</th>
+        <td mat-cell *matCellDef="let doc">{{ doc.entidad || '-' }}</td>
+      </ng-container>
+
+      <!-- Contratista -->
+      <ng-container matColumnDef="contratista">
+        <th mat-header-cell *matHeaderCellDef>Contratista</th>
+        <td mat-cell *matCellDef="let doc">{{ doc.contratista }}</td>
+      </ng-container>
+
+      <!-- Contrato -->
+      <ng-container matColumnDef="contrato">
+        <th mat-header-cell *matHeaderCellDef>Contrato</th>
+        <td mat-cell *matCellDef="let doc">
+          <span class="contrato-num">{{ doc.contratoNumero }}</span>
+        </td>
+      </ng-container>
+
+      <!-- Estado -->
+      <ng-container matColumnDef="estado">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Estado</th>
+        <td mat-cell *matCellDef="let doc" class="text-center">
+          <span class="estado-badge-doc" [class]="getEstadoDocumentoClass(doc.estado)">
+            {{ getEstadoDocumentoLabel(doc.estado) }}
+          </span>
+        </td>
+      </ng-container>
+
+      <!-- Vencimiento -->
+      <ng-container matColumnDef="vencimiento">
+        <th mat-header-cell *matHeaderCellDef class="text-center">Vencimiento</th>
+        <td mat-cell *matCellDef="let doc" class="text-center">
+          <span *ngIf="doc.diasRestantes !== undefined" class="dias-badge"
+                [class.vencido]="doc.diasRestantes < 0"
+                [class.urgente]="doc.diasRestantes >= 0 && doc.diasRestantes <= 7"
+                [class.proximo]="doc.diasRestantes > 7">
+            <ng-container *ngIf="doc.diasRestantes < 0">Hace {{ doc.diasRestantes * -1 }} días</ng-container>
+            <ng-container *ngIf="doc.diasRestantes >= 0">En {{ doc.diasRestantes }} días</ng-container>
+          </span>
+          <span *ngIf="doc.diasRestantes === undefined">-</span>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="columnasDocumentos"></tr>
+      <tr mat-row *matRowDef="let row; columns: columnasDocumentos;"></tr>
+    </table>
+
+    <div class="sin-documentos" *ngIf="documentosFiltrados.length === 0">
+      <mat-icon>check_circle</mat-icon>
+      <p>No hay documentos en este estado</p>
+    </div>
+  </div>
+
+  <!-- Paginación documentos -->
+  <mat-paginator *ngIf="vistaDocumentos && documentosFiltrados.length > 0"
+    [length]="documentosFiltrados.length"
+    [pageSize]="pageSizeDocumentos"
+    [pageIndex]="pageIndexDocumentos"
+    [pageSizeOptions]="[10, 20, 50]"
+    (page)="onPageChangeDocumentos($event)"
     showFirstLastButtons>
   </mat-paginator>
 

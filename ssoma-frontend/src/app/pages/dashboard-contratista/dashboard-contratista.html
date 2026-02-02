@@ -36,23 +36,28 @@
 
   <!-- Barra de búsqueda y filtros -->
   <div class="filtros-bar" *ngIf="todosLosContratos.length > 0">
-    <mat-form-field appearance="outline" class="search-field">
-      <mat-label>Buscar contrato</mat-label>
-      <input matInput [(ngModel)]="searchTerm" (ngModelChange)="onSearchChange()" placeholder="Número, descripción o empresa...">
-      <mat-icon matSuffix>search</mat-icon>
-    </mat-form-field>
+    <div class="search-bar">
+      <mat-icon>search</mat-icon>
+      <input type="text"
+             placeholder="Buscar por número, descripción o empresa..."
+             [(ngModel)]="searchTerm"
+             (ngModelChange)="onSearchChange()">
+      <button mat-icon-button *ngIf="searchTerm" (click)="searchTerm = ''; onSearchChange()" matTooltip="Limpiar búsqueda">
+        <mat-icon>close</mat-icon>
+      </button>
+    </div>
 
-    <mat-form-field appearance="outline" class="filter-field">
-      <mat-label>Estado</mat-label>
-      <mat-select [(ngModel)]="filtroEstado" (ngModelChange)="onFiltroChange()">
-        <mat-option value="todos">Todos los estados</mat-option>
-        <mat-option value="nuevo">Nuevo</mat-option>
-        <mat-option value="atencion">Requiere Atención</mat-option>
-        <mat-option value="habilitado">Habilitado</mat-option>
-        <mat-option value="parcial">Parcial</mat-option>
-        <mat-option value="finalizado">Finalizado</mat-option>
-      </mat-select>
-    </mat-form-field>
+    <div class="filter-select">
+      <mat-icon>filter_list</mat-icon>
+      <select [(ngModel)]="filtroEstado" (ngModelChange)="onFiltroChange()">
+        <option value="todos">Todos los estados</option>
+        <option value="nuevo">Nuevo</option>
+        <option value="atencion">Requiere Atención</option>
+        <option value="habilitado">Habilitado</option>
+        <option value="parcial">Parcial</option>
+        <option value="finalizado">Finalizado</option>
+      </select>
+    </div>
 
     <span class="resultados-info">
       {{ contratosFiltrados.length }} de {{ todosLosContratos.length }} contratos
@@ -108,6 +113,16 @@
             {{ contrato.fechaInicio }} - {{ contrato.fechaFin }}
           </span>
         </div>
+      </div>
+
+      <!-- Alerta de documentos observados -->
+      <div class="alerta-observados" *ngIf="contrato.observacionesPendientes > 0">
+        <mat-icon>visibility</mat-icon>
+        <div class="alerta-texto">
+          <span class="alerta-titulo">{{ contrato.observacionesPendientes }} documento{{ contrato.observacionesPendientes > 1 ? 's' : '' }} observado{{ contrato.observacionesPendientes > 1 ? 's' : '' }}</span>
+          <span class="alerta-descripcion">Documentos en validación - Revisar observaciones</span>
+        </div>
+        <mat-icon class="alerta-arrow">chevron_right</mat-icon>
       </div>
 
       <!-- Recursos del contrato -->

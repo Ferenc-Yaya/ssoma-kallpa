@@ -1,3 +1,13 @@
+export interface DocumentoAlerta {
+  id: string;
+  nombre: string;
+  tipo: 'empresa' | 'personal' | 'vehiculo' | 'equipo';
+  estado: 'aprobado' | 'en_revision' | 'observado' | 'vencido' | 'por_vencer';
+  fechaVencimiento?: string;
+  diasRestantes?: number;
+  entidad?: string; // Nombre del trabajador, vehículo o equipo
+}
+
 export interface ContratoContratista {
   id: string;
   numero: string;
@@ -10,6 +20,7 @@ export interface ContratoContratista {
   personal: { habilitados: number; total: number };
   vehiculos: { habilitados: number; total: number };
   herramientas: { habilitados: number; total: number };
+  documentos?: DocumentoAlerta[];
 }
 
 export interface ContratistaMock {
@@ -28,6 +39,9 @@ export interface ContratistaMock {
     contratosTotal: number;
     personalHabilitado: number;
     personalTotal: number;
+    documentosAprobados: number;
+    documentosEnRevision: number;
+    documentosObservados: number;
     documentosVencidos: number;
     documentosPorVencer: number;
   };
@@ -56,7 +70,12 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
         porcentajeCumplimiento: 93,
         personal: { habilitados: 11, total: 12 },
         vehiculos: { habilitados: 2, total: 2 },
-        herramientas: { habilitados: 5, total: 5 }
+        herramientas: { habilitados: 5, total: 5 },
+        documentos: [
+          { id: 'd1', nombre: 'SCTR Pensión', tipo: 'personal', estado: 'por_vencer', fechaVencimiento: '2024-08-15', diasRestantes: 5, entidad: 'Juan Pérez García' },
+          { id: 'd2', nombre: 'EMO', tipo: 'personal', estado: 'por_vencer', fechaVencimiento: '2024-08-20', diasRestantes: 10, entidad: 'Carlos Mendoza' },
+          { id: 'd3', nombre: 'Carnet de Operador', tipo: 'personal', estado: 'en_revision', entidad: 'Miguel Torres' }
+        ]
       },
       {
         id: '2',
@@ -69,7 +88,10 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
         porcentajeCumplimiento: 95,
         personal: { habilitados: 18, total: 18 },
         vehiculos: { habilitados: 3, total: 3 },
-        herramientas: { habilitados: 8, total: 8 }
+        herramientas: { habilitados: 8, total: 8 },
+        documentos: [
+          { id: 'd4', nombre: 'Seguro Vehicular', tipo: 'vehiculo', estado: 'por_vencer', fechaVencimiento: '2024-08-18', diasRestantes: 8, entidad: 'Camioneta ABC-123' }
+        ]
       }
     ],
     resumen: {
@@ -77,6 +99,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 2,
       personalHabilitado: 29,
       personalTotal: 30,
+      documentosAprobados: 45,
+      documentosEnRevision: 2,
+      documentosObservados: 0,
       documentosVencidos: 0,
       documentosPorVencer: 3
     }
@@ -103,7 +128,16 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
         porcentajeCumplimiento: 65,
         personal: { habilitados: 5, total: 10 },
         vehiculos: { habilitados: 1, total: 2 },
-        herramientas: { habilitados: 4, total: 8 }
+        herramientas: { habilitados: 4, total: 8 },
+        documentos: [
+          { id: 'd5', nombre: 'SCTR Salud', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-30', diasRestantes: -10, entidad: 'Roberto Díaz' },
+          { id: 'd6', nombre: 'SCTR Pensión', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-30', diasRestantes: -10, entidad: 'Roberto Díaz' },
+          { id: 'd7', nombre: 'Inducción SST', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-25', diasRestantes: -15, entidad: 'Ana Vargas' },
+          { id: 'd8', nombre: 'EMO', tipo: 'personal', estado: 'por_vencer', fechaVencimiento: '2024-08-12', diasRestantes: 2, entidad: 'Pedro Sánchez' },
+          { id: 'd9', nombre: 'Certificado Antecedentes', tipo: 'personal', estado: 'observado', entidad: 'Luis Gómez' },
+          { id: 'd10', nombre: 'SOAT', tipo: 'vehiculo', estado: 'vencido', fechaVencimiento: '2024-07-20', diasRestantes: -20, entidad: 'Furgoneta XYZ-456' },
+          { id: 'd11', nombre: 'Revisión Técnica', tipo: 'vehiculo', estado: 'por_vencer', fechaVencimiento: '2024-08-25', diasRestantes: 15, entidad: 'Furgoneta XYZ-456' }
+        ]
       },
       {
         id: '4',
@@ -116,7 +150,14 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
         porcentajeCumplimiento: 78,
         personal: { habilitados: 6, total: 8 },
         vehiculos: { habilitados: 2, total: 2 },
-        herramientas: { habilitados: 10, total: 12 }
+        herramientas: { habilitados: 10, total: 12 },
+        documentos: [
+          { id: 'd12', nombre: 'Licencia de Conducir', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-08-01', diasRestantes: -9, entidad: 'Fernando Ruiz' },
+          { id: 'd13', nombre: 'Capacitación Altura', tipo: 'personal', estado: 'por_vencer', fechaVencimiento: '2024-08-22', diasRestantes: 12, entidad: 'José Castro' },
+          { id: 'd14', nombre: 'Certificado Calibración', tipo: 'equipo', estado: 'por_vencer', fechaVencimiento: '2024-08-28', diasRestantes: 18, entidad: 'Multímetro Digital' },
+          { id: 'd15', nombre: 'Ficha Técnica', tipo: 'equipo', estado: 'observado', entidad: 'Compresor Industrial' },
+          { id: 'd16', nombre: 'Póliza RC', tipo: 'empresa', estado: 'en_revision' }
+        ]
       }
     ],
     resumen: {
@@ -124,6 +165,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 2,
       personalHabilitado: 11,
       personalTotal: 18,
+      documentosAprobados: 28,
+      documentosEnRevision: 4,
+      documentosObservados: 3,
       documentosVencidos: 5,
       documentosPorVencer: 8
     }
@@ -158,6 +202,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 1,
       personalHabilitado: 15,
       personalTotal: 15,
+      documentosAprobados: 38,
+      documentosEnRevision: 0,
+      documentosObservados: 0,
       documentosVencidos: 0,
       documentosPorVencer: 0
     }
@@ -192,6 +239,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 1,
       personalHabilitado: 24,
       personalTotal: 25,
+      documentosAprobados: 52,
+      documentosEnRevision: 1,
+      documentosObservados: 0,
       documentosVencidos: 0,
       documentosPorVencer: 1
     }
@@ -218,7 +268,24 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
         porcentajeCumplimiento: 35,
         personal: { habilitados: 3, total: 10 },
         vehiculos: { habilitados: 1, total: 3 },
-        herramientas: { habilitados: 2, total: 8 }
+        herramientas: { habilitados: 2, total: 8 },
+        documentos: [
+          { id: 'd20', nombre: 'SCTR Salud', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-15', diasRestantes: -25, entidad: 'Marcos Huamán' },
+          { id: 'd21', nombre: 'SCTR Pensión', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-15', diasRestantes: -25, entidad: 'Marcos Huamán' },
+          { id: 'd22', nombre: 'EMO', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-10', diasRestantes: -30, entidad: 'Julio Paredes' },
+          { id: 'd23', nombre: 'Inducción SST', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-05', diasRestantes: -35, entidad: 'Raúl Mendez' },
+          { id: 'd24', nombre: 'Carnet Soldador', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-06-30', diasRestantes: -40, entidad: 'Raúl Mendez' },
+          { id: 'd25', nombre: 'Licencia A-IIIb', tipo: 'personal', estado: 'vencido', fechaVencimiento: '2024-07-20', diasRestantes: -20, entidad: 'César Quispe' },
+          { id: 'd26', nombre: 'SOAT', tipo: 'vehiculo', estado: 'vencido', fechaVencimiento: '2024-07-01', diasRestantes: -39, entidad: 'Grúa PLQ-789' },
+          { id: 'd27', nombre: 'Revisión Técnica', tipo: 'vehiculo', estado: 'vencido', fechaVencimiento: '2024-06-25', diasRestantes: -45, entidad: 'Grúa PLQ-789' },
+          { id: 'd28', nombre: 'Seguro Vehicular', tipo: 'vehiculo', estado: 'vencido', fechaVencimiento: '2024-07-10', diasRestantes: -30, entidad: 'Camión MNO-321' },
+          { id: 'd29', nombre: 'Cert. Operatividad', tipo: 'equipo', estado: 'vencido', fechaVencimiento: '2024-07-08', diasRestantes: -32, entidad: 'Soldadora MIG' },
+          { id: 'd30', nombre: 'Inspección Arnés', tipo: 'equipo', estado: 'vencido', fechaVencimiento: '2024-07-12', diasRestantes: -28, entidad: 'Arnés de Seguridad #5' },
+          { id: 'd31', nombre: 'Póliza TREC', tipo: 'empresa', estado: 'observado', entidad: 'Metalmecánica del Sur' },
+          { id: 'd32', nombre: 'Certificado REMYPE', tipo: 'empresa', estado: 'observado', entidad: 'Metalmecánica del Sur' },
+          { id: 'd33', nombre: 'SCTR Salud', tipo: 'personal', estado: 'por_vencer', fechaVencimiento: '2024-08-20', diasRestantes: 10, entidad: 'Alberto Flores' },
+          { id: 'd34', nombre: 'EMO', tipo: 'personal', estado: 'por_vencer', fechaVencimiento: '2024-08-25', diasRestantes: 15, entidad: 'Diego Ramos' }
+        ]
       }
     ],
     resumen: {
@@ -226,6 +293,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 1,
       personalHabilitado: 3,
       personalTotal: 10,
+      documentosAprobados: 8,
+      documentosEnRevision: 2,
+      documentosObservados: 6,
       documentosVencidos: 12,
       documentosPorVencer: 5
     }
@@ -260,6 +330,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 1,
       personalHabilitado: 0,
       personalTotal: 0,
+      documentosAprobados: 0,
+      documentosEnRevision: 5,
+      documentosObservados: 0,
       documentosVencidos: 0,
       documentosPorVencer: 0
     }
@@ -307,6 +380,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 2,
       personalHabilitado: 32,
       personalTotal: 39,
+      documentosAprobados: 65,
+      documentosEnRevision: 3,
+      documentosObservados: 2,
       documentosVencidos: 2,
       documentosPorVencer: 6
     }
@@ -341,6 +417,9 @@ export const CONTRATISTAS_MOCK: ContratistaMock[] = [
       contratosTotal: 1,
       personalHabilitado: 8,
       personalTotal: 9,
+      documentosAprobados: 22,
+      documentosEnRevision: 1,
+      documentosObservados: 0,
       documentosVencidos: 0,
       documentosPorVencer: 2
     }

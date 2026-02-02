@@ -20,12 +20,14 @@
         <!-- RUC (solo lectura) -->
         <div class="form-section">
           <h3>Identificación</h3>
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>RUC</mat-label>
-            <input matInput formControlName="ruc" readonly>
-            <mat-icon matSuffix>lock</mat-icon>
-            <mat-hint>El RUC no puede ser modificado</mat-hint>
-          </mat-form-field>
+          <div class="form-group">
+            <label>RUC</label>
+            <div class="input-with-icon readonly">
+              <input type="text" formControlName="ruc" readonly>
+              <mat-icon>lock</mat-icon>
+            </div>
+            <span class="hint">El RUC no puede ser modificado</span>
+          </div>
         </div>
 
         <mat-divider></mat-divider>
@@ -34,29 +36,29 @@
         <div class="form-section">
           <h3>Información General</h3>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Razón Social</mat-label>
-            <input matInput formControlName="razonSocial" placeholder="Nombre legal de la empresa">
-            <mat-error *ngIf="empresaForm.get('razonSocial')?.invalid">
+          <div class="form-group">
+            <label>Razón Social <span class="required">*</span></label>
+            <input type="text" formControlName="razonSocial" placeholder="Nombre legal de la empresa">
+            <span class="error" *ngIf="empresaForm.get('razonSocial')?.invalid && empresaForm.get('razonSocial')?.touched">
               {{ getErrorMessage('razonSocial') }}
-            </mat-error>
-          </mat-form-field>
+            </span>
+          </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Rubro Comercial</mat-label>
-            <input matInput formControlName="rubroComercial" placeholder="Ej: Construcción, Minería, Servicios...">
-            <mat-error *ngIf="empresaForm.get('rubroComercial')?.invalid">
+          <div class="form-group">
+            <label>Rubro Comercial</label>
+            <input type="text" formControlName="rubroComercial" placeholder="Ej: Construcción, Minería, Servicios...">
+            <span class="error" *ngIf="empresaForm.get('rubroComercial')?.invalid && empresaForm.get('rubroComercial')?.touched">
               {{ getErrorMessage('rubroComercial') }}
-            </mat-error>
-          </mat-form-field>
+            </span>
+          </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Dirección</mat-label>
-            <textarea matInput formControlName="direccion" rows="2" placeholder="Dirección fiscal de la empresa"></textarea>
-            <mat-error *ngIf="empresaForm.get('direccion')?.invalid">
+          <div class="form-group">
+            <label>Dirección</label>
+            <textarea formControlName="direccion" rows="2" placeholder="Dirección fiscal de la empresa"></textarea>
+            <span class="error" *ngIf="empresaForm.get('direccion')?.invalid && empresaForm.get('direccion')?.touched">
               {{ getErrorMessage('direccion') }}
-            </mat-error>
-          </mat-form-field>
+            </span>
+          </div>
         </div>
 
         <mat-divider></mat-divider>
@@ -66,33 +68,39 @@
           <h3>Información de Contacto</h3>
 
           <div class="form-row">
-            <mat-form-field appearance="outline">
-              <mat-label>Teléfono</mat-label>
-              <input matInput formControlName="telefono" placeholder="Ej: 01-2345678">
-              <mat-icon matPrefix>phone</mat-icon>
-              <mat-error *ngIf="empresaForm.get('telefono')?.invalid">
+            <div class="form-group">
+              <label>Teléfono</label>
+              <div class="input-with-icon">
+                <mat-icon>phone</mat-icon>
+                <input type="text" formControlName="telefono" placeholder="Ej: 01-2345678">
+              </div>
+              <span class="error" *ngIf="empresaForm.get('telefono')?.invalid && empresaForm.get('telefono')?.touched">
                 {{ getErrorMessage('telefono') }}
-              </mat-error>
-            </mat-form-field>
+              </span>
+            </div>
 
-            <mat-form-field appearance="outline">
-              <mat-label>Email</mat-label>
-              <input matInput formControlName="email" type="email" placeholder="contacto@empresa.com">
-              <mat-icon matPrefix>email</mat-icon>
-              <mat-error *ngIf="empresaForm.get('email')?.invalid">
+            <div class="form-group">
+              <label>Email</label>
+              <div class="input-with-icon">
+                <mat-icon>email</mat-icon>
+                <input type="email" formControlName="email" placeholder="contacto@empresa.com">
+              </div>
+              <span class="error" *ngIf="empresaForm.get('email')?.invalid && empresaForm.get('email')?.touched">
                 {{ getErrorMessage('email') }}
-              </mat-error>
-            </mat-form-field>
+              </span>
+            </div>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Sitio Web</mat-label>
-            <input matInput formControlName="sitioWeb" placeholder="https://www.miempresa.com">
-            <mat-icon matPrefix>language</mat-icon>
-            <mat-error *ngIf="empresaForm.get('sitioWeb')?.invalid">
+          <div class="form-group">
+            <label>Sitio Web</label>
+            <div class="input-with-icon">
+              <mat-icon>language</mat-icon>
+              <input type="text" formControlName="sitioWeb" placeholder="https://www.miempresa.com">
+            </div>
+            <span class="error" *ngIf="empresaForm.get('sitioWeb')?.invalid && empresaForm.get('sitioWeb')?.touched">
               {{ getErrorMessage('sitioWeb') }}
-            </mat-error>
-          </mat-form-field>
+            </span>
+          </div>
         </div>
 
       </form>

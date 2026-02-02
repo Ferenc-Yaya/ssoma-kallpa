@@ -99,18 +99,6 @@
   align-items: center;
   gap: 16px;
   margin-bottom: 20px;
-  padding: 12px 16px;
-  background: #f8fafc;
-  border-radius: 10px;
-
-  .search-field {
-    flex: 1;
-    max-width: 400px;
-  }
-
-  .filter-field {
-    width: 180px;
-  }
 
   .resultados-info {
     margin-left: auto;
@@ -118,17 +106,78 @@
     color: #64748b;
     font-weight: 500;
   }
+}
 
-  ::ng-deep {
-    .mat-mdc-form-field {
-      .mat-mdc-text-field-wrapper {
-        background: white;
-      }
-    }
+// Barra de búsqueda
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  flex: 1;
+  max-width: 400px;
 
-    .mat-mdc-form-field-subscript-wrapper {
-      display: none;
+  mat-icon {
+    color: #64748b;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  input {
+    flex: 1;
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+    color: #1e293b;
+
+    &::placeholder {
+      color: #94a3b8;
     }
+  }
+
+  button {
+    width: 28px;
+    height: 28px;
+    line-height: 28px;
+
+    mat-icon {
+      font-size: 18px;
+      width: 18px;
+      height: 18px;
+    }
+  }
+}
+
+// Select de filtro
+.filter-select {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+
+  mat-icon {
+    color: #64748b;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+
+  select {
+    border: none;
+    outline: none;
+    font-size: 14px;
+    background: transparent;
+    color: #1e293b;
+    cursor: pointer;
+    padding-right: 8px;
   }
 }
 
@@ -591,6 +640,54 @@
   }
 }
 
+// Alerta de documentos observados
+.alerta-observados {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  border-bottom: 1px solid #e9d5ff;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: linear-gradient(135deg, #f3e8ff 0%, #e9d5ff 100%);
+  }
+
+  > mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+    color: #9333ea;
+  }
+
+  .alerta-texto {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .alerta-titulo {
+      font-size: 14px;
+      font-weight: 600;
+      color: #7e22ce;
+    }
+
+    .alerta-descripcion {
+      font-size: 12px;
+      color: #a855f7;
+    }
+  }
+
+  .alerta-arrow {
+    color: #9333ea;
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+  }
+}
+
 // Recursos del contrato - Lista horizontal
 .recursos-lista {
   padding: 12px 16px;
@@ -767,12 +864,12 @@ mat-paginator {
   .filtros-bar {
     flex-wrap: wrap;
 
-    .search-field {
+    .search-bar {
       width: 100%;
       max-width: none;
     }
 
-    .filter-field {
+    .filter-select {
       flex: 1;
     }
 
